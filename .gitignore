@@ -2,6 +2,7 @@
 /release-artifacts/
 /release-metadata.json
 /release-notes.md
+/release-changes.md
 /node_modules/
 /.release/npm/loopra-dist/loopra-dist.tar.gz
 *.tgz

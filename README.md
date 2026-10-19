@@ -15,6 +15,18 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 
 产物包括：macOS ZIP、Windows NSIS EXE、Linux DEB、`loopra-dist.tar.gz`、八个安装脚本、`SHA256SUMS` 和 `release-metadata.json`。元数据记录源码仓库、`main` 对应的 SHA、版本号与发版工具提交。
 
+## 自动生成更新说明
+
+工作流从上次**正式、非预发布** Release 的 `release-metadata.json` 读取 `sourceSha`，与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/loopra` 的源码历史。草稿、预发布以及晚于本次版本的 Release 不作为基准。
+
+在本仓库 [Settings → Secrets and variables → Actions](https://github.com/ezdemo/loopra-release/settings/secrets/actions) 添加 Secret **`DEEPSEEK_API_KEY`**，即可由 DeepSeek 将提交记录整理成中文“新增、修复、改进”说明。默认使用 `deepseek-v4-pro`，可用 Actions Variable **`RELEASE_NOTES_MODEL`** 修改模型。API Key 只在生成摘要步骤使用，不会写进产物或日志。
+
+未配置 Key、API 超时/失败或返回不完整时，自动保留原始提交列表。AI 摘要附带可展开的原始提交记录和源码比较链接，正式发布前可在草稿中核对、修改。没有新增提交时不调用 AI。
+
+首次迁入此仓库时，使用源码历史中可追溯的上一个较低版本标签作为基准；没有旧标签时从源码初始历史开始。旧正式 Release 若没有元数据，尝试使用其同名源码标签；如果基准无法追溯或不是本次源码的祖先，工作流会报错，避免生成错误的变更范围。
+
+更新说明在 `prepare` 阶段生成。只构建模式也能在该 job 的 Summary 和 `release-metadata` Artifact 中查看 **`release-changes.md`**；创建 Release 时自动并入草稿正文，并随产物上传。元数据的 `releaseNotes` 记录比较基准、提交数量和生成方式。提交过多时最多展示最近 500 条，AI 输入还设有长度上限，发生截断时会明确标记，并保留完整源码比较链接。
+
 ## 首次迁移配置
 
 - 先把源码仓库中的迁移修改合并到 `ezdemo/loopra/main`，再发第一个正式版本；源码中的更新地址和版本检查必须指向此仓库。

@@ -42,8 +42,10 @@ test('release asset installers stay pinned while main installers keep following 
   const dir = fixture(t);
   const sha = 'a'.repeat(40);
   write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', sourceSha: sha }));
+  write(dir, 'release-changes.md', '### 新增\n\n- 一项可核对的更新');
   const notes = prepareAssets(dir);
   assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
+  assert.match(notes, /一项可核对的更新/);
   const installers = readdirSync(dir).filter(file => /^setup.*\.(sh|ps1)$/.test(file));
   assert.equal(installers.length, 8);
   for (const file of installers) {

@@ -17,6 +17,10 @@ export function prepareAssets(artifactDir, toolingDir = fileURLToPath(new URL('.
   }
   return `## Loopra v${metadata.version}
 
+${readFileSync(resolve(artifactDir, 'release-changes.md'), 'utf8').trim()}
+
+### 下载与安装
+
 源码：[ezdemo/loopra main @ ${metadata.sourceSha}](https://github.com/ezdemo/loopra/commit/${metadata.sourceSha})
 
 - macOS（Apple Silicon）：\`Loopra-*.zip\`

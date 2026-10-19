@@ -38,6 +38,7 @@ jobs:
           repository: ezdemo/loopra
           ref: main
           path: source
+          fetch-depth: 0
           token: ${{ secrets.SOURCE_READ_TOKEN || github.token }}
           persist-credentials: false
       - uses: actions/setup-node@v7
@@ -53,10 +54,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: node .release/check-release.mjs
+      - name: Generate release changes from source commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          RELEASE_NOTES_MODEL: ${{ vars.RELEASE_NOTES_MODEL || 'deepseek-v4-pro' }}
+        run: node .release/generate-notes.mjs source
       - uses: actions/upload-artifact@v7
         with:
           name: release-metadata
-          path: release-metadata.json
+          path: |
+            release-metadata.json
+            release-changes.md
           if-no-files-found: error
           retention-days: 7
 
