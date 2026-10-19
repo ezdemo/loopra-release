@@ -19,7 +19,17 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 
 工作流从上次**正式、非预发布** Release 的 `release-metadata.json` 读取 `sourceSha`，与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/loopra` 的源码历史。草稿、预发布以及晚于本次版本的 Release 不作为基准。
 
-在本仓库 [Settings → Secrets and variables → Actions](https://github.com/ezdemo/loopra-release/settings/secrets/actions) 添加 Secret **`DEEPSEEK_API_KEY`**，即可由 DeepSeek 将提交记录整理成中文“新增、修复、改进”说明。默认使用 `deepseek-v4-pro`，可用 Actions Variable **`RELEASE_NOTES_MODEL`** 修改模型。API Key 只在生成摘要步骤使用，不会写进产物或日志。
+使用 **OpenAI 兼容的 Chat Completions 协议**（JSON 请求、`Authorization: Bearer <Key>`）。默认网关为 `https://amr-link.open-design.ai/v1`，实际请求 `POST https://amr-link.open-design.ai/v1/chat/completions`。请求只使用通用 Chat Completions 字段。
+
+在本仓库 [Settings → Secrets and variables → Actions](https://github.com/ezdemo/loopra-release/settings/secrets/actions) 配置：
+
+| 名称 | 类型 | 内容 |
+| --- | --- | --- |
+| `RELEASE_NOTES_API_KEY` | Secret | 该网关的 API Key，必填才能启用 AI 摘要 |
+| `RELEASE_NOTES_BASE_URL` | Variable | 可选，默认 `https://amr-link.open-design.ai/v1` |
+| `RELEASE_NOTES_MODEL` | Variable | 网关支持的模型 ID，沿用默认 `deepseek-v4-pro`，可按网关实际模型修改 |
+
+API Key 只在生成摘要步骤使用，不会写进产物或日志。原 `DEEPSEEK_API_KEY` 已改为 `RELEASE_NOTES_API_KEY`；更换网关时请在新 Secret 中填写该网关的 Key。
 
 未配置 Key、API 超时/失败或返回不完整时，自动保留原始提交列表。AI 摘要附带可展开的原始提交记录和源码比较链接，正式发布前可在草稿中核对、修改。没有新增提交时不调用 AI。
 

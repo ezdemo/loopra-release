@@ -85,10 +85,12 @@ test('rejects unreadable or incorrect previous-release metadata instead of silen
 test('generates a Chinese AI summary using only source commit subjects', async () => {
   const result = await summarize([{ sha: 'a'.repeat(40), subject: 'feat: 支持独立发版' }], {
     apiKey: 'fake-deepseek-token', model: 'deepseek-v4-pro', request: async (url, options) => {
-      assert.equal(url, 'https://api.deepseek.com/chat/completions');
+      assert.equal(url, 'https://amr-link.open-design.ai/v1/chat/completions');
+      assert.equal(options.method, 'POST');
+      assert.equal(options.headers.Authorization, 'Bearer fake-deepseek-token');
       const body = JSON.parse(options.body);
       assert.equal(body.model, 'deepseek-v4-pro');
-      assert.equal(body.thinking.type, 'disabled');
+      assert.equal('thinking' in body, false);
       assert.deepEqual(JSON.parse(body.messages[1].content), { commitMessages: ['feat: 支持独立发版'] });
       return Response.json({ choices: [{ finish_reason: 'stop', message: { content: '### 新增\n\n- 支持独立发版。' } }] });
     },
@@ -114,6 +116,25 @@ test('missing key, HTTP errors, timeouts, empty and incomplete AI output fall ba
   assert.ok(warnings.some(message => message.includes('timeout')));
   assert.ok(warnings.every(message => !message.includes('fake-deepseek-token') && !message.includes('secret provider details')));
   assert.equal(await summarize([], { apiKey: 'fake-deepseek-token', request: () => assert.fail('No commits should not call the model') }), null);
+});
+
+test('allows a custom compatible gateway and model without duplicating trailing slashes', async () => {
+  const result = await summarize([{ sha: 'a'.repeat(40), subject: 'fix: 安装问题' }], {
+    apiKey: 'gateway-test-key', baseUrl: 'https://gateway.example/v1///', model: 'gateway-model',
+    request: async (url, options) => {
+      assert.equal(url, 'https://gateway.example/v1/chat/completions');
+      assert.equal(options.headers.Authorization, 'Bearer gateway-test-key');
+      const payload = JSON.parse(options.body);
+      assert.equal(payload.model, 'gateway-model');
+      assert.deepEqual(Object.keys(payload).sort(), ['max_tokens', 'messages', 'model', 'temperature']);
+      return Response.json({ choices: [{ finish_reason: 'stop', message: { content: '### 修复\n\n- 修复安装问题。' } }] });
+    },
+  });
+  assert.match(result.text, /修复安装问题/);
+  assert.equal(await summarize([{ subject: 'fix: 安装问题' }], {
+    apiKey: 'gateway-test-key', baseUrl: 'not a URL', warn() {},
+    request: () => assert.fail('Invalid endpoint must not send a request'),
+  }), null);
 });
 
 test('writes fallback release notes, comparison links and baseline metadata end to end', async t => {
