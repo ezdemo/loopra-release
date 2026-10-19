@@ -90,6 +90,14 @@ function markdownText(text) {
     .replace(/[\\`*_[\]]/g, '\\$&');
 }
 
+export function formatMentions(text) {
+  // GitHub lists accounts mentioned in release notes as release contributors.
+  // Keep existing code spans/fences; render Java annotations and other bare
+  // @names as code so they cannot accidentally credit unrelated accounts.
+  return text.replace(/(?<!\\)(`+)[\s\S]*?\1|https?:\/\/[^\s<>]+|(?<![\w@])@[a-z\d](?:[a-z\d-]{0,38})(?![\w-])/gi,
+    (match, ticks) => ticks || /^https?:\/\//i.test(match) ? match : `\`${match}\``);
+}
+
 export async function summarize(commits, { apiKey, baseUrl = DEFAULT_BASE_URL, model = DEFAULT_MODEL, request = fetch, warn = console.warn } = {}) {
   if (!commits.length) return null;
   if (!apiKey) { warn('::notice::RELEASE_NOTES_API_KEY is not configured; using source commit messages.'); return null; }
@@ -135,11 +143,11 @@ export function renderChanges(metadata, baseline, { commits, count }, summary) {
   const compareUrl = baseline.sha
     ? `https://github.com/${SOURCE}/compare/${baseline.sha}...${metadata.sourceSha}`
     : `https://github.com/${SOURCE}/commits/${metadata.sourceSha}`;
-  const raw = commits.map(commit => `- ${markdownText(commit.subject)} ([${commit.sha.slice(0, 7)}](https://github.com/${SOURCE}/commit/${commit.sha}))`).join('\n');
+  const raw = commits.map(commit => `- ${formatMentions(markdownText(commit.subject))} ([${commit.sha.slice(0, 7)}](https://github.com/${SOURCE}/commit/${commit.sha}))`).join('\n');
   const truncation = count > commits.length ? `\n\n本次共 ${count} 条提交，下方展示最近 ${commits.length} 条；完整记录见源码比较链接。` : '';
   const inputTruncation = summary && summary.inputCount < count ? `\n\n摘要基于最近 ${summary.inputCount} 条提交（本次共 ${count} 条），完整记录见源码比较链接。` : '';
   const content = summary
-    ? `${summary.text}${inputTruncation}\n\n<details>\n<summary>原始源码提交记录（${count} 条）</summary>\n\n${raw}${truncation}\n\n</details>`
+    ? `${formatMentions(summary.text)}${inputTruncation}\n\n<details>\n<summary>原始源码提交记录（${count} 条）</summary>\n\n${raw}${truncation}\n\n</details>`
     : `### 更新内容\n\n${raw || '本次源码无新增提交。'}${truncation}`;
   const start = baseline.tag ? `从 ${markdownText(baseline.tag)} 到本次构建` : '首次发版，从源码初始历史到本次构建';
   return `${content}\n\n[查看完整源码变更](<${compareUrl}>) · ${start}\n`;

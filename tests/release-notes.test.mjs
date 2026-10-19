@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { collectCommits, findBaseline, generateNotes, renderChanges, summarize } from '../.release/generate-notes.mjs';
+import { collectCommits, findBaseline, formatMentions, generateNotes, renderChanges, summarize } from '../.release/generate-notes.mjs';
 import { metadataComment } from '../.release/release-metadata.mjs';
 
 function fixture(t) {
@@ -171,4 +171,16 @@ test('keeps original commits beside the AI summary and labels any omitted histor
   assert.match(text, /&lt;img src=x&gt;/);
   assert.match(text, /共 900 条提交/);
   assert.match(renderChanges({ sourceSha: sha }, { sha }, { commits: [], count: 0 }, null), /无新增提交/);
+});
+
+test('Java annotations cannot turn into GitHub release contributor mentions', () => {
+  assert.equal(formatMentions('添加 @Mapping 和 @Controller 注解'), '添加 `@Mapping` 和 `@Controller` 注解');
+  assert.equal(formatMentions('已有 `Java @Mapping` 代码'), '已有 `Java @Mapping` 代码');
+  assert.equal(formatMentions('```java\n@Mapping\n```'), '```java\n@Mapping\n```');
+  assert.equal(formatMentions('dev@example.com https://example.com/@Mapping'), 'dev@example.com https://example.com/@Mapping');
+  const sha = 'a'.repeat(40);
+  const notes = renderChanges({ sourceSha: sha }, { sha }, {
+    commits: [{ sha, subject: 'fix: 添加 @Mapping 注解修复接口路由未注册的问题' }], count: 1,
+  }, { text: '### 修复\n\n添加 @Mapping 注解。', inputCount: 1 });
+  assert.equal(notes.match(/`@Mapping`/g).length, 2);
 });
