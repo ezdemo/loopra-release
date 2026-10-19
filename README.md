@@ -7,11 +7,13 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 ## 构建与发版
 
 1. 把要发布的源码合并到 `ezdemo/loopra` 的 **main**，无需为发版手动修改源码版本号。
-2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。默认只构建；勾选 `create_release` 会创建 Release **草稿**。
+2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。`create_release` 默认勾选：构建成功后自动正式发布，无需手动发布草稿；取消勾选则只构建。
 3. 工作流自动领取版本，锁定源码提交，在核心和三平台桌面构建前统一注入该版本。无需手动打标签；标签由流水线自动创建，推送标签不会触发新构建。
-4. 检查草稿产物后手动发布。npm 工作流在 Release 正式发布后，将同一份核心包发布为 `loopra-dist`。
+4. 核心与三平台安装包全部构建成功后，流水线先上传到临时草稿，核对四个附件的 SHA-256 和构建身份，再自动正式发布。随后分别启动 npm 发布和源码仓库 Release 同步。
 
-普通提交只运行轻量检查。构建失败时不会创建新草稿。草稿和只构建模式不会发布 npm。
+普通提交只运行轻量检查。构建失败不会创建 Release；上传或校验失败时临时草稿不会正式发布，也不会启动 npm 与源码同步。只构建模式不会发布 Release 或 npm。
+
+GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `release.published` 工作流，因此构建流程在正式发布成功后，通过 `workflow_dispatch` 分别启动 **Publish core to npm** 和 **Sync release to source repository**。两个任务独立运行，失败时可以从各自入口重试。人工正式发布已有草稿时，原来的 `release.published` 入口仍然有效。npm 继续使用 `npm-publish.yml` 的 OIDC 信任配置，无需新增凭据。
 
 ### 自动同步源码仓库 Release
 
@@ -58,16 +60,16 @@ Release 下载区只保留四个软件包：`Loopra-macos-arm64.zip`、`Loopra-w
 
 API Key 只在生成摘要步骤使用，不会写进产物或日志。原 `DEEPSEEK_API_KEY` 已改为 `RELEASE_NOTES_API_KEY`；更换网关时请在新 Secret 中填写该网关的 Key。
 
-未配置 Key、API 超时/失败或返回不完整时，自动保留原始提交列表。AI 摘要附带可展开的原始提交记录和源码比较链接，正式发布前可在草稿中核对、修改。没有新增提交时不调用 AI。
+未配置 Key、API 超时/失败或返回不完整时，自动保留原始提交列表。AI 摘要附带可展开的原始提交记录和源码比较链接；如需提前审阅，可先用只构建模式查看更新说明，再启动自动发版。没有新增提交时不调用 AI。
 
 首次迁入此仓库时，使用源码历史中可追溯的上一个较低版本标签作为基准；没有旧标签时从源码初始历史开始。旧正式 Release 若没有元数据，尝试使用其同名源码标签；如果基准无法追溯或不是本次源码的祖先，工作流会报错，避免生成错误的变更范围。
 
-更新说明在 `prepare` 阶段生成。只构建模式也能在该 job 的 Summary 和 `release-metadata` Artifact 中查看 **`release-changes.md`**；创建 Release 时自动并入草稿正文，不作为下载附件。元数据的 `releaseNotes` 记录比较基准、提交数量和生成方式。提交过多时最多展示最近 500 条，AI 输入还设有长度上限，发生截断时会明确标记，并保留完整源码比较链接。
+更新说明在 `prepare` 阶段生成。只构建模式也能在该 job 的 Summary 和 `release-metadata` Artifact 中查看 **`release-changes.md`**；创建 Release 时自动并入正文，不作为下载附件。元数据的 `releaseNotes` 记录比较基准、提交数量和生成方式。提交过多时最多展示最近 500 条，AI 输入还设有长度上限，发生截断时会明确标记，并保留完整源码比较链接。
 
 ## 首次迁移配置
 
 - 先把源码仓库中的迁移修改合并到 `ezdemo/loopra/main`，再发第一个正式版本；源码中的更新地址和版本检查必须指向此仓库。
-- 此仓库启用 GitHub Actions。领取版本标签和创建草稿的 job 申请 `contents: write`，npm job 申请 `id-token: write`。
+- 此仓库启用 GitHub Actions。领取版本标签和发布 Release 的 job 申请 `contents: write`，启动后续工作流的 job 申请 `actions: write`，npm job 申请 `id-token: write`。
 - 公开源码不需要额外凭据。若以后改为私有源码，在此仓库添加 `SOURCE_READ_TOKEN`，授予对 `ezdemo/loopra` 的只读 Contents 权限。
 - 如需 macOS Developer ID 签名，把原仓库的 `MAC_CERTIFICATE_P12`、`MAC_CERTIFICATE_P12_PASSWORD` 迁到此仓库；公证还需要 `APPLE_ID`、`APPLE_APP_SPECIFIC_PASSWORD`、`APPLE_TEAM_ID`。无证书时使用 ad-hoc 签名。
 - 在 npm 的 `loopra-dist` 包设置中，将 Trusted Publisher 配置为用户 **ezdemo**、仓库 **loopra-release**、工作流文件 **npm-publish.yml**。允许直接 `npm publish`，文件名不要填写完整路径。npm 发布使用 OIDC，无需长效 token。

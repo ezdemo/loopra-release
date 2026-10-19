@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       create_release:
-        description: 'Create a draft release after building (off: build only)'
+        description: 'Automatically publish the release after building (off: build only)'
         type: boolean
-        default: false
+        default: true
 
 permissions:
   contents: read
@@ -316,7 +316,8 @@ jobs:
           merge-multiple: true
       - name: Prepare packages and release notes
         run: node .release/prepare-assets.mjs release-artifacts
-      - name: Create draft in the release repository
+      # Upload into a temporary draft so users never see incomplete packages.
+      - name: Upload release packages
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
@@ -327,3 +328,39 @@ jobs:
           prerelease: false
           fail_on_unmatched_files: true
           files: release-assets/*
+      - name: Verify packages and publish release automatically
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: v${{ needs.prepare.outputs.version }}
+        run: node .release/publish-release.mjs
+
+  # Releases published with GITHUB_TOKEN do not emit workflow-triggering release
+  # events. Dispatch both existing workflows explicitly, keeping npm OIDC bound
+  # to npm-publish.yml and allowing either downstream task to fail independently.
+  dispatch-npm:
+    needs: [prepare, release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Start npm publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: v${{ needs.prepare.outputs.version }}
+        run: gh workflow run npm-publish.yml --ref main -f "tag=$RELEASE_TAG"
+
+  dispatch-source-sync:
+    needs: [prepare, release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Start source release synchronization
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: v${{ needs.prepare.outputs.version }}
+        run: gh workflow run sync-release.yml --ref main -f "tag=$RELEASE_TAG"
