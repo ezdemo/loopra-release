@@ -1,0 +1,61 @@
+# Loopra Releases
+
+Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ezdemo/loopra](https://github.com/ezdemo/loopra)，下载见 [Releases](https://github.com/ezdemo/loopra-release/releases/latest)。
+
+参考 [yetone/magpie-releases](https://github.com/yetone/magpie-releases) 的源码与发布仓库分离方式。此仓库固定从 `ezdemo/loopra` 的 **main** 分支获取源码，开始构建时锁定提交 SHA，核心包和所有桌面安装包都使用该提交。
+
+## 构建与发版
+
+1. 在源码仓库运行 `./bump-version.ps1 -Version 26.10.1`，把源码和版本变更合并到 **main**。工作流校验根 `pom.xml` 的 `loopra.version`、核心 `version.txt` 和 Electron `package.json` 的版本一致性。
+2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。默认只构建；勾选 `create_release` 会创建 `v<源码版本>` 的 Release **草稿**。
+3. 也可在**本仓库**推送 `v26.10.1` 标签触发构建和草稿创建。标签版本必须与构建开始时源码 `main` 的版本一致。源码仓库打标签不会自动触发此仓库。
+4. 检查草稿产物后手动发布。npm 工作流在 Release 正式发布后，将同一份核心包发布为 `loopra-dist`。
+
+普通提交只运行轻量检查。构建失败时不会创建新草稿。草稿和只构建模式不会发布 npm。
+
+产物包括：macOS ZIP、Windows NSIS EXE、Linux DEB、`loopra-dist.tar.gz`、八个安装脚本、`SHA256SUMS` 和 `release-metadata.json`。元数据记录源码仓库、`main` 对应的 SHA、版本号与发版工具提交。
+
+## 首次迁移配置
+
+- 先把源码仓库中的迁移修改合并到 `ezdemo/loopra/main`，再发第一个正式版本；源码中的更新地址和版本检查必须指向此仓库。
+- 此仓库启用 GitHub Actions。工作流仅在创建草稿的 job 申请 `contents: write`，npm job 申请 `id-token: write`。
+- 公开源码不需要额外凭据。若以后改为私有源码，在此仓库添加 `SOURCE_READ_TOKEN`，授予对 `ezdemo/loopra` 的只读 Contents 权限。
+- 如需 macOS Developer ID 签名，把原仓库的 `MAC_CERTIFICATE_P12`、`MAC_CERTIFICATE_P12_PASSWORD` 迁到此仓库；公证还需要 `APPLE_ID`、`APPLE_APP_SPECIFIC_PASSWORD`、`APPLE_TEAM_ID`。无证书时使用 ad-hoc 签名。
+- 在 npm 的 `loopra-dist` 包设置中，将 Trusted Publisher 配置为用户 **ezdemo**、仓库 **loopra-release**、工作流文件 **npm-publish.yml**。允许直接 `npm publish`，文件名不要填写完整路径。npm 发布使用 OIDC，无需长效 token。
+- 保留已有 Release 和已发布 npm 版本。npm 版本沿用源码版本的前三段，已发布的版本不能覆盖；使用新的版本号。npm 失败后可手动运行 **Publish core to npm**，输入已正式发布的 Release 标签重试。
+- 老版本应用中已写死的旧地址不会自动变更，可在旧仓库 README / 最后一个 Release 中提供此仓库的迁移入口。
+
+## 安装
+
+Windows PowerShell：
+
+```powershell
+irm https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup.ps1 | iex
+```
+
+macOS / Linux：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup.sh | bash
+```
+
+`main` 上的脚本默认安装最新的**正式** Release。使用 `setup-mirror` 变体可通过 GitHub 镜像下载核心包；`LOOPRA_MIRROR` 可指定镜像。`setup-gui` 安装独立桌面核心运行时到 `~/.loopra-gui`。随 Release 上传的脚本固定安装该次版本；也可以对 `main` 脚本设置 `LOOPRA_VERSION=v26.10.1` 指定版本。
+
+## 本地构建
+
+在此仓库目录中准备源码（Node 22.14+、pnpm 10、Java 17、Maven）：
+
+```bash
+git clone --branch main --single-branch https://github.com/ezdemo/loopra.git source
+bash .release/ci-sync-web-assets.sh
+cd source
+mvn -B -ntp -DskipTests -gs ../.release/maven-central-settings.xml -s ../.release/maven-central-settings.xml clean verify
+cd ..
+bash .release/ci-package-electron.sh
+```
+
+脚本默认操作此仓库的 `source/`，也可通过 `LOOPRA_SOURCE_DIR` 指定已有源码目录。桌面包在对应系统上原生构建，输出到 `source/loopra-front/release/`。Windows 可用 `.release/windows_package.ps1 -SourceDir <源码目录>` 同步前端，用 `.release/embed-core.ps1 -SourceDir <源码目录>` 嵌入核心包。
+
+源码仓库保留后端测试工作流；旧 Gitee 打包流水线由本仓库 GitHub Actions 替代。Maven / Electron 的应用构建配置仍属于源码，发布编排和分发脚本属于本仓库。
+
+本地验证：`node --test tests/*.test.mjs`，以及逐文件执行 `bash -n .release/<脚本>.sh`。

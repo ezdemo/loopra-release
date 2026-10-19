@@ -1,0 +1,8 @@
+/source/
+/release-artifacts/
+/release-metadata.json
+/release-notes.md
+/node_modules/
+/.release/npm/loopra-dist/loopra-dist.tar.gz
+*.tgz
+.DS_Store
