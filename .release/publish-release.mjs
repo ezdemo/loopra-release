@@ -6,17 +6,20 @@ import { parseMetadata } from './release-metadata.mjs';
 
 // Publishing is the last step: all four uploaded packages must match the hashes
 // recorded when the build artifacts were prepared, before any release is public.
-export async function publishRelease({ tag, releaseSha, token, request = fetch }) {
+export async function publishRelease({ tag, releaseId, releaseSha, token, request = fetch }) {
   if (!/^v\d+\.\d+\.\d+(?:\.\d+)?$/.test(tag || '')) throw new Error('Invalid release tag');
+  if (!/^[1-9]\d*$/.test(String(releaseId || '')) || !Number.isSafeInteger(Number(releaseId))) throw new Error('Invalid release ID');
   if (!/^[a-f0-9]{40}$/.test(releaseSha || '')) throw new Error('Invalid build workflow commit');
   if (!token) throw new Error('GH_TOKEN is required to publish the release');
   const api = 'https://api.github.com/repos/ezdemo/loopra-release';
   const headers = { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}` };
-  const response = await request(`${api}/releases/tags/${tag}`, { headers, signal: AbortSignal.timeout(30000) });
+  // GitHub's by-tag endpoint only returns published releases, even when the
+  // caller can read drafts. The upload action returns the exact draft ID.
+  const response = await request(`${api}/releases/${releaseId}`, { headers, signal: AbortSignal.timeout(30000) });
   if (!response.ok) throw new Error(`Cannot read release draft: HTTP ${response.status}`);
   const release = await response.json();
   const metadata = parseMetadata(release.body || '');
-  if (release.tag_name !== tag || !metadata || `v${metadata.version}` !== tag || metadata.releaseSha !== releaseSha) {
+  if (release.id !== Number(releaseId) || release.tag_name !== tag || !metadata || `v${metadata.version}` !== tag || metadata.releaseSha !== releaseSha) {
     throw new Error('Release metadata does not match this build');
   }
   if (release.prerelease) throw new Error('Expected a stable release');
@@ -44,7 +47,8 @@ export async function publishRelease({ tag, releaseSha, token, request = fetch }
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const release = await publishRelease({ tag: process.env.RELEASE_TAG, releaseSha: process.env.GITHUB_SHA, token: process.env.GH_TOKEN });
+  const release = await publishRelease({ tag: process.env.RELEASE_TAG, releaseId: process.env.RELEASE_ID,
+    releaseSha: process.env.GITHUB_SHA, token: process.env.GH_TOKEN });
   console.log(`Published ${release.tag_name}: ${release.html_url}`);
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY,
     `Published [${release.tag_name}](${release.html_url}) automatically after verifying all four packages.\n`);

@@ -17,6 +17,9 @@ function fixture() {
   const request = async (url, options) => {
     assert.equal(options.headers.Authorization, 'Bearer test-token');
     state.calls.push({ url, method: options.method || 'GET' });
+    // Model GitHub's actual API: drafts are invisible to the by-tag endpoint.
+    if (url.includes('/releases/tags/')) return new Response('', { status: 404 });
+    assert.equal(url, 'https://api.github.com/repos/ezdemo/loopra-release/releases/12');
     if (options.method === 'PATCH') {
       assert.equal(url, 'https://api.github.com/repos/ezdemo/loopra-release/releases/12');
       assert.deepEqual(JSON.parse(options.body), { draft: false, prerelease: false, make_latest: 'true' });
@@ -25,8 +28,17 @@ function fixture() {
     }
     return Response.json(state.release);
   };
-  return { state, run: options => publishRelease({ tag, releaseSha, token: 'test-token', request, ...options }) };
+  return { state, request, run: options => publishRelease({ tag, releaseId: 12, releaseSha, token: 'test-token', request, ...options }) };
 }
+
+test('publishes a draft by its upload ID when the by-tag API returns 404', async () => {
+  const { state, request, run } = fixture();
+  assert.equal((await request(`https://api.github.com/repos/ezdemo/loopra-release/releases/tags/${tag}`,
+    { headers: { Authorization: 'Bearer test-token' } })).status, 404);
+  state.calls = [];
+  assert.equal((await run({ releaseId: '12' })).draft, false);
+  assert.ok(state.calls.every(call => call.url.endsWith('/releases/12')));
+});
 
 test('publishes a complete draft only after verifying every package and its build identity', async () => {
   const { state, run } = fixture();
@@ -55,6 +67,7 @@ test('incomplete, corrupted or unexpected uploaded packages remain unpublished',
 test('mismatched build metadata cannot publish a draft', async () => {
   for (const change of [
     state => { state.release.body = ''; },
+    state => { state.release.id = 13; },
     state => { state.release.tag_name = 'v26.10.1903'; },
     state => { state.metadata.releaseSha = 'c'.repeat(40); state.release.body = metadataComment(state.metadata); },
     state => { delete state.metadata.artifacts['loopra-dist.tar.gz']; state.release.body = metadataComment(state.metadata); },
@@ -67,7 +80,8 @@ test('mismatched build metadata cannot publish a draft', async () => {
 });
 
 test('validates input and credentials before making a request', async () => {
-  for (const options of [{ tag: '../main' }, { releaseSha: 'main' }, { token: '' }]) {
+  for (const options of [{ tag: '../main' }, { releaseId: undefined }, { releaseId: 0 },
+    { releaseId: '../12' }, { releaseId: Number.MAX_SAFE_INTEGER + 1 }, { releaseSha: 'main' }, { token: '' }]) {
     const { state, run } = fixture();
     await assert.rejects(run(options));
     assert.deepEqual(state.calls, []);
