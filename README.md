@@ -13,6 +13,18 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 
 普通提交只运行轻量检查。构建失败时不会创建新草稿。草稿和只构建模式不会发布 npm。
 
+### 自动同步源码仓库 Release
+
+正式发布本仓库的 Release 后，**Sync release to source repository** 工作流会将同一版本单向同步到 `ezdemo/loopra`。npm 发布与同步独立运行，任一失败不会阻塞另一项，也不会重新构建软件包。
+
+首次配置：创建 Fine-grained PAT，Repository access 只选择 **ezdemo/loopra**，Repository permissions 授予 **Contents: Read and write**。在本仓库 [Actions Secrets](https://github.com/ezdemo/loopra-release/settings/secrets/actions) 添加 **`SOURCE_RELEASE_TOKEN`**。该凭据用于反向创建源码标签和 Release，与源码仓库触发构建用的凭据不同；不要把 token 写进代码或更新说明。
+
+同步复制标题、说明和全部四个安装包，下载与上传都校验 SHA-256。源码仓库同名标签指向发布元数据中的 `sourceSha`，而不是当前 `main` 或发布工具提交。说明中的下载链接改为源码仓库的对应附件，其余正文与构建元数据保留。目标先创建草稿，附件齐全后才发布；预发布状态同步保留，补同步旧版本不会抢占最新正式版本。
+
+历史版本补同步或失败重试：Actions → **Sync release to source repository** → **Run workflow**，选择 `main`，填写已正式发布的标签（例如 `v26.10.1901`）。勾选 `dry_run` 可只检查元数据、源码提交和现有目标，预览过程不会上传或发布。发布后修改更新说明时，也可通过这个入口重新同步。
+
+重试会复用已有草稿并跳过相同附件；已正式发布但内容不同的附件、指向其他提交的同名标签、缺少构建元数据的旧 Release 会报错，不会覆盖。同步不删除历史 Release。源码仓库应只保留测试和构建触发入口，不应在 `v*` 标签上再次构建或发布 npm，以免形成循环。
+
 ### 自动版本号
 
 使用 **上海时区（Asia/Shanghai）** 的 `年.月.日期＋两位日内序号`。第三段的数值等于 `日期 × 100 + 序号`，序号范围 `01–99`。
