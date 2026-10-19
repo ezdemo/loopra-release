@@ -318,6 +318,7 @@ jobs:
         run: node .release/prepare-assets.mjs release-artifacts
       # Upload into a temporary draft so users never see incomplete packages.
       - name: Upload release packages
+        id: upload_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
@@ -332,6 +333,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: v${{ needs.prepare.outputs.version }}
+          RELEASE_ID: ${{ steps.upload_release.outputs.id }}
         run: node .release/publish-release.mjs
 
   # Releases published with GITHUB_TOKEN do not emit workflow-triggering release
