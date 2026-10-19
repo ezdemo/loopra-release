@@ -26,7 +26,7 @@ function write(dir, file, text) {
   return dest;
 }
 
-test('source version is authoritative; mismatched tags and stale installer versions fail', t => {
+test('reads source version consistency; mismatched tags and stale installer versions fail', t => {
   const dir = fixture(t);
   write(dir, 'pom.xml', '<project><properties><loopra.version>26.10.1.2</loopra.version></properties></project>');
   write(dir, 'loopra/src/installDist/bin/version.txt', '26.10.1.2\n');

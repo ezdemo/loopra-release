@@ -2,6 +2,8 @@ import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reserveVersion } from './release-version.mjs';
+import { setBuildVersion } from './set-version.mjs';
 
 export function readSourceVersion(sourceDir, tag = '') {
   const read = file => readFileSync(resolve(sourceDir, file), 'utf8').trim();
@@ -20,16 +22,25 @@ export function readSourceVersion(sourceDir, tag = '') {
   return { version, npmVersion };
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const sourceDir = resolve(process.argv[2] || 'source');
-  const metadata = {
-    ...readSourceVersion(sourceDir, process.env.RELEASE_TAG || ''),
+export function createSourceMetadata(sourceDir, version, releaseSha) {
+  const originalSourceVersion = readFileSync(resolve(sourceDir, 'pom.xml'), 'utf8').match(/<loopra\.version>([^<]+)<\/loopra\.version>/)?.[1];
+  setBuildVersion(sourceDir, version);
+  return {
+    ...readSourceVersion(sourceDir),
+    originalSourceVersion,
     sourceRepository: 'ezdemo/loopra',
     sourceRef: 'main',
     sourceSha: execFileSync('git', ['-C', sourceDir, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     releaseRepository: 'ezdemo/loopra-release',
-    releaseSha: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+    releaseSha,
   };
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const sourceDir = resolve(process.argv[2] || 'source');
+  const releaseSha = process.env.GITHUB_SHA || execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  const version = await reserveVersion({ token: process.env.GH_TOKEN, releaseSha });
+  const metadata = createSourceMetadata(sourceDir, version, releaseSha);
   writeFileSync('release-metadata.json', JSON.stringify(metadata, null, 2) + '\n');
   if (process.env.GITHUB_OUTPUT) {
     appendFileSync(process.env.GITHUB_OUTPUT, `source_sha=${metadata.sourceSha}\nversion=${metadata.version}\n`);

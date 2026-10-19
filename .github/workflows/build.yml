@@ -1,8 +1,6 @@
 name: Build & Release
 
 on:
-  push:
-    tags: ['v*']
   workflow_dispatch:
     inputs:
       create_release:
@@ -14,7 +12,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: loopra-release
   cancel-in-progress: false
 
 env:
@@ -24,6 +22,8 @@ jobs:
   # Resolve main once so every platform builds exactly the same source commit.
   prepare:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       source_sha: ${{ steps.metadata.outputs.source_sha }}
       version: ${{ steps.metadata.outputs.version }}
@@ -44,13 +44,13 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
-      - name: Resolve source version and record provenance
+      - name: Reserve Shanghai date version and update build sources
         id: metadata
         env:
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          GH_TOKEN: ${{ github.token }}
         run: node .release/source-metadata.mjs source
       - name: Refuse to overwrite a published release
-        if: startsWith(github.ref, 'refs/tags/v') || inputs.create_release
+        if: inputs.create_release
         env:
           GH_TOKEN: ${{ github.token }}
         run: node .release/check-release.mjs
@@ -64,6 +64,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: release-metadata
+          overwrite: true
           path: |
             release-metadata.json
             release-changes.md
@@ -120,6 +121,12 @@ jobs:
         with:
           version: 10
           run_install: false
+
+      - name: Apply the reserved build version
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+        run: node .release/set-version.mjs source "$RELEASE_VERSION"
+        shell: bash
 
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -218,6 +225,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact_name }}
+          overwrite: true
           path: ${{ matrix.upload_pattern }}
           if-no-files-found: error
           retention-days: 7
@@ -267,7 +275,11 @@ jobs:
           run_install: false
 
       - name: Sync frontend assets
-        run: bash .release/ci-sync-web-assets.sh
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          node .release/set-version.mjs source "$RELEASE_VERSION"
+          bash .release/ci-sync-web-assets.sh
 
       - name: Package web distribution
         working-directory: source
@@ -281,10 +293,11 @@ jobs:
         with:
           name: loopra-dist
           path: ./source/loopra/target/loopra-dist.tar.gz
+          overwrite: true
           retention-days: 7
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v') || inputs.create_release
+    if: inputs.create_release
     needs: [prepare, electron-build, web-dist]
     runs-on: ubuntu-latest
     permissions:

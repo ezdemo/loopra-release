@@ -6,12 +6,27 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 
 ## 构建与发版
 
-1. 在源码仓库运行 `./bump-version.ps1 -Version 26.10.1`，把源码和版本变更合并到 **main**。工作流校验根 `pom.xml` 的 `loopra.version`、核心 `version.txt` 和 Electron `package.json` 的版本一致性。
-2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。默认只构建；勾选 `create_release` 会创建 `v<源码版本>` 的 Release **草稿**。
-3. 也可在**本仓库**推送 `v26.10.1` 标签触发构建和草稿创建。标签版本必须与构建开始时源码 `main` 的版本一致。源码仓库打标签不会自动触发此仓库。
+1. 把要发布的源码合并到 `ezdemo/loopra` 的 **main**，无需为发版手动修改源码版本号。
+2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。默认只构建；勾选 `create_release` 会创建 Release **草稿**。
+3. 工作流自动领取版本，锁定源码提交，在核心和三平台桌面构建前统一注入该版本。无需手动打标签；标签由流水线自动创建，推送标签不会触发新构建。
 4. 检查草稿产物后手动发布。npm 工作流在 Release 正式发布后，将同一份核心包发布为 `loopra-dist`。
 
 普通提交只运行轻量检查。构建失败时不会创建新草稿。草稿和只构建模式不会发布 npm。
+
+### 自动版本号
+
+使用 **上海时区（Asia/Shanghai）** 的 `年.月.日期＋两位日内序号`。第三段的数值等于 `日期 × 100 + 序号`，序号范围 `01–99`。
+
+| 构建 | 版本 |
+| --- | --- |
+| 2026-10-19 第一次 | `26.10.1901` |
+| 2026-10-19 第二次 | `26.10.1902` |
+| 2026-10-20 第一次 | `26.10.2001` |
+| 2027-01-01 第一次 | `27.1.101` |
+
+编号根据本仓库已有标签和 Release（包含草稿）递增，再原子创建版本标签占号。试构建、失败构建和重新完整运行都可能占用序号，已领取的号不回收；每天最多 99 次。各平台使用 `prepare` 领取的同一个版本，不会分别编号。
+
+Maven 根 `loopra.version`、Loopra 模块版本、Electron `package.json`、核心 `version.txt`、Release 标签和 npm 包版本全部一致。修改只发生在 CI 拉取的源码副本，源码仓库保留开发版本；发版元数据同时记录原源码版本、源码提交 SHA 和实际构建版本。软件包文件名保持不带版本号。
 
 Release 下载区只保留四个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`loopra-dist.tar.gz`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
 
@@ -40,11 +55,11 @@ API Key 只在生成摘要步骤使用，不会写进产物或日志。原 `DEEP
 ## 首次迁移配置
 
 - 先把源码仓库中的迁移修改合并到 `ezdemo/loopra/main`，再发第一个正式版本；源码中的更新地址和版本检查必须指向此仓库。
-- 此仓库启用 GitHub Actions。工作流仅在创建草稿的 job 申请 `contents: write`，npm job 申请 `id-token: write`。
+- 此仓库启用 GitHub Actions。领取版本标签和创建草稿的 job 申请 `contents: write`，npm job 申请 `id-token: write`。
 - 公开源码不需要额外凭据。若以后改为私有源码，在此仓库添加 `SOURCE_READ_TOKEN`，授予对 `ezdemo/loopra` 的只读 Contents 权限。
 - 如需 macOS Developer ID 签名，把原仓库的 `MAC_CERTIFICATE_P12`、`MAC_CERTIFICATE_P12_PASSWORD` 迁到此仓库；公证还需要 `APPLE_ID`、`APPLE_APP_SPECIFIC_PASSWORD`、`APPLE_TEAM_ID`。无证书时使用 ad-hoc 签名。
 - 在 npm 的 `loopra-dist` 包设置中，将 Trusted Publisher 配置为用户 **ezdemo**、仓库 **loopra-release**、工作流文件 **npm-publish.yml**。允许直接 `npm publish`，文件名不要填写完整路径。npm 发布使用 OIDC，无需长效 token。
-- 保留已有 Release 和已发布 npm 版本。npm 版本沿用源码版本的前三段，已发布的版本不能覆盖；使用新的版本号。npm 失败后可手动运行 **Publish core to npm**，输入已正式发布的 Release 标签重试。
+- 保留已有 Release 和已发布 npm 版本。npm 使用流水线领取的同一构建版本，已发布版本不能覆盖。npm 失败后可手动运行 **Publish core to npm**，输入已正式发布的 Release 标签重试。
 - 老版本应用中已写死的旧地址不会自动变更，可在旧仓库 README / 最后一个 Release 中提供此仓库的迁移入口。
 
 ## 安装
@@ -61,7 +76,7 @@ macOS / Linux：
 curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup.sh | bash
 ```
 
-`main` 上的脚本默认安装最新的**正式** Release。使用 `setup-mirror` 变体可通过 GitHub 镜像下载核心包；`LOOPRA_MIRROR` 可指定镜像。`setup-gui` 安装独立桌面核心运行时到 `~/.loopra-gui`。安装脚本不作为 Release 附件。对 `main` 脚本设置 `LOOPRA_VERSION=v26.10.1` 可指定要安装的版本。
+`main` 上的脚本默认安装最新的**正式** Release。使用 `setup-mirror` 变体可通过 GitHub 镜像下载核心包；`LOOPRA_MIRROR` 可指定镜像。`setup-gui` 安装独立桌面核心运行时到 `~/.loopra-gui`。安装脚本不作为 Release 附件。对 `main` 脚本设置 `LOOPRA_VERSION=v26.10.1901` 可指定要安装的版本。
 
 ## 本地构建
 
