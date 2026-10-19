@@ -68,6 +68,14 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
       throw new Error('Existing target release contains unexpected assets');
     }
   }
+  const sameAsset = (existing, asset) => existing?.state === 'uploaded' && existing.size === asset.size &&
+    existing.digest === `sha256:${expected[asset.name]}`;
+  const pending = release.assets.filter(asset => {
+    const existing = target?.assets.find(item => item.name === asset.name);
+    if (sameAsset(existing, asset)) return false;
+    if (existing && !target.draft) throw new Error(`Published target asset differs: ${asset.name}`);
+    return true;
+  });
   // Replacing only download links keeps the source mirror self-contained; build
   // provenance and all other release notes stay identical to the original.
   const body = (release.body || '').replaceAll(
@@ -80,7 +88,7 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
   const directory = mkdtempSync(join(tmpdir(), 'loopra-sync-'));
   try {
     // Validate all local bytes before creating a public-facing source tag/draft.
-    for (const asset of release.assets) {
+    for (const asset of pending) {
       const response = await request(`${api(RELEASE)}/releases/assets/${asset.id}`, {
         headers: headers(RELEASE, { Accept: 'application/octet-stream' }), signal: AbortSignal.timeout(600000),
       });
@@ -95,11 +103,10 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
       draft: true, prerelease: release.prerelease,
     } });
 
-    for (const asset of release.assets) {
+    for (const asset of pending) {
       const existing = target.assets.find(item => item.name === asset.name);
       if (existing) {
         // Never overwrite published bytes. A failed draft upload can be retried.
-        if (existing.state === 'uploaded' && existing.size === asset.size && existing.digest === `sha256:${expected[asset.name]}`) continue;
         if (!target.draft) throw new Error(`Published target asset differs: ${asset.name}`);
         await json(SOURCE, `/releases/assets/${existing.id}`, { method: 'DELETE' });
       }

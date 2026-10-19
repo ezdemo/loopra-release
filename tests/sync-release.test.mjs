@@ -152,9 +152,11 @@ test('failed upload leaves a draft; retry skips completed bytes and safely finis
   await run();
   assert.equal(state.target.draft, false);
   assert.equal(writes(state).filter(call => call.path.endsWith('/releases/2/assets')).length, 3);
+  assert.equal(state.calls.filter(call => call.method === 'GET' && call.path.includes('/releases/assets/')).length, 3);
   state.calls = [];
   await run();
   assert.equal(writes(state).filter(call => call.method === 'POST').length, 0);
+  assert.ok(!state.calls.some(call => call.path.includes('/releases/assets/')), 'complete mirrors must not download gigabytes again');
 });
 
 test('bad uploaded digests prevent publication and draft retries repair only bad bytes', async () => {
