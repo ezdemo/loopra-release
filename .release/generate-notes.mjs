@@ -2,6 +2,7 @@ import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readReleaseMetadata } from './release-metadata.mjs';
 
 const SOURCE = 'ezdemo/loopra';
 const RELEASES = 'ezdemo/loopra-release';
@@ -49,14 +50,9 @@ export async function findBaseline(sourceDir, metadata, { token, request = fetch
   releases.sort((a, b) => String(b.published_at || '').localeCompare(String(a.published_at || '')));
   if (releases.length) {
     const previous = releases[0];
-    const asset = previous.assets.find(asset => asset.name === 'release-metadata.json');
+    const old = await readReleaseMetadata(previous, { token, request });
     let sha;
-    if (asset) {
-      // Use the asset API so authenticated downloads also work for private drafts/repos.
-      const old = await githubJson(`https://api.github.com/repos/${RELEASES}/releases/assets/${asset.id}`, token, request, true);
-      if (old.sourceRepository !== SOURCE || !SHA.test(old.sourceSha)) {
-        throw new Error('Previous release contains invalid source metadata.');
-      }
+    if (old) {
       sha = old.sourceSha;
     } else {
       // Compatibility with a release made before source metadata was introduced.

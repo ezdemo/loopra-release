@@ -78,16 +78,19 @@ jobs:
           - os: macos-latest
             builder_flag: --mac
             artifact_name: Loopra-mac
+            package_name: 'Loopra-macos-${arch}.${ext}'
             upload_pattern: 'source/loopra-front/release/*.zip'
 
           - os: ubuntu-latest
             builder_flag: --linux
             artifact_name: Loopra-linux
+            package_name: 'Loopra-linux-${arch}.${ext}'
             upload_pattern: 'source/loopra-front/release/*.deb'
 
           - os: windows-latest
             builder_flag: --win
             artifact_name: Loopra-win
+            package_name: 'Loopra-windows-${arch}.${ext}'
             upload_pattern: 'source/loopra-front/release/*.exe'
 
     runs-on: ${{ matrix.os }}
@@ -202,12 +205,13 @@ jobs:
         env:
           # 无证书时禁止自动发现，避免 runner 上意外使用无效证书导致打包失败
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          BUILDER_ARTIFACT_NAME: ${{ matrix.package_name }}
         run: |
           if [ "$RUNNER_OS" = "macOS" ] && [ "$MAC_USE_ADHOC" = "1" ]; then
             # 无 Developer ID 证书 → 显式 ad-hoc 签名（identity "-" 与 codesign 约定一致）
-            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.mac.identity=-
+            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.mac.identity=- -c.artifactName="$BUILDER_ARTIFACT_NAME"
           else
-            npx electron-builder ${{ matrix.builder_flag }} --publish=never
+            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.artifactName="$BUILDER_ARTIFACT_NAME"
           fi
 
       - name: Upload artifacts
@@ -297,11 +301,8 @@ jobs:
         with:
           path: release-artifacts
           merge-multiple: true
-      - name: Prepare versioned installers and release notes
+      - name: Prepare packages and release notes
         run: node .release/prepare-assets.mjs release-artifacts
-      - name: Calculate checksums
-        working-directory: release-artifacts
-        run: sha256sum * > SHA256SUMS
       - name: Create draft in the release repository
         uses: softprops/action-gh-release@v2
         with:
@@ -312,4 +313,4 @@ jobs:
           draft: true
           prerelease: false
           fail_on_unmatched_files: true
-          files: release-artifacts/*
+          files: release-assets/*

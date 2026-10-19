@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { collectCommits, findBaseline, generateNotes, renderChanges, summarize } from '../.release/generate-notes.mjs';
+import { metadataComment } from '../.release/release-metadata.mjs';
 
 function fixture(t) {
   const dir = mkdtempSync(join(tmpdir(), 'loopra-notes-test-'));
@@ -26,7 +27,7 @@ function fixture(t) {
   const second = commit('fix: 修复会话切换');
   git('tag', '-a', 'v26.9.2', '-m', 'previous source release');
   const current = commit('feat: 支持独立发版');
-  const metadata = { version: '26.10.1', sourceRepository: 'ezdemo/loopra', sourceSha: current, releaseRepository: 'ezdemo/loopra-release' };
+  const metadata = { version: '26.10.1', npmVersion: '26.10.1', sourceRepository: 'ezdemo/loopra', sourceSha: current, releaseRepository: 'ezdemo/loopra-release' };
   return { dir, git, commit, first, second, current, metadata };
 }
 
@@ -43,7 +44,7 @@ test('uses the newest published stable release source SHA and ignores draft/prer
     assert.equal(options.headers.Authorization, 'Bearer fake-github-token');
     if (url.includes('/releases?')) return Response.json(releases);
     assert.equal(url, 'https://api.github.com/repos/ezdemo/loopra-release/releases/assets/7');
-    return Response.json({ sourceRepository: 'ezdemo/loopra', sourceSha: f.second });
+    return Response.json({ ...f.metadata, sourceSha: f.second });
   };
   const baseline = await findBaseline(f.dir, f.metadata, { request, token: 'fake-github-token' });
   assert.deepEqual(baseline, { sha: f.second, tag: 'v26.9.2', kind: 'published-release' });
@@ -75,11 +76,21 @@ test('rejects unreadable or incorrect previous-release metadata instead of silen
   const request = async url => url.includes('/releases?')
     ? Response.json([{ tag_name: 'v26.9.2', assets: [{ id: 1, name: 'release-metadata.json' }] }])
     : Response.json({ sourceRepository: 'wrong/source', sourceSha: f.second });
-  await assert.rejects(findBaseline(f.dir, f.metadata, { request }), /invalid source metadata/);
+  await assert.rejects(findBaseline(f.dir, f.metadata, { request }), /Invalid release source metadata/);
   const badSha = async url => url.includes('/releases?')
     ? Response.json([{ tag_name: 'v26.9.2', assets: [{ id: 1, name: 'release-metadata.json' }] }])
-    : Response.json({ sourceRepository: 'ezdemo/loopra', sourceSha: 'a'.repeat(40) });
+    : Response.json({ ...f.metadata, sourceSha: 'a'.repeat(40) });
   await assert.rejects(findBaseline(f.dir, f.metadata, { request: badSha }), /not an ancestor/);
+});
+
+test('reads the previous source SHA from the release body without a metadata download asset', async t => {
+  const f = fixture(t);
+  const baseline = await findBaseline(f.dir, f.metadata, { request: async url => {
+    assert.ok(url.includes('/releases?'));
+    return Response.json([{ tag_name: 'v26.9.2', published_at: '2026-10-01', assets: [],
+      body: metadataComment({ ...f.metadata, version: '26.9.2', npmVersion: '26.9.2', sourceSha: f.second }) }]);
+  } });
+  assert.equal(baseline.sha, f.second);
 });
 
 test('generates a Chinese AI summary using only source commit subjects', async () => {

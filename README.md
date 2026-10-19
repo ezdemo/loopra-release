@@ -13,11 +13,11 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 
 普通提交只运行轻量检查。构建失败时不会创建新草稿。草稿和只构建模式不会发布 npm。
 
-产物包括：macOS ZIP、Windows NSIS EXE、Linux DEB、`loopra-dist.tar.gz`、八个安装脚本、`SHA256SUMS` 和 `release-metadata.json`。元数据记录源码仓库、`main` 对应的 SHA、版本号与发版工具提交。
+Release 下载区只保留四个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`loopra-dist.tar.gz`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
 
 ## 自动生成更新说明
 
-工作流从上次**正式、非预发布** Release 的 `release-metadata.json` 读取 `sourceSha`，与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/loopra` 的源码历史。草稿、预发布以及晚于本次版本的 Release 不作为基准。
+工作流从上次**正式、非预发布** Release 正文中的隐藏记录读取 `sourceSha`（兼容旧版 `release-metadata.json` 附件），与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/loopra` 的源码历史。草稿、预发布以及晚于本次版本的 Release 不作为基准。
 
 使用 **OpenAI 兼容的 Chat Completions 协议**（JSON 请求、`Authorization: Bearer <Key>`）。默认网关为 `https://amr-link.open-design.ai/v1`，实际请求 `POST https://amr-link.open-design.ai/v1/chat/completions`。请求只使用通用 Chat Completions 字段。
 
@@ -35,7 +35,7 @@ API Key 只在生成摘要步骤使用，不会写进产物或日志。原 `DEEP
 
 首次迁入此仓库时，使用源码历史中可追溯的上一个较低版本标签作为基准；没有旧标签时从源码初始历史开始。旧正式 Release 若没有元数据，尝试使用其同名源码标签；如果基准无法追溯或不是本次源码的祖先，工作流会报错，避免生成错误的变更范围。
 
-更新说明在 `prepare` 阶段生成。只构建模式也能在该 job 的 Summary 和 `release-metadata` Artifact 中查看 **`release-changes.md`**；创建 Release 时自动并入草稿正文，并随产物上传。元数据的 `releaseNotes` 记录比较基准、提交数量和生成方式。提交过多时最多展示最近 500 条，AI 输入还设有长度上限，发生截断时会明确标记，并保留完整源码比较链接。
+更新说明在 `prepare` 阶段生成。只构建模式也能在该 job 的 Summary 和 `release-metadata` Artifact 中查看 **`release-changes.md`**；创建 Release 时自动并入草稿正文，不作为下载附件。元数据的 `releaseNotes` 记录比较基准、提交数量和生成方式。提交过多时最多展示最近 500 条，AI 输入还设有长度上限，发生截断时会明确标记，并保留完整源码比较链接。
 
 ## 首次迁移配置
 
@@ -61,7 +61,7 @@ macOS / Linux：
 curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup.sh | bash
 ```
 
-`main` 上的脚本默认安装最新的**正式** Release。使用 `setup-mirror` 变体可通过 GitHub 镜像下载核心包；`LOOPRA_MIRROR` 可指定镜像。`setup-gui` 安装独立桌面核心运行时到 `~/.loopra-gui`。随 Release 上传的脚本固定安装该次版本；也可以对 `main` 脚本设置 `LOOPRA_VERSION=v26.10.1` 指定版本。
+`main` 上的脚本默认安装最新的**正式** Release。使用 `setup-mirror` 变体可通过 GitHub 镜像下载核心包；`LOOPRA_MIRROR` 可指定镜像。`setup-gui` 安装独立桌面核心运行时到 `~/.loopra-gui`。安装脚本不作为 Release 附件。对 `main` 脚本设置 `LOOPRA_VERSION=v26.10.1` 可指定要安装的版本。
 
 ## 本地构建
 

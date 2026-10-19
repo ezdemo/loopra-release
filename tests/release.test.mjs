@@ -8,6 +8,7 @@ import { test } from 'node:test';
 import { readSourceVersion } from '../.release/source-metadata.mjs';
 import { prepareAssets } from '../.release/prepare-assets.mjs';
 import { checkRelease } from '../.release/check-release.mjs';
+import { parseMetadata } from '../.release/release-metadata.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const tooling = join(root, '.release');
@@ -38,20 +39,26 @@ test('source version is authoritative; mismatched tags and stale installer versi
   assert.throws(() => readSourceVersion(dir), /Invalid source version/);
 });
 
-test('release asset installers stay pinned while main installers keep following latest', t => {
+test('publishes only four packages with stable names; source metadata stays in the release body', t => {
   const dir = fixture(t);
   const sha = 'a'.repeat(40);
-  write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', sourceSha: sha }));
+  write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: sha,
+    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
   write(dir, 'release-changes.md', '### 新增\n\n- 一项可核对的更新');
+  for (const name of ['Loopra-26.10.1-arm64-mac.zip', 'Loopra.Setup.26.10.1.exe', 'loopra-front_26.10.1_amd64.deb', 'loopra-dist.tar.gz']) {
+    write(dir, name, 'package fixture');
+  }
+  write(dir, 'setup.ps1', 'installer script should stay out of download list');
+  write(dir, 'SHA256SUMS', 'old checksums should stay out of download list');
   const notes = prepareAssets(dir);
   assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
   assert.match(notes, /一项可核对的更新/);
-  const installers = readdirSync(dir).filter(file => /^setup.*\.(sh|ps1)$/.test(file));
-  assert.equal(installers.length, 8);
-  for (const file of installers) {
-    assert.match(readFileSync(join(dir, file), 'utf8'), /VERSION\s*=\s*"v26\.10\.1"/);
-    assert.match(readFileSync(join(tooling, file), 'utf8'), /latest/);
-  }
+  assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [
+    'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'loopra-dist.tar.gz',
+  ]);
+  assert.equal(parseMetadata(notes).sourceSha, sha);
+  assert.match(parseMetadata(notes).artifacts['loopra-dist.tar.gz'], /^[a-f0-9]{64}$/);
+  assert.doesNotMatch(notes, /setup\.ps1|SHA256SUMS/);
 });
 
 test('shell installers use new release URLs and preserve mirror, version and GUI options', t => {
@@ -118,12 +125,13 @@ test('frontend sync replaces old assets but preserves the source config.json', t
 });
 
 test('release guard permits a new version and rejects published or changed-source releases', async () => {
-  const metadata = { version: '26.10.1', sourceSha: 'a'.repeat(40) };
+  const metadata = { version: '26.10.1', npmVersion: '26.10.1', sourceSha: 'a'.repeat(40),
+    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' };
   await checkRelease(metadata, 'test-token', async () => new Response('', { status: 404 }));
   await assert.rejects(checkRelease(metadata, 'test-token', async () => new Response('', { status: 403 })), /HTTP 403/);
   await assert.rejects(checkRelease(metadata, 'test-token', async () => Response.json({ draft: false })), /already published/);
   const existingDraft = async url => url.includes('/releases/tags/')
-    ? Response.json({ draft: true, assets: [{ name: 'release-metadata.json', url: 'https://api.github.com/asset' }] })
+    ? Response.json({ draft: true, assets: [{ id: 1, name: 'release-metadata.json' }] })
     : Response.json(metadata);
   await checkRelease(metadata, 'test-token', existingDraft);
   await assert.rejects(checkRelease({ ...metadata, sourceSha: 'b'.repeat(40) }, 'test-token', existingDraft), /another main commit/);
