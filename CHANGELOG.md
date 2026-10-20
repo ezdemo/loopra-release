@@ -4,6 +4,29 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2008:start -->
+## [26.10.2008](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2008)
+
+发布日期：2026-10-20 19:59（UTC+8）
+
+### 新增
+- 更新时增加版本确认和更新来源选择对话框。
+- 核心更新支持实时日志查看，并支持停止更新。
+- 外部智能体可显示上下文组成百分比。
+
+### 修复
+- 更新日志可在对话框中打开，并支持 Windows PowerShell。
+- 更新器保持对 Java 17 的兼容。
+- 输入区工具菜单保持在视口范围内，避免溢出。
+
+### 改进
+- 简化智能体菜单，调整推理内容间距。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b13b5a0839d39dee714b1612c9f3a7e7cc025f1c...3f9226d30df210530ebb1089d550834ec6ca0b93>) · 从 v26.10.2007 到本次构建
+<!-- loopra-release:v26.10.2008:end -->
+
+---
+
 <!-- loopra-release:v26.10.2007:start -->
 ## [26.10.2007](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2007)
 
