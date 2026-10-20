@@ -4,6 +4,26 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2004:start -->
+## [26.10.2004](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2004)
+
+发布日期：2026-10-20（上海时间）
+
+### 新增
+- 新增 Codex 提供方及共享外部 Agent 注册表，支持原生 Codex 子代理与 elicitation 表单。
+- Git 新增忽略目录。
+
+### 修复
+- Agent 选择菜单会根据可用空间自适应展开。
+
+### 改进
+- 优化回合时长显示，并简化输入区。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b6430da7b937f8ca25b47db2b3f42ebcc6a335bb...e14c7ae503d7263e09bc0b6ce627d0b88e47e4c4>) · 从 v26.10.2003 到本次构建
+<!-- loopra-release:v26.10.2004:end -->
+
+---
+
 <!-- loopra-release:v26.10.2003:start -->
 ## [26.10.2003](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2003)
 
