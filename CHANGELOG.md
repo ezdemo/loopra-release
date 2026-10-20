@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2011:start -->
+## [26.10.2011](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2011)
+
+发布日期：2026-10-20 22:06（UTC+8）
+
+### 新增
+- Windows 桌面端支持自动下载并安装更新。
+
+### 修复
+- 修复推理设置不稳定问题，并调整界面缩放级别。
+- 修复核心启动后无法自动打开工作区的问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/3880e0cac7e8c0cfc7552b5e63c62921a341f2db...f44c6c2ae9bc91c64c655b09396ac8b9f27d06c2>) · 从 v26.10.2009 到本次构建
+<!-- loopra-release:v26.10.2011:end -->
+
+---
+
 <!-- loopra-release:v26.10.2009:start -->
 ## [26.10.2009](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2009)
 
