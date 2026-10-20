@@ -1,4 +1,4 @@
-import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync, openSync, readSync, closeSync, statSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync, openSync, readSync, closeSync, statSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,21 +10,36 @@ export function downloadName(name) {
   if (/^loopra.*\.zip$/i.test(name)) return `Loopra-macos-${/(?:x64|amd64|x86_64)/i.test(name) ? 'x64' : 'arm64'}.zip`;
   if (/^loopra.*\.exe$/i.test(name)) return `Loopra-windows-${arch}.exe`;
   if (/^loopra.*\.deb$/i.test(name)) return `Loopra-linux-${arch}.deb`;
+  if (/^loopra.*\.AppImage$/i.test(name)) return `Loopra-linux-${arch}.AppImage`;
   return null;
 }
 
 export function releaseAssetName(name) {
-  if (name === 'latest.yml' || /^Loopra-windows-(?:x64|arm64)\.exe\.blockmap$/.test(name)) return name;
+  if (/^latest(?:-mac|-linux)?\.yml$/.test(name) || /^Loopra-(?:windows-(?:x64|arm64)\.exe|macos-(?:x64|arm64)\.zip)\.blockmap$/.test(name)) return name;
   return downloadName(name);
 }
 
-// Retain support for mirroring older, four-package releases.
+// Accept legacy releases and complete platform update groups, never partial feeds.
 export function validReleaseAssets(names) {
+  if (new Set(names).size !== names.length || names.some(name => releaseAssetName(name) !== name)) return false;
   const packages = names.filter(name => downloadName(name) === name);
-  if (packages.length !== 4 || !packages.includes('loopra-dist.tar.gz') ||
-      !['macos', 'windows', 'linux'].every(platform => packages.some(name => name.startsWith(`Loopra-${platform}-`)))) return false;
+  const one = pattern => packages.filter(name => pattern.test(name)).length === 1;
+  if (!packages.includes('loopra-dist.tar.gz') || !one(/^Loopra-windows-.*\.exe$/) ||
+      !one(/^Loopra-macos-.*\.zip$/) || !one(/^Loopra-linux-.*\.deb$/)) return false;
   const windows = packages.find(name => name.startsWith('Loopra-windows-'));
-  return names.length === 4 || (names.length === 6 && names.includes('latest.yml') && names.includes(`${windows}.blockmap`));
+  const mac = packages.find(name => name.startsWith('Loopra-macos-'));
+  const image = packages.filter(name => name.endsWith('.AppImage'));
+  if (image.length > 1 || packages.length !== 4 + image.length) return false;
+  if (names.length === 4) return true;
+  const expected = new Set([...packages, 'latest.yml', `${windows}.blockmap`]);
+  if (image.length || names.includes('latest-linux.yml')) {
+    if (image.length !== 1) return false;
+    expected.add('latest-linux.yml');
+  }
+  if (names.includes('latest-mac.yml') || names.includes(`${mac}.blockmap`)) {
+    expected.add('latest-mac.yml'); expected.add(`${mac}.blockmap`);
+  }
+  return expected.size === names.length && names.every(name => expected.has(name));
 }
 
 export function hashFile(path, algorithm = 'sha256', encoding = 'hex') {
@@ -38,25 +53,43 @@ export function hashFile(path, algorithm = 'sha256', encoding = 'hex') {
   return hash.digest(encoding);
 }
 
-// Validate electron-builder's generated stable Windows manifest before publishing.
+// Validate electron-builder's generated manifests before publishing.
 // Read only the required scalar fields; never execute/expand YAML tags or aliases.
-export function validateWindowsUpdate(dir, version, windowsName, installerName = windowsName) {
-  const manifest = readFileSync(resolve(dir, 'latest.yml'), 'utf8');
+export function validateUpdateManifest(dir, manifestName, version, files) {
+  const manifest = readFileSync(resolve(dir, manifestName), 'utf8');
+  const unquote = value => value.trim().replace(/^(['"])(.*)\1$/, '$2');
   const scalar = (pattern) => {
     const matches = [...manifest.matchAll(pattern)];
-    if (matches.length !== 1) throw new Error('Invalid Windows update manifest');
-    return matches[0][1].trim().replace(/^(['"])(.*)\1$/, '$2');
+    if (matches.length !== 1) throw new Error(`Invalid update manifest: ${manifestName}`);
+    return unquote(matches[0][1]);
   };
   const manifestVersion = scalar(/^version:\s*([^\r\n]+)$/gm);
   const path = scalar(/^path:\s*([^\r\n]+)$/gm);
-  const url = scalar(/^\s+- url:\s*([^\r\n]+)$/gm);
   const sha512 = scalar(/^sha512:\s*([^\r\n]+)$/gm);
-  const fileHash = scalar(/^\s+sha512:\s*([^\r\n]+)$/gm);
-  const size = scalar(/^\s+size:\s*([^\r\n]+)$/gm);
-  const installer = resolve(dir, installerName);
-  if (manifestVersion !== version || path !== windowsName || url !== windowsName ||
-      sha512 !== hashFile(installer, 'sha512', 'base64') || fileHash !== sha512 ||
-      Number(size) !== statSync(installer).size) throw new Error('Windows update manifest does not match the installer/version');
+  const entries = [];
+  let entry;
+  for (const line of manifest.split(/\r?\n/)) {
+    const url = /^  - url:\s*(.+)$/.exec(line);
+    if (url) { entry = { url: unquote(url[1]) }; entries.push(entry); continue; }
+    const field = /^    (sha512|size):\s*(.+)$/.exec(line);
+    if (field && entry) {
+      if (entry[field[1]] !== undefined) throw new Error(`Invalid update manifest: ${manifestName}`);
+      entry[field[1]] = unquote(field[2]);
+    } else if (/^\S/.test(line)) entry = null;
+  }
+  const mismatch = () => { throw new Error(`Update manifest ${manifestName} does not match the installer/version`); };
+  if (manifestVersion !== version || entries.length !== files.length || new Set(entries.map(item => item.url)).size !== files.length) mismatch();
+  for (const file of files) {
+    const item = entries.find(item => item.url === file.download);
+    const installer = resolve(dir, file.name);
+    if (!item || item.sha512 !== hashFile(installer, 'sha512', 'base64') || Number(item.size) !== statSync(installer).size) mismatch();
+  }
+  const primary = entries.find(item => item.url === path);
+  if (!primary || primary.sha512 !== sha512) mismatch();
+}
+
+export function validateWindowsUpdate(dir, version, windowsName, installerName = windowsName) {
+  validateUpdateManifest(dir, 'latest.yml', version, [{ name: installerName, download: windowsName }]);
   if (!statSync(resolve(dir, `${windowsName}.blockmap`)).size) throw new Error('Windows update blockmap is empty');
 }
 
@@ -70,12 +103,25 @@ export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'pu
   if (new Set(packages.map(file => file.download)).size !== packages.length) throw new Error('Duplicate platform packages');
   const windows = packages.find(file => file.download.startsWith('Loopra-windows-'));
   validateWindowsUpdate(artifactDir, metadata.npmVersion, windows.download, windows.name);
-  const updateFiles = ['latest.yml', `${windows.download}.blockmap`].map(name => ({ name, download: name }));
+  const linux = packages.filter(file => file.download.startsWith('Loopra-linux-'));
+  if (!linux.some(file => file.download.endsWith('.AppImage')) || !linux.some(file => file.download.endsWith('.deb'))) throw new Error('Both Linux DEB and AppImage packages are required');
+  validateUpdateManifest(artifactDir, 'latest-linux.yml', metadata.npmVersion, linux);
+  const updateNames = ['latest.yml', `${windows.download}.blockmap`, 'latest-linux.yml'];
+  const macSupport = JSON.parse(readFileSync(resolve(artifactDir, 'desktop-update-mac.json'), 'utf8'));
+  if (typeof macSupport.signed !== 'boolean') throw new Error('Missing macOS signing status');
+  if (macSupport.signed) {
+    const mac = packages.find(file => file.download.startsWith('Loopra-macos-'));
+    validateUpdateManifest(artifactDir, 'latest-mac.yml', metadata.npmVersion, [mac]);
+    if (!statSync(resolve(artifactDir, `${mac.download}.blockmap`)).size) throw new Error('macOS update blockmap is empty');
+    updateNames.push('latest-mac.yml', `${mac.download}.blockmap`);
+  } else if (existsSync(resolve(artifactDir, 'latest-mac.yml'))) throw new Error('Ad-hoc macOS builds must not publish an automatic update feed');
+  const updateFiles = updateNames.map(name => ({ name, download: name }));
   const files = [...packages, ...updateFiles];
-  if (!validReleaseAssets(files.map(file => file.download))) throw new Error('Expected four packages and two Windows update assets');
+  if (!validReleaseAssets(files.map(file => file.download))) throw new Error('Incomplete desktop packages/update assets');
   mkdirSync(publishDir, { recursive: true });
   if (readdirSync(publishDir).length) throw new Error('Publish directory must be empty');
   metadata.artifacts = {};
+  metadata.desktopUpdates = { windows: true, linux: ['deb', 'AppImage'], mac: macSupport.signed };
   for (const file of files) {
     const dest = resolve(publishDir, file.download);
     copyFileSync(resolve(artifactDir, file.name), dest);

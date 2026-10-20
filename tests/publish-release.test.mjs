@@ -61,6 +61,16 @@ test('publishes complete Windows update metadata and rejects a missing update as
   }
 });
 
+test('publishes all platform update assets only after every file passes the recorded checksums', async () => {
+  const { state, run } = fixture();
+  for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'Loopra-linux-x64.AppImage', 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap']) {
+    state.metadata.artifacts[name] = 'e'.repeat(64);
+    state.release.assets.push({ name, state: 'uploaded', size: 100, digest: `sha256:${'e'.repeat(64)}` });
+  }
+  state.release.body = metadataComment(state.metadata);
+  assert.equal((await run()).draft, false);
+});
+
 test('incomplete, corrupted or unexpected uploaded packages remain unpublished', async () => {
   for (const change of [
     release => release.assets.pop(),

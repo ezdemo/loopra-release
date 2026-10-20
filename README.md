@@ -9,7 +9,7 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 1. 把要发布的源码合并到 `ezdemo/loopra` 的 **main**，无需为发版手动修改源码版本号。
 2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。`create_release` 默认勾选：构建成功后自动正式发布，无需手动发布草稿；取消勾选则只构建。
 3. 工作流自动领取版本，锁定源码提交，在核心和三平台桌面构建前统一注入该版本。无需手动打标签；标签由流水线自动创建，推送标签不会触发新构建。
-4. 核心与三平台安装包全部构建成功后，流水线先上传到临时草稿，核对软件包、Windows 更新清单及差分文件的 SHA-256 和构建身份，再自动正式发布。Windows 更新清单还会核对版本、安装包文件名、大小及 SHA-512。随后分别启动 npm 发布、源码仓库 Release 同步和 `CHANGELOG.md` 归档。
+4. 核心与三平台安装包全部构建成功后，流水线先上传到临时草稿，核对软件包、各平台更新清单及差分文件的 SHA-256 和构建身份，再自动正式发布。各平台更新清单还会逐项核对版本、软件包文件名、大小及 SHA-512。随后分别启动 npm 发布、源码仓库 Release 同步和 `CHANGELOG.md` 归档。
 
 普通提交只运行轻量检查。构建失败不会创建 Release；上传或校验失败时临时草稿不会正式发布，也不会启动 npm 与源码同步。只构建模式不会发布 Release 或 npm。
 
@@ -50,9 +50,11 @@ GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `rele
 
 Maven 根 `loopra.version`、Loopra 模块版本、Electron `package.json`、核心 `version.txt`、Release 标签和 npm 包版本全部一致。修改只发生在 CI 拉取的源码副本，源码仓库保留开发版本；发版元数据同时记录原源码版本、源码提交 SHA 和实际构建版本。软件包文件名保持不带版本号。
 
-Release 下载区包含四个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`loopra-dist.tar.gz`，以及 Windows 自动更新所需的 `latest.yml` 和 `Loopra-windows-x64.exe.blockmap`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
+Release 下载区包含五个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`Loopra-linux-x64.AppImage` 和 `loopra-dist.tar.gz`。Windows 自动更新使用 `latest.yml` 和 EXE 的 `.blockmap`，Linux 使用同时列出 DEB/AppImage 的 `latest-linux.yml`；正式签名的 macOS 构建额外发布 `latest-mac.yml` 和 ZIP 的 `.blockmap`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
 
-Windows 桌面端使用 electron-updater 从本仓库获取正式版，启动后自动检查并下载；下载后可点击“重启并安装”，也会在正常退出时安装。开发环境不启动更新器；macOS/Linux 暂时保留发布页手动下载。旧版桌面端尚无更新器，需要先手动安装一次包含此功能的版本。首次发布前，需要将源码仓库与本仓库的更新代码都合入 main。自动安装继续遵循系统权限与签名检查，不绕过系统授权。
+Windows、Linux DEB/AppImage、正式签名的 macOS 桌面端使用 electron-updater 从本仓库获取正式版，启动后自动检查并下载；下载后可点击“重启并安装”，也会在正常退出时安装。Linux DEB 安装可能需要管理员授权。开发环境不启动更新器；临时签名的 macOS 构建保留手动下载入口，显示签名限制。旧版桌面端尚无更新器，需要先手动安装一次包含此功能的版本。首次发布前，需要将源码仓库与本仓库的更新代码都合入 main。自动安装继续遵循系统权限与签名检查，不绕过系统授权。
+
+macOS 自动更新复用现有 `MAC_CERTIFICATE_P12` / `MAC_CERTIFICATE_P12_PASSWORD`，证书必须是 Developer ID Application。流水线会验证生成的 `.app` 签名，并在包内记录正式签名标记；正式签名客户端还会等待 Squirrel 验证更新包后才提供安装按钮。未配置证书时继续构建 ad-hoc ZIP，移除该版本的 `latest-mac.yml`，避免已正式签名的客户端收到临时签名更新。Apple 公证继续使用已有 `APPLE_ID`、`APPLE_APP_SPECIFIC_PASSWORD`、`APPLE_TEAM_ID`。
 
 ## 自动生成更新说明
 

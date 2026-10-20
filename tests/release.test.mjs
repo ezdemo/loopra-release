@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
 import { readSourceVersion } from '../.release/source-metadata.mjs';
-import { prepareAssets, validateWindowsUpdate } from '../.release/prepare-assets.mjs';
+import { prepareAssets, validateWindowsUpdate, validateUpdateManifest, validReleaseAssets } from '../.release/prepare-assets.mjs';
 import { checkRelease } from '../.release/check-release.mjs';
 import { parseMetadata } from '../.release/release-metadata.mjs';
 
@@ -49,7 +49,38 @@ function windowsUpdate(dir, installer = 'Loopra-windows-x64.exe') {
   return text;
 }
 
-test('publishes four packages plus verified Windows update assets; metadata stays in the release body', t => {
+function manifest(dir, name, files) {
+  const entries = files.map(file => {
+    const bytes = readFileSync(join(dir, file.name));
+    return { url: file.download, sha512: createHash('sha512').update(bytes).digest('base64'), size: bytes.length };
+  });
+  const text = `version: 26.10.1\nfiles:\n${entries.map(entry => `  - url: ${entry.url}\n    sha512: ${entry.sha512}\n    size: ${entry.size}`).join('\n')}\npath: ${entries[0].url}\nsha512: ${entries[0].sha512}\n`;
+  write(dir, name, text);
+  return text;
+}
+
+function linuxUpdate(dir, debName = 'Loopra-linux-x64.deb') {
+  write(dir, 'Loopra-linux-x64.AppImage', 'appimage fixture');
+  const files = [{ name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' }, { name: debName, download: 'Loopra-linux-x64.deb' }];
+  manifest(dir, 'latest-linux.yml', files);
+  return files;
+}
+
+function desktopArtifacts(t, signed) {
+  const dir = fixture(t);
+  write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: 'a'.repeat(40), sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
+  write(dir, 'release-changes.md', '### 修复\n\n- 自动更新');
+  for (const name of ['loopra-dist.tar.gz', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-linux-x64.deb']) write(dir, name, 'package fixture');
+  windowsUpdate(dir); linuxUpdate(dir);
+  write(dir, 'desktop-update-mac.json', JSON.stringify({ signed }));
+  if (signed) {
+    manifest(dir, 'latest-mac.yml', [{ name: 'Loopra-macos-arm64.zip', download: 'Loopra-macos-arm64.zip' }]);
+    write(dir, 'Loopra-macos-arm64.zip.blockmap', 'blockmap fixture');
+  }
+  return dir;
+}
+
+test('publishes five packages plus verified Windows/Linux update assets; metadata stays in the release body', t => {
   const dir = fixture(t);
   const sha = 'a'.repeat(40);
   write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: sha,
@@ -61,17 +92,68 @@ test('publishes four packages plus verified Windows update assets; metadata stay
   write(dir, 'setup.ps1', 'installer script should stay out of download list');
   write(dir, 'SHA256SUMS', 'old checksums should stay out of download list');
   windowsUpdate(dir, 'Loopra.Setup.26.10.1.exe');
+  linuxUpdate(dir, 'loopra-front_26.10.1_amd64.deb');
+  write(dir, 'desktop-update-mac.json', '{"signed":false}');
   const notes = prepareAssets(dir);
   assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
   assert.match(notes, /一项可核对的更新/);
   assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [
-    'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-windows-x64.exe.blockmap', 'latest.yml', 'loopra-dist.tar.gz',
+    'Loopra-linux-x64.AppImage', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'latest.yml', 'loopra-dist.tar.gz',
   ]);
   assert.equal(parseMetadata(notes).sourceSha, sha);
   assert.match(parseMetadata(notes).artifacts['loopra-dist.tar.gz'], /^[a-f0-9]{64}$/);
   assert.match(parseMetadata(notes).artifacts['latest.yml'], /^[a-f0-9]{64}$/);
   assert.doesNotMatch(notes.split('<!--')[0], /latest\.yml|\.blockmap/);
   assert.doesNotMatch(notes, /setup\.ps1|SHA256SUMS/);
+});
+
+test('signed macOS publishes its manifest/blockmap; ad-hoc archives remain available without an update feed', t => {
+  for (const signed of [false, true]) {
+    const dir = desktopArtifacts(t, signed);
+    const notes = prepareAssets(dir);
+    const names = readdirSync(join(dir, 'publish'));
+    assert.equal(names.length, signed ? 10 : 8);
+    assert.equal(names.includes('latest-mac.yml'), signed);
+    assert.equal(names.includes('desktop-update-mac.json'), false);
+    assert.equal(parseMetadata(notes).desktopUpdates.mac, signed);
+  }
+});
+
+test('missing platform metadata or an unsigned macOS update feed blocks publication', t => {
+  const adhoc = desktopArtifacts(t, false);
+  write(adhoc, 'latest-mac.yml', 'unsigned update');
+  assert.throws(() => prepareAssets(adhoc), /Ad-hoc/);
+  const signed = desktopArtifacts(t, true);
+  rmSync(join(signed, 'latest-mac.yml'));
+  assert.throws(() => prepareAssets(signed), /ENOENT/);
+  const linux = desktopArtifacts(t, false);
+  rmSync(join(linux, 'latest-linux.yml'));
+  assert.throws(() => prepareAssets(linux), /ENOENT/);
+});
+
+test('validates every Linux manifest entry, including secondary file hashes and untrusted URLs', t => {
+  const dir = desktopArtifacts(t, false);
+  const files = [{ name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' }, { name: 'Loopra-linux-x64.deb', download: 'Loopra-linux-x64.deb' }];
+  const text = readFileSync(join(dir, 'latest-linux.yml'), 'utf8');
+  validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', files);
+  for (const bad of [text.replace('Loopra-linux-x64.deb', 'https://other.example/package.deb'),
+    text.replace('version: 26.10.1', 'version: 26.10.2'), text.replace(/(    sha512: .+\n)/, '$1$1')]) {
+    write(dir, 'latest-linux.yml', bad);
+    assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', files), /Invalid|does not match/);
+  }
+  write(dir, 'latest-linux.yml', text);
+  write(dir, 'Loopra-linux-x64.deb', 'tampered secondary file');
+  assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', files), /does not match/);
+});
+
+test('legacy four/six assets and complete multiplatform groups are accepted, partial update feeds are rejected', () => {
+  const legacy = ['loopra-dist.tar.gz', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-linux-x64.deb'];
+  const windows = [...legacy, 'latest.yml', 'Loopra-windows-x64.exe.blockmap'];
+  const linux = [...windows, 'Loopra-linux-x64.AppImage', 'latest-linux.yml'];
+  const all = [...linux, 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap'];
+  for (const names of [legacy, windows, linux, all]) assert.equal(validReleaseAssets(names), true);
+  for (const names of [[...linux, 'latest-mac.yml'], all.filter(name => name !== 'latest-linux.yml'),
+    all.filter(name => name !== 'Loopra-windows-x64.exe.blockmap'), [...linux, 'unexpected.yml']]) assert.equal(validReleaseAssets(names), false);
 });
 
 test('rejects missing/mismatched Windows manifests and installer checksums before publishing', t => {

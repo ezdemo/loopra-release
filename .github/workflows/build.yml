@@ -80,13 +80,20 @@ jobs:
             builder_flag: --mac
             artifact_name: Loopra-mac
             package_name: 'Loopra-macos-${arch}.${ext}'
-            upload_pattern: 'source/loopra-front/release/*.zip'
+            upload_pattern: |
+              source/loopra-front/release/*.zip
+              source/loopra-front/release/*.zip.blockmap
+              source/loopra-front/release/latest-mac.yml
+              source/loopra-front/release/desktop-update-mac.json
 
           - os: ubuntu-latest
             builder_flag: --linux
             artifact_name: Loopra-linux
             package_name: 'Loopra-linux-${arch}.${ext}'
-            upload_pattern: 'source/loopra-front/release/*.deb'
+            upload_pattern: |
+              source/loopra-front/release/*.deb
+              source/loopra-front/release/*.AppImage
+              source/loopra-front/release/latest-linux.yml
 
           - os: windows-latest
             builder_flag: --win
@@ -219,10 +226,36 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "macOS" ] && [ "$MAC_USE_ADHOC" = "1" ]; then
             # 无 Developer ID 证书 → 显式 ad-hoc 签名（identity "-" 与 codesign 约定一致）
-            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.mac.identity=- -c.artifactName="$BUILDER_ARTIFACT_NAME"
+            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.mac.identity=- -c.extraMetadata.loopraDesktopUpdate.macSigned=false -c.artifactName="$BUILDER_ARTIFACT_NAME"
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.extraMetadata.loopraDesktopUpdate.macSigned=true -c.artifactName="$BUILDER_ARTIFACT_NAME"
           else
             npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.artifactName="$BUILDER_ARTIFACT_NAME"
           fi
+
+      - name: Record macOS automatic update support
+        if: runner.os == 'macOS'
+        working-directory: source/loopra-front
+        shell: bash
+        run: |
+          if [ "$MAC_USE_ADHOC" = "0" ]; then
+            found=0
+            for bundle in release/mac*/Loopra.app; do
+              [ -d "$bundle" ] || continue
+              codesign --verify --deep --strict "$bundle"
+              signature=$(codesign -dv --verbose=4 "$bundle" 2>&1)
+              if [[ "$signature" != *"Authority=Developer ID Application:"* ]]; then
+                echo "::error::macOS 自动更新需要 Developer ID Application 正式签名"
+                exit 1
+              fi
+              found=1
+            done
+            [ "$found" = "1" ] || { echo "::error::未找到已签名的 Loopra.app"; exit 1; }
+          else
+            # Keep ad-hoc archives available for manual installation, out of the signed update feed.
+            rm -f release/latest-mac.yml
+          fi
+          node -e 'require("fs").writeFileSync("release/desktop-update-mac.json", JSON.stringify({signed: process.env.MAC_USE_ADHOC === "0"}))'
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
