@@ -92,7 +92,10 @@ jobs:
             builder_flag: --win
             artifact_name: Loopra-win
             package_name: 'Loopra-windows-${arch}.${ext}'
-            upload_pattern: 'source/loopra-front/release/*.exe'
+            upload_pattern: |
+              source/loopra-front/release/*.exe
+              source/loopra-front/release/*.exe.blockmap
+              source/loopra-front/release/latest.yml
 
     runs-on: ${{ matrix.os }}
 

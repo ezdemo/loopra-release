@@ -9,7 +9,7 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 1. 把要发布的源码合并到 `ezdemo/loopra` 的 **main**，无需为发版手动修改源码版本号。
 2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。`create_release` 默认勾选：构建成功后自动正式发布，无需手动发布草稿；取消勾选则只构建。
 3. 工作流自动领取版本，锁定源码提交，在核心和三平台桌面构建前统一注入该版本。无需手动打标签；标签由流水线自动创建，推送标签不会触发新构建。
-4. 核心与三平台安装包全部构建成功后，流水线先上传到临时草稿，核对四个附件的 SHA-256 和构建身份，再自动正式发布。随后分别启动 npm 发布、源码仓库 Release 同步和 `CHANGELOG.md` 归档。
+4. 核心与三平台安装包全部构建成功后，流水线先上传到临时草稿，核对软件包、Windows 更新清单及差分文件的 SHA-256 和构建身份，再自动正式发布。Windows 更新清单还会核对版本、安装包文件名、大小及 SHA-512。随后分别启动 npm 发布、源码仓库 Release 同步和 `CHANGELOG.md` 归档。
 
 普通提交只运行轻量检查。构建失败不会创建 Release；上传或校验失败时临时草稿不会正式发布，也不会启动 npm 与源码同步。只构建模式不会发布 Release 或 npm。
 
@@ -29,7 +29,7 @@ GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `rele
 
 首次配置：创建 Fine-grained PAT，Repository access 只选择 **ezdemo/loopra**，Repository permissions 授予 **Contents: Read and write**。在本仓库 [Actions Secrets](https://github.com/ezdemo/loopra-release/settings/secrets/actions) 添加 **`SOURCE_RELEASE_TOKEN`**。该凭据用于反向创建源码标签和 Release，与源码仓库触发构建用的凭据不同；不要把 token 写进代码或更新说明。
 
-同步复制标题、说明和全部四个安装包，下载与上传都校验 SHA-256。源码仓库同名标签指向发布元数据中的 `sourceSha`，而不是当前 `main` 或发布工具提交。说明中的下载链接改为源码仓库的对应附件，其余正文与构建元数据保留。目标先创建草稿，附件齐全后才发布；预发布状态同步保留，补同步旧版本不会抢占最新正式版本。
+同步复制标题、说明和全部软件包及自动更新文件，下载与上传都校验 SHA-256。兼容旧版四附件 Release。源码仓库同名标签指向发布元数据中的 `sourceSha`，而不是当前 `main` 或发布工具提交。说明中的下载链接改为源码仓库的对应附件，其余正文与构建元数据保留。目标先创建草稿，附件齐全后才发布；预发布状态同步保留，补同步旧版本不会抢占最新正式版本。
 
 历史版本补同步或失败重试：Actions → **Sync release to source repository** → **Run workflow**，选择 `main`，填写已正式发布的标签（例如 `v26.10.1901`）。勾选 `dry_run` 可只检查元数据、源码提交和现有目标，预览过程不会上传或发布。发布后修改更新说明时，也可通过这个入口重新同步。
 
@@ -50,7 +50,9 @@ GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `rele
 
 Maven 根 `loopra.version`、Loopra 模块版本、Electron `package.json`、核心 `version.txt`、Release 标签和 npm 包版本全部一致。修改只发生在 CI 拉取的源码副本，源码仓库保留开发版本；发版元数据同时记录原源码版本、源码提交 SHA 和实际构建版本。软件包文件名保持不带版本号。
 
-Release 下载区只保留四个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`loopra-dist.tar.gz`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
+Release 下载区包含四个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`loopra-dist.tar.gz`，以及 Windows 自动更新所需的 `latest.yml` 和 `Loopra-windows-x64.exe.blockmap`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
+
+Windows 桌面端使用 electron-updater 从本仓库获取正式版，启动后自动检查并下载；下载后可点击“重启并安装”，也会在正常退出时安装。开发环境不启动更新器；macOS/Linux 暂时保留发布页手动下载。旧版桌面端尚无更新器，需要先手动安装一次包含此功能的版本。首次发布前，需要将源码仓库与本仓库的更新代码都合入 main。自动安装继续遵循系统权限与签名检查，不绕过系统授权。
 
 ## 自动生成更新说明
 

@@ -46,6 +46,21 @@ test('publishes a complete draft only after verifying every package and its buil
   assert.deepEqual(state.calls.map(call => call.method), ['GET', 'PATCH']);
 });
 
+test('publishes complete Windows update metadata and rejects a missing update asset', async () => {
+  for (const incomplete of [false, true]) {
+    const { state, run } = fixture();
+    for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap']) {
+      state.metadata.artifacts[name] = 'e'.repeat(64);
+      state.release.assets.push({ name, state: 'uploaded', size: 100, digest: `sha256:${'e'.repeat(64)}` });
+    }
+    state.release.body = metadataComment(state.metadata);
+    if (incomplete) {
+      state.release.assets.pop();
+      await assert.rejects(run(), /Uploaded packages/);
+    } else assert.equal((await run()).draft, false);
+  }
+});
+
 test('incomplete, corrupted or unexpected uploaded packages remain unpublished', async () => {
   for (const change of [
     release => release.assets.pop(),

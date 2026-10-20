@@ -8,8 +8,9 @@ const tag = 'v26.10.1901';
 const sha = 'a'.repeat(40);
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const clone = value => JSON.parse(JSON.stringify(value));
-function server() {
+function server(withUpdates = false) {
   const packages = ['loopra-dist.tar.gz', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe'];
+  if (withUpdates) packages.push('latest.yml', 'Loopra-windows-x64.exe.blockmap');
   const bytes = Object.fromEntries(packages.map(name => [name, Buffer.from(`package bytes: ${name}`)]));
   const metadata = { version: tag.slice(1), npmVersion: tag.slice(1), sourceRepository: 'ezdemo/loopra',
     releaseRepository: 'ezdemo/loopra-release', sourceSha: sha,
@@ -67,7 +68,7 @@ function server() {
         return new Response(null, { status: 204 });
       }
       if (method === 'PATCH' && path.endsWith('/releases/2')) {
-        assert.equal(state.target.assets.length, 4, 'do not publish an incomplete mirror');
+        assert.equal(state.target.assets.length, packages.length, 'do not publish an incomplete mirror');
         Object.assign(state.target, body);
         return json(state.target);
       }
@@ -77,6 +78,15 @@ function server() {
   return { state, run: options => syncRelease({ tag, sourceToken: 'source-token', releaseToken: 'release-token', request, ...options }) };
 }
 const writes = state => state.calls.filter(call => call.method !== 'GET');
+
+test('mirrors Windows update manifest and blockmap along with all packages', async () => {
+  const { state, run } = server(true);
+  await run();
+  assert.equal(state.target.assets.length, 6);
+  assert.ok(state.target.assets.some(asset => asset.name === 'latest.yml'));
+  assert.ok(state.target.assets.some(asset => asset.name === 'Loopra-windows-x64.exe.blockmap'));
+  assert.equal(state.target.draft, false);
+});
 
 test('mirrors verified bytes, notes and a source-commit tag; publishes only after all uploads', async () => {
   const { state, run } = server();

@@ -5,8 +5,9 @@ import { dirname, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
+import { createHash } from 'node:crypto';
 import { readSourceVersion } from '../.release/source-metadata.mjs';
-import { prepareAssets } from '../.release/prepare-assets.mjs';
+import { prepareAssets, validateWindowsUpdate } from '../.release/prepare-assets.mjs';
 import { checkRelease } from '../.release/check-release.mjs';
 import { parseMetadata } from '../.release/release-metadata.mjs';
 
@@ -39,7 +40,16 @@ test('reads source version consistency; mismatched tags and stale installer vers
   assert.throws(() => readSourceVersion(dir), /Invalid source version/);
 });
 
-test('publishes only four packages with stable names; source metadata stays in the release body', t => {
+function windowsUpdate(dir, installer = 'Loopra-windows-x64.exe') {
+  const bytes = readFileSync(join(dir, installer));
+  const sha512 = createHash('sha512').update(bytes).digest('base64');
+  write(dir, 'Loopra-windows-x64.exe.blockmap', 'blockmap fixture');
+  const text = `version: 26.10.1\nfiles:\n  - url: Loopra-windows-x64.exe\n    sha512: ${sha512}\n    size: ${bytes.length}\npath: Loopra-windows-x64.exe\nsha512: ${sha512}\nreleaseDate: '2026-10-20T00:00:00.000Z'\n`;
+  write(dir, 'latest.yml', text);
+  return text;
+}
+
+test('publishes four packages plus verified Windows update assets; metadata stays in the release body', t => {
   const dir = fixture(t);
   const sha = 'a'.repeat(40);
   write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: sha,
@@ -50,15 +60,35 @@ test('publishes only four packages with stable names; source metadata stays in t
   }
   write(dir, 'setup.ps1', 'installer script should stay out of download list');
   write(dir, 'SHA256SUMS', 'old checksums should stay out of download list');
+  windowsUpdate(dir, 'Loopra.Setup.26.10.1.exe');
   const notes = prepareAssets(dir);
   assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
   assert.match(notes, /一项可核对的更新/);
   assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [
-    'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'loopra-dist.tar.gz',
+    'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-windows-x64.exe.blockmap', 'latest.yml', 'loopra-dist.tar.gz',
   ]);
   assert.equal(parseMetadata(notes).sourceSha, sha);
   assert.match(parseMetadata(notes).artifacts['loopra-dist.tar.gz'], /^[a-f0-9]{64}$/);
+  assert.match(parseMetadata(notes).artifacts['latest.yml'], /^[a-f0-9]{64}$/);
+  assert.doesNotMatch(notes.split('<!--')[0], /latest\.yml|\.blockmap/);
   assert.doesNotMatch(notes, /setup\.ps1|SHA256SUMS/);
+});
+
+test('rejects missing/mismatched Windows manifests and installer checksums before publishing', t => {
+  const dir = fixture(t);
+  write(dir, 'Loopra-windows-x64.exe', 'package fixture');
+  assert.throws(() => validateWindowsUpdate(dir, '26.10.1', 'Loopra-windows-x64.exe'), /ENOENT/);
+  const manifest = windowsUpdate(dir);
+  for (const text of [manifest.replace('version: 26.10.1', 'version: 26.10.2'),
+    manifest.replaceAll('Loopra-windows-x64.exe', 'other.exe'),
+    manifest.replace('size: 15', 'size: 16'),
+    manifest.replace(/sha512: .+/g, 'sha512: wrong')]) {
+    write(dir, 'latest.yml', text);
+    assert.throws(() => validateWindowsUpdate(dir, '26.10.1', 'Loopra-windows-x64.exe'), /does not match/);
+  }
+  write(dir, 'latest.yml', manifest);
+  write(dir, 'Loopra-windows-x64.exe', 'tampered');
+  assert.throws(() => validateWindowsUpdate(dir, '26.10.1', 'Loopra-windows-x64.exe'), /does not match/);
 });
 
 test('shell installers use new release URLs and preserve mirror, version and GUI options', t => {

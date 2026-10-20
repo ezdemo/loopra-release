@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import { finished, pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
-import { downloadName, hashFile } from './prepare-assets.mjs';
+import { releaseAssetName, validReleaseAssets, hashFile } from './prepare-assets.mjs';
 import { parseMetadata, readReleaseMetadata } from './release-metadata.mjs';
 
 const SOURCE = 'ezdemo/loopra';
@@ -35,9 +35,8 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
   if (!metadata || `v${metadata.version}` !== tag) throw new Error('Release metadata does not match the requested tag');
   const expected = metadata.artifacts || {};
   const names = Object.keys(expected);
-  if (!names.includes('loopra-dist.tar.gz') || !['macos', 'windows', 'linux'].every(platform =>
-    names.some(name => name.startsWith(`Loopra-${platform}-`)))) throw new Error('Metadata must include core and all desktop packages');
-  if (names.some(name => downloadName(name) !== name || !/^[a-f0-9]{64}$/.test(expected[name]))) {
+  if (!validReleaseAssets(names)) throw new Error('Metadata must include core, all desktop packages and complete update assets');
+  if (names.some(name => releaseAssetName(name) !== name || !/^[a-f0-9]{64}$/.test(expected[name]))) {
     throw new Error('Invalid package name or checksum in release metadata');
   }
   if (release.assets.length !== names.length || new Set(release.assets.map(asset => asset.name)).size !== names.length ||
