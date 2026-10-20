@@ -55,7 +55,7 @@ export function hashFile(path, algorithm = 'sha256', encoding = 'hex') {
 
 // Validate electron-builder's generated manifests before publishing.
 // Read only the required scalar fields; never execute/expand YAML tags or aliases.
-export function validateUpdateManifest(dir, manifestName, version, files) {
+function readUpdateManifest(dir, manifestName) {
   const manifest = readFileSync(resolve(dir, manifestName), 'utf8');
   const unquote = value => value.trim().replace(/^(['"])(.*)\1$/, '$2');
   const scalar = (pattern) => {
@@ -77,6 +77,11 @@ export function validateUpdateManifest(dir, manifestName, version, files) {
       entry[field[1]] = unquote(field[2]);
     } else if (/^\S/.test(line)) entry = null;
   }
+  return { manifestVersion, path, sha512, entries };
+}
+
+export function validateUpdateManifest(dir, manifestName, version, files) {
+  const { manifestVersion, path, sha512, entries } = readUpdateManifest(dir, manifestName);
   const mismatch = () => { throw new Error(`Update manifest ${manifestName} does not match the installer/version`); };
   if (manifestVersion !== version || entries.length !== files.length || new Set(entries.map(item => item.url)).size !== files.length) mismatch();
   for (const file of files) {
@@ -86,6 +91,27 @@ export function validateUpdateManifest(dir, manifestName, version, files) {
   }
   const primary = entries.find(item => item.url === path);
   if (!primary || primary.sha512 !== sha512) mismatch();
+}
+
+// electron-builder only emits the AppImage in latest-linux.yml. DebUpdater needs
+// its DEB in the same feed, so build the final manifest from the verified files.
+export function renderLinuxUpdateManifest(dir, version, files) {
+  const entries = files.map(file => {
+    const installer = resolve(dir, file.name);
+    return {
+      url: file.download,
+      sha512: hashFile(installer, 'sha512', 'base64'),
+      size: statSync(installer).size,
+    };
+  });
+  return `version: ${version}
+files:
+${entries.map(entry => `  - url: ${entry.url}
+    sha512: ${entry.sha512}
+    size: ${entry.size}`).join('\n')}
+path: ${entries[0].url}
+sha512: ${entries[0].sha512}
+`;
 }
 
 export function validateWindowsUpdate(dir, version, windowsName, installerName = windowsName) {
@@ -104,8 +130,11 @@ export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'pu
   const windows = packages.find(file => file.download.startsWith('Loopra-windows-'));
   validateWindowsUpdate(artifactDir, metadata.npmVersion, windows.download, windows.name);
   const linux = packages.filter(file => file.download.startsWith('Loopra-linux-'));
-  if (!linux.some(file => file.download.endsWith('.AppImage')) || !linux.some(file => file.download.endsWith('.deb'))) throw new Error('Both Linux DEB and AppImage packages are required');
-  validateUpdateManifest(artifactDir, 'latest-linux.yml', metadata.npmVersion, linux);
+  const linuxAppImage = linux.find(file => file.download.endsWith('.AppImage'));
+  const linuxDeb = linux.find(file => file.download.endsWith('.deb'));
+  if (!linuxAppImage || !linuxDeb) throw new Error('Both Linux DEB and AppImage packages are required');
+  validateUpdateManifest(artifactDir, 'latest-linux.yml', metadata.npmVersion, [linuxAppImage]);
+  const linuxUpdateManifest = renderLinuxUpdateManifest(artifactDir, metadata.npmVersion, [linuxAppImage, linuxDeb]);
   const updateNames = ['latest.yml', `${windows.download}.blockmap`, 'latest-linux.yml'];
   const macSupport = JSON.parse(readFileSync(resolve(artifactDir, 'desktop-update-mac.json'), 'utf8'));
   if (typeof macSupport.signed !== 'boolean') throw new Error('Missing macOS signing status');
@@ -124,7 +153,8 @@ export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'pu
   metadata.desktopUpdates = { windows: true, linux: ['deb', 'AppImage'], mac: macSupport.signed };
   for (const file of files) {
     const dest = resolve(publishDir, file.download);
-    copyFileSync(resolve(artifactDir, file.name), dest);
+    if (file.name === 'latest-linux.yml') writeFileSync(dest, linuxUpdateManifest);
+    else copyFileSync(resolve(artifactDir, file.name), dest);
     metadata.artifacts[file.download] = hashFile(dest);
   }
   const links = packages.map(file => `- [${file.download}](https://github.com/ezdemo/loopra-release/releases/download/v${metadata.version}/${file.download})`).join('\n');

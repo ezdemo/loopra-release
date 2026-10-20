@@ -61,7 +61,8 @@ function manifest(dir, name, files) {
 
 function linuxUpdate(dir, debName = 'Loopra-linux-x64.deb') {
   write(dir, 'Loopra-linux-x64.AppImage', 'appimage fixture');
-  const files = [{ name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' }, { name: debName, download: 'Loopra-linux-x64.deb' }];
+  // electron-builder publishes only the AppImage in its generated Linux feed.
+  const files = [{ name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' }];
   manifest(dir, 'latest-linux.yml', files);
   return files;
 }
@@ -131,19 +132,21 @@ test('missing platform metadata or an unsigned macOS update feed blocks publicat
   assert.throws(() => prepareAssets(linux), /ENOENT/);
 });
 
-test('validates every Linux manifest entry, including secondary file hashes and untrusted URLs', t => {
+test('adds DEB to the generated Linux feed and validates the AppImage entry', t => {
   const dir = desktopArtifacts(t, false);
-  const files = [{ name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' }, { name: 'Loopra-linux-x64.deb', download: 'Loopra-linux-x64.deb' }];
+  const appImage = { name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' };
   const text = readFileSync(join(dir, 'latest-linux.yml'), 'utf8');
-  validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', files);
-  for (const bad of [text.replace('Loopra-linux-x64.deb', 'https://other.example/package.deb'),
+  validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', [appImage]);
+  for (const bad of [text.replace('Loopra-linux-x64.AppImage', 'https://other.example/package.AppImage'),
     text.replace('version: 26.10.1', 'version: 26.10.2'), text.replace(/(    sha512: .+\n)/, '$1$1')]) {
     write(dir, 'latest-linux.yml', bad);
-    assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', files), /Invalid|does not match/);
+    assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', [appImage]), /Invalid|does not match/);
   }
   write(dir, 'latest-linux.yml', text);
-  write(dir, 'Loopra-linux-x64.deb', 'tampered secondary file');
-  assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', files), /does not match/);
+  prepareAssets(dir);
+  validateUpdateManifest(join(dir, 'publish'), 'latest-linux.yml', '26.10.1', [
+    appImage, { name: 'Loopra-linux-x64.deb', download: 'Loopra-linux-x64.deb' },
+  ]);
 });
 
 test('legacy four/six assets and complete multiplatform groups are accepted, partial update feeds are rejected', () => {
