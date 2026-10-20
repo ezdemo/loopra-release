@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2009:start -->
+## [26.10.2009](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2009)
+
+发布日期：2026-10-20 20:45（UTC+8）
+
+### 修复
+
+- 统一桌面端启动界面，并优先处理随应用内置的核心更新。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/3f9226d30df210530ebb1089d550834ec6ca0b93...3880e0cac7e8c0cfc7552b5e63c62921a341f2db>) · 从 v26.10.2008 到本次构建
+<!-- loopra-release:v26.10.2009:end -->
+
+---
+
 <!-- loopra-release:v26.10.2008:start -->
 ## [26.10.2008](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2008)
 
