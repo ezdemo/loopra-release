@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2005:start -->
+## [26.10.2005](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2005)
+
+发布日期：2026-10-20（上海时间）
+
+### 修复
+- 恢复 Codex 子代理标签页的正常显示，并统一编辑器中的任务面板。
+- Web 端兼容历史消息回显中的 `contentParts` 与图片字段，修复旧数据展示异常。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/e14c7ae503d7263e09bc0b6ce627d0b88e47e4c4...8abe99841227010163d1f7a34f4d235f13082557>) · 从 v26.10.2004 到本次构建
+<!-- loopra-release:v26.10.2005:end -->
+
+---
+
 <!-- loopra-release:v26.10.2004:start -->
 ## [26.10.2004](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2004)
 
