@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2002:start -->
+## [26.10.2002](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2002)
+
+发布日期：2026-10-20（上海时间）
+
+### 修复
+- 修复 Web 端工作区菜单在空间不足时展开方向不合理的问题，菜单现在会根据可用空间自动选择展开方向。
+
+### 改进
+- 更新日志的入口改为指向 loopra-release 仓库，便于查看各版本发布信息。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/8f38092d00490be6583249c9b6dbeeb7f9f82fd7...80765a6475d61e451771b651efe7ff1ad73fa07e>) · 从 v26.10.2001 到本次构建
+<!-- loopra-release:v26.10.2002:end -->
+
+---
+
 <!-- loopra-release:v26.10.2001:start -->
 ## [26.10.2001](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2001)
 
