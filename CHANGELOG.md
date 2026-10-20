@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2007:start -->
+## [26.10.2007](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2007)
+
+发布日期：2026-10-20 16:49（UTC+8）
+
+### 改进
+- Web 端改进会话维护与文件预览体验。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/69c41386550e5bcf368d0e1beb428bb74094904a...b13b5a0839d39dee714b1612c9f3a7e7cc025f1c>) · 从 v26.10.2006 到本次构建
+<!-- loopra-release:v26.10.2007:end -->
+
+---
+
 <!-- loopra-release:v26.10.2006:start -->
 ## [26.10.2006](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2006)
 
