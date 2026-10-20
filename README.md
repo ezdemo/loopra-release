@@ -17,7 +17,7 @@ GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `rele
 
 ### 自动归档变更列表
 
-每次正式发布后，**Update release changelog** 会将更新说明归档到本仓库的 [CHANGELOG.md](CHANGELOG.md)，文件不存在时自动创建并提交到 `main`。按版本倒序排列，标注上海时区的发布日期；同一版本重复运行会更新原条目，内容不变则不提交。
+每次正式发布后，**Update release changelog** 会将更新说明归档到本仓库的 [CHANGELOG.md](CHANGELOG.md)，文件不存在时自动创建并提交到 `main`。按版本倒序排列，标注精确到分钟的发布时间，格式为 `YYYY-MM-DD HH:mm（UTC+8）`；同一版本重复运行会更新原条目，内容不变则不提交。
 
 归档保留更新内容和源码比较链接，去掉下载列表、打包元数据和重复的原始提交折叠区。草稿、预发布、试构建与失败构建不归档。手动发布或编辑正式 Release 也会触发更新；补齐历史或失败重试可从 Actions → **Update release changelog** → **Run workflow** 执行。
 

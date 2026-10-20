@@ -24,6 +24,7 @@ export function releaseEntry(release) {
   if (!Number.isFinite(date.getTime())) throw new Error(`Invalid publication date for ${tag}`);
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
   }).formatToParts(date).map(part => [part.type, part.value]));
   let notes = (release.body || '').replaceAll('\r\n', '\n')
     .replace(/<!-- loopra-release-metadata\s*\n[^\n]+\s*\n-->/g, '')
@@ -34,7 +35,7 @@ export function releaseEntry(release) {
   notes = notes.split(/^### 下载(?:与安装)?\s*$/m)[0].replace(/\n{3,}/g, '\n\n').trim();
   notes = notes.replace(/<!-- loopra-(?:changelog|release):[^\n]*-->/g, marker => marker.replace('<', '&lt;'));
   const heading = `## [${tag.slice(1)}](https://github.com/ezdemo/loopra-release/releases/tag/${tag})`;
-  return `${heading}\n\n发布日期：${parts.year}-${parts.month}-${parts.day}（上海时间）\n\n${notes || '本版本暂无更新说明。'}`;
+  return `${heading}\n\n发布日期：${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}（UTC+8）\n\n${notes || '本版本暂无更新说明。'}`;
 }
 
 export function renderChangelog(existing, releases) {

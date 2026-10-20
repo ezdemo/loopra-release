@@ -9,7 +9,7 @@ const encodeFile = (content, sha = 'a'.repeat(40)) => ({
   type: 'file', sha, encoding: 'base64', content: Buffer.from(content).toString('base64'),
 });
 
-test('creates a readable archive with Shanghai dates and excludes draft/prerelease versions and packaging details', () => {
+test('creates a readable archive with UTC+8 timestamps and excludes draft/prerelease versions and packaging details', () => {
   const notes = `## Loopra v26.10.2001
 
 ### 新增
@@ -34,10 +34,21 @@ test('creates a readable archive with Shanghai dates and excludes draft/prerelea
   assert.equal(versions, 1);
   assert.match(content, /^# 更新日志/);
   assert.match(content, /\[26\.10\.2001\]/);
-  assert.match(content, /2026-10-20（上海时间）/);
+  assert.match(content, /发布日期：2026-10-20 00:05（UTC\+8）/);
   assert.match(content, /新功能/);
   assert.match(content, /查看完整源码变更/);
   assert.doesNotMatch(content, /raw commit|installer.exe|hidden-metadata|2002|2003/);
+});
+
+test('formats publication times in UTC+8 with zero-padded 24-hour hours and minutes', () => {
+  for (const [published_at, expected] of [
+    ['2026-10-19T16:00:59Z', '2026-10-20 00:00'],
+    ['2026-10-20T01:07:30Z', '2026-10-20 09:07'],
+    ['2026-10-20T15:59:00Z', '2026-10-20 23:59'],
+  ]) {
+    const entry = releaseEntry({ ...release('v26.10.2001'), published_at });
+    assert.equal(entry.split('\n')[2], `发布日期：${expected}（UTC+8）`);
+  }
 });
 
 test('retries replace the same version, preserve other versions and manual text, and sort numerically', () => {
