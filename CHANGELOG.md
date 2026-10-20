@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2003:start -->
+## [26.10.2003](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2003)
+
+发布日期：2026-10-20（上海时间）
+
+### 修复
+
+- 修复 Windows 上关联技能（linked skills）与 MCP 命令的兼容性问题，恢复其正常使用。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/80765a6475d61e451771b651efe7ff1ad73fa07e...b6430da7b937f8ca25b47db2b3f42ebcc6a335bb>) · 从 v26.10.2002 到本次构建
+<!-- loopra-release:v26.10.2003:end -->
+
+---
+
 <!-- loopra-release:v26.10.2002:start -->
 ## [26.10.2002](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2002)
 
