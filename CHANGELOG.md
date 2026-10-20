@@ -4,10 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2006:start -->
+## [26.10.2006](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2006)
+
+发布日期：2026-10-20 16:26（UTC+8）
+
+### 修复
+- 网页端在配置加载期间会阻止发送消息，并调整了背景按钮的对齐。
+- 被中断的回复会保留在原来的会话中。
+- 消息编辑区的任务操作按钮改为透明样式。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/8abe99841227010163d1f7a34f4d235f13082557...69c41386550e5bcf368d0e1beb428bb74094904a>) · 从 v26.10.2005 到本次构建
+<!-- loopra-release:v26.10.2006:end -->
+
+---
+
 <!-- loopra-release:v26.10.2005:start -->
 ## [26.10.2005](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2005)
 
-发布日期：2026-10-20（上海时间）
+发布日期：2026-10-20 15:55（UTC+8）
 
 ### 修复
 - 恢复 Codex 子代理标签页的正常显示，并统一编辑器中的任务面板。
@@ -21,7 +36,7 @@
 <!-- loopra-release:v26.10.2004:start -->
 ## [26.10.2004](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2004)
 
-发布日期：2026-10-20（上海时间）
+发布日期：2026-10-20 14:38（UTC+8）
 
 ### 新增
 - 新增 Codex 提供方及共享外部 Agent 注册表，支持原生 Codex 子代理与 elicitation 表单。
@@ -41,7 +56,7 @@
 <!-- loopra-release:v26.10.2003:start -->
 ## [26.10.2003](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2003)
 
-发布日期：2026-10-20（上海时间）
+发布日期：2026-10-20 10:35（UTC+8）
 
 ### 修复
 
@@ -55,7 +70,7 @@
 <!-- loopra-release:v26.10.2002:start -->
 ## [26.10.2002](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2002)
 
-发布日期：2026-10-20（上海时间）
+发布日期：2026-10-20 09:55（UTC+8）
 
 ### 修复
 - 修复 Web 端工作区菜单在空间不足时展开方向不合理的问题，菜单现在会根据可用空间自动选择展开方向。
@@ -71,7 +86,7 @@
 <!-- loopra-release:v26.10.2001:start -->
 ## [26.10.2001](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2001)
 
-发布日期：2026-10-20（上海时间）
+发布日期：2026-10-20 09:24（UTC+8）
 
 ### 修复
 - 修复 MCP 通过 stdio 连接时的协议版本协商问题，确保使用双方支持的协议版本。
@@ -84,7 +99,7 @@
 <!-- loopra-release:v26.10.1906:start -->
 ## [26.10.1906](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.1906)
 
-发布日期：2026-10-19（上海时间）
+发布日期：2026-10-19 23:07（UTC+8）
 
 ### 改进
 - 升级 Solon 与 Solon AI 依赖至 4.1.1，保持底层框架与 AI 组件同步更新。
@@ -97,7 +112,7 @@
 <!-- loopra-release:v26.10.1905:start -->
 ## [26.10.1905](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.1905)
 
-发布日期：2026-10-19（上海时间）
+发布日期：2026-10-19 22:49（UTC+8）
 
 ### 新增
 - 在 ACP 中向代理提供由系统管理的项目级和全局 MCP 服务器。
@@ -115,7 +130,7 @@
 <!-- loopra-release:v26.10.1904:start -->
 ## [26.10.1904](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.1904)
 
-发布日期：2026-10-19（上海时间）
+发布日期：2026-10-19 21:16（UTC+8）
 
 ### 新增
 
@@ -129,7 +144,7 @@
 <!-- loopra-release:v26.10.1902:start -->
 ## [26.10.1902](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.1902)
 
-发布日期：2026-10-19（上海时间）
+发布日期：2026-10-19 20:36（UTC+8）
 
 ### 新增
 - 支持为 Java 与 Electron 配置出站代理。
@@ -146,7 +161,7 @@
 <!-- loopra-release:v26.10.1901:start -->
 ## [26.10.1901](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.1901)
 
-发布日期：2026-10-19（上海时间）
+发布日期：2026-10-19 17:09（UTC+8）
 
 ### 新增
 - ACP 运行时支持：未安装运行时提供可复制的 ACP 安装提示词；ACP 统一驱动 Agent 配置与前端选择器。
