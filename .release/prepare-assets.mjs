@@ -133,7 +133,10 @@ export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'pu
   const linuxAppImage = linux.find(file => file.download.endsWith('.AppImage'));
   const linuxDeb = linux.find(file => file.download.endsWith('.deb'));
   if (!linuxAppImage || !linuxDeb) throw new Error('Both Linux DEB and AppImage packages are required');
-  validateUpdateManifest(artifactDir, 'latest-linux.yml', metadata.npmVersion, [linuxAppImage]);
+  // electron-builder records its architecture-specific artifact names
+  // (x86_64/amd64); only the published copies are normalized to x64.
+  validateUpdateManifest(artifactDir, 'latest-linux.yml', metadata.npmVersion,
+    [linuxAppImage, linuxDeb].map(file => ({ ...file, download: file.name })));
   const linuxUpdateManifest = renderLinuxUpdateManifest(artifactDir, metadata.npmVersion, [linuxAppImage, linuxDeb]);
   const updateNames = ['latest.yml', `${windows.download}.blockmap`, 'latest-linux.yml'];
   const macSupport = JSON.parse(readFileSync(resolve(artifactDir, 'desktop-update-mac.json'), 'utf8'));

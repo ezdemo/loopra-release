@@ -50,7 +50,7 @@ GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `rele
 
 Maven 根 `loopra.version`、Loopra 模块版本、Electron `package.json`、核心 `version.txt`、Release 标签和 npm 包版本全部一致。修改只发生在 CI 拉取的源码副本，源码仓库保留开发版本；发版元数据同时记录原源码版本、源码提交 SHA 和实际构建版本。软件包文件名保持不带版本号。
 
-Release 下载区包含五个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`Loopra-linux-x64.AppImage` 和 `loopra-dist.tar.gz`。Windows 自动更新使用 `latest.yml` 和 EXE 的 `.blockmap`；Linux 在 electron-builder 生成 AppImage 清单后追加 DEB 条目，最终以同时列出 DEB/AppImage 的 `latest-linux.yml` 发布；正式签名的 macOS 构建额外发布 `latest-mac.yml` 和 ZIP 的 `.blockmap`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
+Release 下载区包含五个软件包：`Loopra-macos-arm64.zip`、`Loopra-windows-x64.exe`、`Loopra-linux-x64.deb`、`Loopra-linux-x64.AppImage` 和 `loopra-dist.tar.gz`。Windows 自动更新使用 `latest.yml` 和 EXE 的 `.blockmap`；Linux 会把 electron-builder 清单中的 `amd64/x86_64` 条目规范化为发布名 `x64`，最终以同时列出 DEB/AppImage 的 `latest-linux.yml` 发布；正式签名的 macOS 构建额外发布 `latest-mac.yml` 和 ZIP 的 `.blockmap`。文件名不带版本号，应用内部仍保留实际版本。安装脚本在仓库中提供，更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
 
 Windows、Linux DEB/AppImage、正式签名的 macOS 桌面端使用 electron-updater 从本仓库获取正式版，启动后自动检查并下载；下载后可点击“重启并安装”，也会在正常退出时安装。Linux DEB 安装可能需要管理员授权。开发环境不启动更新器；临时签名的 macOS 构建保留手动下载入口，显示签名限制。旧版桌面端尚无更新器，需要先手动安装一次包含此功能的版本。首次发布前，需要将源码仓库与本仓库的更新代码都合入 main。自动安装继续遵循系统权限与签名检查，不绕过系统授权。
 

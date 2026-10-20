@@ -59,10 +59,11 @@ function manifest(dir, name, files) {
   return text;
 }
 
-function linuxUpdate(dir, debName = 'Loopra-linux-x64.deb') {
-  write(dir, 'Loopra-linux-x64.AppImage', 'appimage fixture');
-  // electron-builder publishes only the AppImage in its generated Linux feed.
-  const files = [{ name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' }];
+function linuxUpdate(dir, debName = 'Loopra-linux-amd64.deb') {
+  // electron-builder uses architecture names in both the files and update feed.
+  const appImageName = 'Loopra-linux-x86_64.AppImage';
+  write(dir, appImageName, 'appimage fixture');
+  const files = [{ name: appImageName, download: appImageName }, { name: debName, download: debName }];
   manifest(dir, 'latest-linux.yml', files);
   return files;
 }
@@ -71,7 +72,7 @@ function desktopArtifacts(t, signed) {
   const dir = fixture(t);
   write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: 'a'.repeat(40), sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
   write(dir, 'release-changes.md', '### 修复\n\n- 自动更新');
-  for (const name of ['loopra-dist.tar.gz', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-linux-x64.deb']) write(dir, name, 'package fixture');
+  for (const name of ['loopra-dist.tar.gz', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-linux-amd64.deb']) write(dir, name, 'package fixture');
   windowsUpdate(dir); linuxUpdate(dir);
   write(dir, 'desktop-update-mac.json', JSON.stringify({ signed }));
   if (signed) {
@@ -132,20 +133,24 @@ test('missing platform metadata or an unsigned macOS update feed blocks publicat
   assert.throws(() => prepareAssets(linux), /ENOENT/);
 });
 
-test('adds DEB to the generated Linux feed and validates the AppImage entry', t => {
+test('normalizes architecture-specific Linux feed entries and validates both packages', t => {
   const dir = desktopArtifacts(t, false);
-  const appImage = { name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' };
+  const generatedFiles = [
+    { name: 'Loopra-linux-x86_64.AppImage', download: 'Loopra-linux-x86_64.AppImage' },
+    { name: 'Loopra-linux-amd64.deb', download: 'Loopra-linux-amd64.deb' },
+  ];
   const text = readFileSync(join(dir, 'latest-linux.yml'), 'utf8');
-  validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', [appImage]);
-  for (const bad of [text.replace('Loopra-linux-x64.AppImage', 'https://other.example/package.AppImage'),
+  validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', generatedFiles);
+  for (const bad of [text.replace('Loopra-linux-amd64.deb', 'https://other.example/package.deb'),
     text.replace('version: 26.10.1', 'version: 26.10.2'), text.replace(/(    sha512: .+\n)/, '$1$1')]) {
     write(dir, 'latest-linux.yml', bad);
-    assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', [appImage]), /Invalid|does not match/);
+    assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', generatedFiles), /Invalid|does not match/);
   }
   write(dir, 'latest-linux.yml', text);
   prepareAssets(dir);
   validateUpdateManifest(join(dir, 'publish'), 'latest-linux.yml', '26.10.1', [
-    appImage, { name: 'Loopra-linux-x64.deb', download: 'Loopra-linux-x64.deb' },
+    { name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' },
+    { name: 'Loopra-linux-x64.deb', download: 'Loopra-linux-x64.deb' },
   ]);
 });
 
