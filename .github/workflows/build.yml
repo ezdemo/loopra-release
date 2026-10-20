@@ -337,8 +337,8 @@ jobs:
         run: node .release/publish-release.mjs
 
   # Releases published with GITHUB_TOKEN do not emit workflow-triggering release
-  # events. Dispatch both existing workflows explicitly, keeping npm OIDC bound
-  # to npm-publish.yml and allowing either downstream task to fail independently.
+  # events. Dispatch downstream workflows explicitly, keeping npm OIDC bound
+  # to npm-publish.yml and allowing each downstream task to fail independently.
   dispatch-npm:
     needs: [prepare, release]
     runs-on: ubuntu-latest
@@ -366,3 +366,16 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: v${{ needs.prepare.outputs.version }}
         run: gh workflow run sync-release.yml --ref main -f "tag=$RELEASE_TAG"
+
+  dispatch-changelog:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Archive release notes in CHANGELOG.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run changelog.yml --ref main

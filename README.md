@@ -9,11 +9,19 @@ Loopra 的独立构建、安装与发布仓库。源码和问题反馈位于 [ez
 1. 把要发布的源码合并到 `ezdemo/loopra` 的 **main**，无需为发版手动修改源码版本号。
 2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。`create_release` 默认勾选：构建成功后自动正式发布，无需手动发布草稿；取消勾选则只构建。
 3. 工作流自动领取版本，锁定源码提交，在核心和三平台桌面构建前统一注入该版本。无需手动打标签；标签由流水线自动创建，推送标签不会触发新构建。
-4. 核心与三平台安装包全部构建成功后，流水线先上传到临时草稿，核对四个附件的 SHA-256 和构建身份，再自动正式发布。随后分别启动 npm 发布和源码仓库 Release 同步。
+4. 核心与三平台安装包全部构建成功后，流水线先上传到临时草稿，核对四个附件的 SHA-256 和构建身份，再自动正式发布。随后分别启动 npm 发布、源码仓库 Release 同步和 `CHANGELOG.md` 归档。
 
 普通提交只运行轻量检查。构建失败不会创建 Release；上传或校验失败时临时草稿不会正式发布，也不会启动 npm 与源码同步。只构建模式不会发布 Release 或 npm。
 
-GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `release.published` 工作流，因此构建流程在正式发布成功后，通过 `workflow_dispatch` 分别启动 **Publish core to npm** 和 **Sync release to source repository**。两个任务独立运行，失败时可以从各自入口重试。人工正式发布已有草稿时，原来的 `release.published` 入口仍然有效。npm 继续使用 `npm-publish.yml` 的 OIDC 信任配置，无需新增凭据。
+GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `release.published` 工作流，因此构建流程在正式发布成功后，通过 `workflow_dispatch` 分别启动 **Publish core to npm**、**Sync release to source repository** 和 **Update release changelog**。三个任务独立运行，失败时可以从各自入口重试。人工正式发布已有草稿时，原来的 `release.published` 入口仍然有效。npm 继续使用 `npm-publish.yml` 的 OIDC 信任配置，无需新增凭据。
+
+### 自动归档变更列表
+
+每次正式发布后，**Update release changelog** 会将更新说明归档到本仓库的 [CHANGELOG.md](CHANGELOG.md)，文件不存在时自动创建并提交到 `main`。按版本倒序排列，标注上海时区的发布日期；同一版本重复运行会更新原条目，内容不变则不提交。
+
+归档保留更新内容和源码比较链接，去掉下载列表、打包元数据和重复的原始提交折叠区。草稿、预发布、试构建与失败构建不归档。手动发布或编辑正式 Release 也会触发更新；补齐历史或失败重试可从 Actions → **Update release changelog** → **Run workflow** 执行。
+
+文件中的自动生成区域由工作流管理，区域以外的人工说明会保留。归档、npm 发布和源码同步独立运行，归档失败不会阻断其他两项；不需要新增 Secret。
 
 ### 自动同步源码仓库 Release
 
