@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2014:start -->
+## [26.10.2014](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2014)
+
+发布日期：2026-10-20 23:28（UTC+8）
+
+### 新增
+- 桌面端新增对 macOS 和 Linux 的自动更新支持。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/f44c6c2ae9bc91c64c655b09396ac8b9f27d06c2...47232ccd2b44b1103f75d3fe7304ca3a2c5f2a83>) · 从 v26.10.2011 到本次构建
+<!-- loopra-release:v26.10.2014:end -->
+
+---
+
 <!-- loopra-release:v26.10.2011:start -->
 ## [26.10.2011](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2011)
 
