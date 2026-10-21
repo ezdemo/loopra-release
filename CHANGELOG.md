@@ -4,6 +4,27 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2102:start -->
+## [26.10.2102](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2102)
+
+发布日期：2026-10-21 13:32（UTC+8）
+
+### 新增
+- 保存智能体偏好设置，重启后无需重新配置。
+
+### 修复
+- 修复外部智能体场景下流式工具输出丢失、退出状态未正确保留的问题。
+- 对外部智能体隐藏其不支持的历史记录操作，避免误点无效入口。
+
+### 改进
+- 优化对话过程摘要的展示，并调整回复内容的间距，提升阅读体验。
+- 打磨桌面端工作流，操作衔接更顺畅。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/e984abf5640bf91ad7f2b2ff5538253b82403057...dc67179c5bb6801f973fb623292eb8fb7c02ad58>) · 从 v26.10.2101 到本次构建
+<!-- loopra-release:v26.10.2102:end -->
+
+---
+
 <!-- loopra-release:v26.10.2101:start -->
 ## [26.10.2101](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2101)
 
