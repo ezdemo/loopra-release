@@ -4,6 +4,21 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2101:start -->
+## [26.10.2101](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2101)
+
+发布日期：2026-10-21 10:07（UTC+8）
+
+### 新增
+
+- 更新页面新增发布历史记录，便于查看过往版本信息。
+- 桌面端更新将获得更醒目的提示。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/47232ccd2b44b1103f75d3fe7304ca3a2c5f2a83...e984abf5640bf91ad7f2b2ff5538253b82403057>) · 从 v26.10.2014 到本次构建
+<!-- loopra-release:v26.10.2101:end -->
+
+---
+
 <!-- loopra-release:v26.10.2014:start -->
 ## [26.10.2014](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2014)
 
