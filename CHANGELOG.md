@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2104:start -->
+## [26.10.2104](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2104)
+
+发布日期：2026-10-21 16:42（UTC+8）
+
+### 新增
+- 桌面端新增原生右键菜单，并支持主题同步。
+
+### 修复
+- 同步 pnpm 锁文件，确保发布安装时依赖版本一致。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/dc67179c5bb6801f973fb623292eb8fb7c02ad58...908e0eb7e5bab822e58a5e90f2a802afbbcbbe55>) · 从 v26.10.2102 到本次构建
+<!-- loopra-release:v26.10.2104:end -->
+
+---
+
 <!-- loopra-release:v26.10.2102:start -->
 ## [26.10.2102](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2102)
 
