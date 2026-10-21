@@ -100,7 +100,7 @@ test('publishes five packages plus verified Windows/Linux update assets; metadat
   assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
   assert.match(notes, /一项可核对的更新/);
   assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [
-    'Loopra-linux-x64.AppImage', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'latest.yml', 'loopra-dist.tar.gz',
+    'Loopra-linux-x64.AppImage', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'latest-unsigned-mac.yml', 'latest.yml', 'loopra-dist.tar.gz',
   ]);
   assert.equal(parseMetadata(notes).sourceSha, sha);
   assert.match(parseMetadata(notes).artifacts['loopra-dist.tar.gz'], /^[a-f0-9]{64}$/);
@@ -109,19 +109,23 @@ test('publishes five packages plus verified Windows/Linux update assets; metadat
   assert.doesNotMatch(notes, /setup\.ps1|SHA256SUMS/);
 });
 
-test('signed macOS publishes its manifest/blockmap; ad-hoc archives remain available without an update feed', t => {
+test('all macOS builds publish a custom-install feed; only signed builds publish the Squirrel feed', t => {
   for (const signed of [false, true]) {
     const dir = desktopArtifacts(t, signed);
     const notes = prepareAssets(dir);
     const names = readdirSync(join(dir, 'publish'));
-    assert.equal(names.length, signed ? 10 : 8);
+    assert.equal(names.length, signed ? 11 : 9);
     assert.equal(names.includes('latest-mac.yml'), signed);
     assert.equal(names.includes('desktop-update-mac.json'), false);
-    assert.equal(parseMetadata(notes).desktopUpdates.mac, signed);
+    assert.equal(names.includes('latest-unsigned-mac.yml'), true);
+    assert.equal(parseMetadata(notes).desktopUpdates.mac, true);
+    assert.equal(parseMetadata(notes).desktopUpdates.macSigned, signed);
+    validateUpdateManifest(join(dir, 'publish'), 'latest-unsigned-mac.yml', '26.10.1',
+      [{ name: 'Loopra-macos-arm64.zip', download: 'Loopra-macos-arm64.zip' }]);
   }
 });
 
-test('missing platform metadata or an unsigned macOS update feed blocks publication', t => {
+test('missing platform metadata or an ad-hoc Squirrel feed blocks publication', t => {
   const adhoc = desktopArtifacts(t, false);
   write(adhoc, 'latest-mac.yml', 'unsigned update');
   assert.throws(() => prepareAssets(adhoc), /Ad-hoc/);
@@ -159,7 +163,7 @@ test('legacy four/six assets and complete multiplatform groups are accepted, par
   const windows = [...legacy, 'latest.yml', 'Loopra-windows-x64.exe.blockmap'];
   const linux = [...windows, 'Loopra-linux-x64.AppImage', 'latest-linux.yml'];
   const all = [...linux, 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap'];
-  for (const names of [legacy, windows, linux, all]) assert.equal(validReleaseAssets(names), true);
+  for (const names of [legacy, windows, linux, all, [...linux, 'latest-unsigned-mac.yml'], [...all, 'latest-unsigned-mac.yml']]) assert.equal(validReleaseAssets(names), true);
   for (const names of [[...linux, 'latest-mac.yml'], all.filter(name => name !== 'latest-linux.yml'),
     all.filter(name => name !== 'Loopra-windows-x64.exe.blockmap'), [...linux, 'unexpected.yml']]) assert.equal(validReleaseAssets(names), false);
 });

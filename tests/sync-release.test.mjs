@@ -11,7 +11,8 @@ const clone = value => JSON.parse(JSON.stringify(value));
 function server(withUpdates = false) {
   const packages = ['loopra-dist.tar.gz', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe'];
   if (withUpdates) packages.push('latest.yml', 'Loopra-windows-x64.exe.blockmap');
-  if (withUpdates === 'all') packages.push('latest-linux.yml', 'Loopra-linux-x64.AppImage', 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap');
+  if (withUpdates === 'all' || withUpdates === 'unsigned') packages.push('latest-linux.yml', 'Loopra-linux-x64.AppImage', 'latest-unsigned-mac.yml');
+  if (withUpdates === 'all') packages.push('latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap');
   const bytes = Object.fromEntries(packages.map(name => [name, Buffer.from(`package bytes: ${name}`)]));
   const metadata = { version: tag.slice(1), npmVersion: tag.slice(1), sourceRepository: 'ezdemo/loopra',
     releaseRepository: 'ezdemo/loopra-release', sourceSha: sha,
@@ -92,10 +93,20 @@ test('mirrors Windows update manifest and blockmap along with all packages', asy
 test('mirrors complete macOS and Linux update assets with verified hashes', async () => {
   const { state, run } = server('all');
   await run();
-  assert.equal(state.target.assets.length, 10);
+  assert.equal(state.target.assets.length, 11);
   assert.equal(state.target.draft, false);
   assert.ok(state.target.assets.some(asset => asset.name === 'latest-mac.yml'));
   assert.ok(state.target.assets.some(asset => asset.name === 'latest-linux.yml'));
+  assert.ok(state.target.assets.some(asset => asset.name === 'latest-unsigned-mac.yml'));
+});
+
+test('mirrors the ad-hoc Mac feed without exposing it to signed clients', async () => {
+  const { state, run } = server('unsigned');
+  await run();
+  assert.equal(state.target.assets.length, 9);
+  assert.equal(state.target.draft, false);
+  assert.ok(state.target.assets.some(asset => asset.name === 'latest-unsigned-mac.yml'));
+  assert.equal(state.target.assets.some(asset => asset.name === 'latest-mac.yml'), false);
 });
 
 test('mirrors verified bytes, notes and a source-commit tag; publishes only after all uploads', async () => {

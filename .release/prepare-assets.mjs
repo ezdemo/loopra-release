@@ -15,7 +15,7 @@ export function downloadName(name) {
 }
 
 export function releaseAssetName(name) {
-  if (/^latest(?:-mac|-linux)?\.yml$/.test(name) || /^Loopra-(?:windows-(?:x64|arm64)\.exe|macos-(?:x64|arm64)\.zip)\.blockmap$/.test(name)) return name;
+  if (/^latest(?:-mac|-unsigned-mac|-linux)?\.yml$/.test(name) || /^Loopra-(?:windows-(?:x64|arm64)\.exe|macos-(?:x64|arm64)\.zip)\.blockmap$/.test(name)) return name;
   return downloadName(name);
 }
 
@@ -39,6 +39,7 @@ export function validReleaseAssets(names) {
   if (names.includes('latest-mac.yml') || names.includes(`${mac}.blockmap`)) {
     expected.add('latest-mac.yml'); expected.add(`${mac}.blockmap`);
   }
+  if (names.includes('latest-unsigned-mac.yml')) expected.add('latest-unsigned-mac.yml');
   return expected.size === names.length && names.every(name => expected.has(name));
 }
 
@@ -138,11 +139,14 @@ export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'pu
   validateUpdateManifest(artifactDir, 'latest-linux.yml', metadata.npmVersion,
     [linuxAppImage, linuxDeb].map(file => ({ ...file, download: file.name })));
   const linuxUpdateManifest = renderLinuxUpdateManifest(artifactDir, metadata.npmVersion, [linuxAppImage, linuxDeb]);
-  const updateNames = ['latest.yml', `${windows.download}.blockmap`, 'latest-linux.yml'];
+  const updateNames = ['latest.yml', `${windows.download}.blockmap`, 'latest-linux.yml', 'latest-unsigned-mac.yml'];
   const macSupport = JSON.parse(readFileSync(resolve(artifactDir, 'desktop-update-mac.json'), 'utf8'));
   if (typeof macSupport.signed !== 'boolean') throw new Error('Missing macOS signing status');
+  const mac = packages.find(file => file.download.startsWith('Loopra-macos-'));
+  // Custom-install clients can also move to a signed build. Squirrel's feed
+  // remains exclusive to Developer ID builds, including older signed clients.
+  const unsignedMacManifest = renderLinuxUpdateManifest(artifactDir, metadata.npmVersion, [mac]);
   if (macSupport.signed) {
-    const mac = packages.find(file => file.download.startsWith('Loopra-macos-'));
     validateUpdateManifest(artifactDir, 'latest-mac.yml', metadata.npmVersion, [mac]);
     if (!statSync(resolve(artifactDir, `${mac.download}.blockmap`)).size) throw new Error('macOS update blockmap is empty');
     updateNames.push('latest-mac.yml', `${mac.download}.blockmap`);
@@ -153,10 +157,11 @@ export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'pu
   mkdirSync(publishDir, { recursive: true });
   if (readdirSync(publishDir).length) throw new Error('Publish directory must be empty');
   metadata.artifacts = {};
-  metadata.desktopUpdates = { windows: true, linux: ['deb', 'AppImage'], mac: macSupport.signed };
+  metadata.desktopUpdates = { windows: true, linux: ['deb', 'AppImage'], mac: true, macSigned: macSupport.signed };
   for (const file of files) {
     const dest = resolve(publishDir, file.download);
     if (file.name === 'latest-linux.yml') writeFileSync(dest, linuxUpdateManifest);
+    else if (file.name === 'latest-unsigned-mac.yml') writeFileSync(dest, unsignedMacManifest);
     else copyFileSync(resolve(artifactDir, file.name), dest);
     metadata.artifacts[file.download] = hashFile(dest);
   }

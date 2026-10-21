@@ -63,12 +63,29 @@ test('publishes complete Windows update metadata and rejects a missing update as
 
 test('publishes all platform update assets only after every file passes the recorded checksums', async () => {
   const { state, run } = fixture();
-  for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'Loopra-linux-x64.AppImage', 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap']) {
+  for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'Loopra-linux-x64.AppImage', 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap', 'latest-unsigned-mac.yml']) {
     state.metadata.artifacts[name] = 'e'.repeat(64);
     state.release.assets.push({ name, state: 'uploaded', size: 100, digest: `sha256:${'e'.repeat(64)}` });
   }
   state.release.body = metadataComment(state.metadata);
   assert.equal((await run()).draft, false);
+});
+
+test('ad-hoc Mac publication requires the custom feed bytes to match their recorded hash', async () => {
+  for (const valid of [true, false]) {
+    const { state, run } = fixture();
+    for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap', 'latest-unsigned-mac.yml']) {
+      state.metadata.artifacts[name] = 'e'.repeat(64);
+      state.release.assets.push({ name, state: 'uploaded', size: 100, digest: `sha256:${'e'.repeat(64)}` });
+    }
+    state.release.body = metadataComment(state.metadata);
+    if (valid) assert.equal((await run()).draft, false);
+    else {
+      state.release.assets.at(-1).digest = `sha256:${'f'.repeat(64)}`;
+      await assert.rejects(run(), /checksums differ/);
+      assert.equal(state.release.draft, true);
+    }
+  }
 });
 
 test('incomplete, corrupted or unexpected uploaded packages remain unpublished', async () => {
