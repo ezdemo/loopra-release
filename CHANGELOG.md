@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2105:start -->
+## [26.10.2105](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2105)
+
+发布日期：2026-10-21 19:46（UTC+8）
+
+### 新增
+- 未签名的 macOS 版本现已支持自动更新。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/908e0eb7e5bab822e58a5e90f2a802afbbcbbe55...69423a14f5121c62a15461a381d928b6f27afb9b>) · 从 v26.10.2104 到本次构建
+<!-- loopra-release:v26.10.2105:end -->
+
+---
+
 <!-- loopra-release:v26.10.2104:start -->
 ## [26.10.2104](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2104)
 
