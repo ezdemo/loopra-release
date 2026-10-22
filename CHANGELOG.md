@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2202:start -->
+## [26.10.2202](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2202)
+
+发布日期：2026-10-22 11:09（UTC+8）
+
+### 修复
+- 修复桌面端启动过程中的稳定性问题，减少启动异常。
+
+### 改进
+- 优化设置页面的加载与响应速度。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/69423a14f5121c62a15461a381d928b6f27afb9b...42578ef0620385c8dba0fe1586609989cf9b0733>) · 从 v26.10.2105 到本次构建
+<!-- loopra-release:v26.10.2202:end -->
+
+---
+
 <!-- loopra-release:v26.10.2105:start -->
 ## [26.10.2105](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2105)
 
