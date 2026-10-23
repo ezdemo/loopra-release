@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2302:start -->
+## [26.10.2302](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2302)
+
+发布日期：2026-10-23 16:08（UTC+8）
+
+### 新增
+- ACP 支持从历史回复派生（fork）Codex 和 Claude 会话。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/c10975e31968513aed924e260f1d63e516951814...a9cf36f8cd03869d6e2efecb0d9847f9a209da11>) · 从 v26.10.2301 到本次构建
+<!-- loopra-release:v26.10.2302:end -->
+
+---
+
 <!-- loopra-release:v26.10.2301:start -->
 ## [26.10.2301](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2301)
 
