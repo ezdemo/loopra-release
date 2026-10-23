@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2305:start -->
+## [26.10.2305](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2305)
+
+发布日期：2026-10-23 23:15（UTC+8）
+
+### 新增
+- 内置 SelfSkill，并支持挂载常用 Agent 技能。
+- 支持多个会话并发运行。
+
+### 改进
+- 降低流式渲染与上下文估算的开销。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/87840e8f10be75fdceb51c361c7c6ee2de8cdaae...287ba5d986cc84ae1a49f7ed7f9c82d1e304cc58>) · 从 v26.10.2304 到本次构建
+<!-- loopra-release:v26.10.2305:end -->
+
+---
+
 <!-- loopra-release:v26.10.2304:start -->
 ## [26.10.2304](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2304)
 
