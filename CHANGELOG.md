@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2304:start -->
+## [26.10.2304](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2304)
+
+发布日期：2026-10-23 22:03（UTC+8）
+
+### 新增
+- 为模型增加显示名称。
+
+### 改进
+- 优化加载体验。
+
+### 修复
+- 精简搜索对话框，并让结果布局更清晰。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b418a3c51a47b1987dc35f359c14bfb96bce0662...87840e8f10be75fdceb51c361c7c6ee2de8cdaae>) · 从 v26.10.2303 到本次构建
+<!-- loopra-release:v26.10.2304:end -->
+
+---
+
 <!-- loopra-release:v26.10.2303:start -->
 ## [26.10.2303](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2303)
 
