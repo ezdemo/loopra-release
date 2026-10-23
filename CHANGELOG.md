@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2303:start -->
+## [26.10.2303](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2303)
+
+发布日期：2026-10-23 18:46（UTC+8）
+
+### 改进
+- 浏览器模块移除旧版网关，同时保留桌面端生命周期行为。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a9cf36f8cd03869d6e2efecb0d9847f9a209da11...b418a3c51a47b1987dc35f359c14bfb96bce0662>) · 从 v26.10.2302 到本次构建
+<!-- loopra-release:v26.10.2303:end -->
+
+---
+
 <!-- loopra-release:v26.10.2302:start -->
 ## [26.10.2302](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2302)
 
