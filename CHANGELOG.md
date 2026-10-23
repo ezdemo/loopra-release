@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2301:start -->
+## [26.10.2301](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2301)
+
+发布日期：2026-10-23 15:51（UTC+8）
+
+### 新增
+- 聊天模块支持纯聊天模式隔离，让纯聊天与其他能力分开运行。
+
+### 修复
+- 修复 ACP 会话被占用时的处理逻辑，并明确提示可执行的恢复操作。
+
+### 改进
+- 移除旧版浏览器网关，聊天不再依赖该通道。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/42578ef0620385c8dba0fe1586609989cf9b0733...c10975e31968513aed924e260f1d63e516951814>) · 从 v26.10.2202 到本次构建
+<!-- loopra-release:v26.10.2301:end -->
+
+---
+
 <!-- loopra-release:v26.10.2202:start -->
 ## [26.10.2202](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2202)
 
