@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2402:start -->
+## [26.10.2402](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2402)
+
+发布日期：2026-10-24 23:54（UTC+8）
+
+### 改进
+- ACP：在隔离会话之间复用已初始化的适配器，减少重复初始化。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/c2069261b650c003eb62378df668ec9b4627a6cc...e88c55737ccdd34454b757a07df3341efa6e0f4f>) · 从 v26.10.2401 到本次构建
+<!-- loopra-release:v26.10.2402:end -->
+
+---
+
 <!-- loopra-release:v26.10.2401:start -->
 ## [26.10.2401](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2401)
 
