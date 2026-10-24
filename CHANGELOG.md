@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2401:start -->
+## [26.10.2401](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2401)
+
+发布日期：2026-10-24 20:39（UTC+8）
+
+### 新增
+- Web 端访问新增访问密钥要求；开发环境下可继续复用现有后端。
+
+### 改进
+- 提升会话查找与 Agent 配置加载速度。
+- 优化访问密钥对话框。
+- 将运行中会话的脉冲提示替换为小型加载指示器。
+- 简化模型提供商设置布局。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/287ba5d986cc84ae1a49f7ed7f9c82d1e304cc58...c2069261b650c003eb62378df668ec9b4627a6cc>) · 从 v26.10.2305 到本次构建
+<!-- loopra-release:v26.10.2401:end -->
+
+---
+
 <!-- loopra-release:v26.10.2305:start -->
 ## [26.10.2305](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2305)
 
