@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2504:start -->
+## [26.10.2504](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2504)
+
+发布日期：2026-10-25 22:20（UTC+8）
+
+### 改进
+- 重新整理技能与设置界面，提升操作与浏览体验。
+- 统一桌面端外部链接的打开方式。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/9c8c85286f2fa8d580f5b9c6c7d37d60ae99bcbe...463f11239edab0bf118ab00ed9314fa9e9d2179e>) · 从 v26.10.2503 到本次构建
+<!-- loopra-release:v26.10.2504:end -->
+
+---
+
 <!-- loopra-release:v26.10.2503:start -->
 ## [26.10.2503](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2503)
 
