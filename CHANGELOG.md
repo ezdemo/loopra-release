@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2502:start -->
+## [26.10.2502](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2502)
+
+发布日期：2026-10-25 19:09（UTC+8）
+
+### 改进
+- 优化模型设置、会话标题及图片预览体验。
+
+### 修复
+- 修复智能体未将工具图片纳入模型上下文的问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/94523ded9386f3ae7b9eed757d05195f300abf15...6c2907e2d34407adbc039b842015e6575a586799>) · 从 v26.10.2501 到本次构建
+<!-- loopra-release:v26.10.2502:end -->
+
+---
+
 <!-- loopra-release:v26.10.2501:start -->
 ## [26.10.2501](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2501)
 
