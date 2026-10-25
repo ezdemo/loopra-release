@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2501:start -->
+## [26.10.2501](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2501)
+
+发布日期：2026-10-25 12:11（UTC+8）
+
+### 改进
+- 重新设计“关于”设置页面，并为内置核心更新增加保护机制。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/e88c55737ccdd34454b757a07df3341efa6e0f4f...94523ded9386f3ae7b9eed757d05195f300abf15>) · 从 v26.10.2402 到本次构建
+<!-- loopra-release:v26.10.2501:end -->
+
+---
+
 <!-- loopra-release:v26.10.2402:start -->
 ## [26.10.2402](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2402)
 
