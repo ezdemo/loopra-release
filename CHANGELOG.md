@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2503:start -->
+## [26.10.2503](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2503)
+
+发布日期：2026-10-25 20:18（UTC+8）
+
+### 新增
+- ACP 新增 Pi 与 DeepSeek Harness 两个提供方，并补充了相关能力验证与模式限制说明。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/6c2907e2d34407adbc039b842015e6575a586799...9c8c85286f2fa8d580f5b9c6c7d37d60ae99bcbe>) · 从 v26.10.2502 到本次构建
+<!-- loopra-release:v26.10.2503:end -->
+
+---
+
 <!-- loopra-release:v26.10.2502:start -->
 ## [26.10.2502](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2502)
 
