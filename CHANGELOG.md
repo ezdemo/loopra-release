@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2601:start -->
+## [26.10.2601](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2601)
+
+发布日期：2026-10-26 12:27（UTC+8）
+
+### 改进
+- 更新介绍页下载内容，并统一镜像更新方式。
+
+### 修复
+- 桌面端首页先显示骨架屏，再呈现工作区。
+- 设置页滚动时保持顶部栏固定。
+- 介绍页静态资源增加版本标识，Agent 列表保持单行显示。
+- 恢复 AI 会话标题，并在会话压缩时保留使用的模型。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/463f11239edab0bf118ab00ed9314fa9e9d2179e...d2113c34e21c7859af61c3881a6ce3346485e3c8>) · 从 v26.10.2504 到本次构建
+<!-- loopra-release:v26.10.2601:end -->
+
+---
+
 <!-- loopra-release:v26.10.2504:start -->
 ## [26.10.2504](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2504)
 
