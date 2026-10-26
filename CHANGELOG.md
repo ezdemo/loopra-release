@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2606:start -->
+## [26.10.2606](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2606)
+
+发布日期：2026-10-26 22:33（UTC+8）
+
+### 新增
+- MCP 支持按 Agent 单独开启或关闭转发。
+
+### 修复
+- 内置技能会保持安装状态，不再允许被移除。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b0733cacef5e421507f7762699f2824e79578fef...30ca721c239e5dcd5c774e24dbc61afc3f1577db>) · 从 v26.10.2605 到本次构建
+<!-- loopra-release:v26.10.2606:end -->
+
+---
+
 <!-- loopra-release:v26.10.2605:start -->
 ## [26.10.2605](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2605)
 
