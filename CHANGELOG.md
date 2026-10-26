@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2605:start -->
+## [26.10.2605](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2605)
+
+发布日期：2026-10-26 21:43（UTC+8）
+
+### 修复
+
+- 侧边栏个人资料行现在整行区域均可点击打开设置，不再局限于局部点击。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a0997feba3379e34394cc4248c3d12aae626d647...b0733cacef5e421507f7762699f2824e79578fef>) · 从 v26.10.2604 到本次构建
+<!-- loopra-release:v26.10.2605:end -->
+
+---
+
 <!-- loopra-release:v26.10.2604:start -->
 ## [26.10.2604](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2604)
 
