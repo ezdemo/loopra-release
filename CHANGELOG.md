@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2604:start -->
+## [26.10.2604](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2604)
+
+发布日期：2026-10-26 21:06（UTC+8）
+
+### 新增
+- UI 新增可选的本地头像和昵称设置。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/633e5749af86785814d75e100d73425b0977acb4...a0997feba3379e34394cc4248c3d12aae626d647>) · 从 v26.10.2603 到本次构建
+<!-- loopra-release:v26.10.2604:end -->
+
+---
+
 <!-- loopra-release:v26.10.2603:start -->
 ## [26.10.2603](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2603)
 
