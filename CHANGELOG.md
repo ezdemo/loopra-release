@@ -4,6 +4,24 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2603:start -->
+## [26.10.2603](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2603)
+
+发布日期：2026-10-26 19:08（UTC+8）
+
+### 新增
+
+- 界面新增智能体图标。
+
+### 改进
+
+- 优化桌面端拖拽区域的稳定性。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/d2113c34e21c7859af61c3881a6ce3346485e3c8...633e5749af86785814d75e100d73425b0977acb4>) · 从 v26.10.2602 到本次构建
+<!-- loopra-release:v26.10.2603:end -->
+
+---
+
 <!-- loopra-release:v26.10.2602:start -->
 ## [26.10.2602](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2602)
 
