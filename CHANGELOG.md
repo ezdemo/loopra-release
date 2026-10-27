@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2701:start -->
+## [26.10.2701](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2701)
+
+发布日期：2026-10-27 09:18（UTC+8）
+
+### 修复
+- 文件变更卡片现在会显示文件名，便于识别具体改动的是哪个文件。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/30ca721c239e5dcd5c774e24dbc61afc3f1577db...3d358a5fa3e4e0158c75b2993847d113ec8b71dc>) · 从 v26.10.2606 到本次构建
+<!-- loopra-release:v26.10.2701:end -->
+
+---
+
 <!-- loopra-release:v26.10.2606:start -->
 ## [26.10.2606](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2606)
 
