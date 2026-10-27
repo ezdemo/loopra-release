@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2703:start -->
+## [26.10.2703](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2703)
+
+发布日期：2026-10-27 15:43（UTC+8）
+
+### 新增
+- Web 端工作区文件支持内联显示 Git 变更。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/fbc53efd8f9ee8df790f0e9fe66b95984cc77905...c7b70f846985b0fd1b488c431c7f2c64551c89ba>) · 从 v26.10.2702 到本次构建
+<!-- loopra-release:v26.10.2703:end -->
+
+---
+
 <!-- loopra-release:v26.10.2702:start -->
 ## [26.10.2702](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2702)
 
