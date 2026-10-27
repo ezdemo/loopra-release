@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2702:start -->
+## [26.10.2702](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2702)
+
+发布日期：2026-10-27 12:51（UTC+8）
+
+### 新增
+- 增强日程功能。
+- 增强编辑器消息队列功能。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/3d358a5fa3e4e0158c75b2993847d113ec8b71dc...fbc53efd8f9ee8df790f0e9fe66b95984cc77905>) · 从 v26.10.2701 到本次构建
+<!-- loopra-release:v26.10.2702:end -->
+
+---
+
 <!-- loopra-release:v26.10.2701:start -->
 ## [26.10.2701](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2701)
 
