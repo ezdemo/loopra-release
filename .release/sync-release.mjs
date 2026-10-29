@@ -4,10 +4,9 @@ import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import { finished, pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
-import { releaseAssetName, validReleaseAssets, hashFile } from './prepare-assets.mjs';
+import { downloadName, hashFile, isLoopraxRelease, releaseAssetName, validReleaseAssets } from './prepare-assets.mjs';
 import { parseMetadata, readReleaseMetadata } from './release-metadata.mjs';
 
-const SOURCE = 'ezdemo/loopra';
 const RELEASE = 'ezdemo/loopra-release';
 const api = repo => `https://api.github.com/repos/${repo}`;
 
@@ -15,9 +14,10 @@ const api = repo => `https://api.github.com/repos/${repo}`;
 // Always resolve the latter from the embedded build metadata, never from main.
 export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = false, request = fetch }) {
   if (!/^v\d+\.\d+\.\d+(?:\.\d+)?$/.test(tag || '')) throw new Error('Invalid release tag');
-  if (!dryRun && !sourceToken) throw new Error('SOURCE_RELEASE_TOKEN is required (Contents: write on ezdemo/loopra)');
+  if (!dryRun && !sourceToken) throw new Error('SOURCE_RELEASE_TOKEN is required (Contents: write on the source repository)');
+  let sourceRepo = '';
   const headers = (repo, extra = {}) => {
-    const token = repo === SOURCE ? sourceToken : releaseToken;
+    const token = repo === sourceRepo ? sourceToken : releaseToken;
     return { Accept: 'application/vnd.github+json', ...(token ? { Authorization: `Bearer ${token}` } : {}), ...extra };
   };
   async function json(repo, path, { method = 'GET', body, optional = false } = {}) {
@@ -33,10 +33,12 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
   if (release.draft || release.tag_name !== tag) throw new Error('Only a published release can be synchronized');
   const metadata = await readReleaseMetadata(release, { token: releaseToken, request });
   if (!metadata || `v${metadata.version}` !== tag) throw new Error('Release metadata does not match the requested tag');
+  sourceRepo = metadata.sourceRepository;
   const expected = metadata.artifacts || {};
   const names = Object.keys(expected);
-  if (!validReleaseAssets(names)) throw new Error('Metadata must include core, all desktop packages and complete update assets');
-  if (names.some(name => releaseAssetName(name) !== name || !/^[a-f0-9]{64}$/.test(expected[name]))) {
+  const canonical = isLoopraxRelease(names) ? downloadName : releaseAssetName;
+  if (!isLoopraxRelease(names) && !validReleaseAssets(names)) throw new Error('Metadata must include the full package set');
+  if (names.some(name => canonical(name) !== name || !/^[a-f0-9]{64}$/.test(expected[name]))) {
     throw new Error('Invalid package name or checksum in release metadata');
   }
   if (release.assets.length !== names.length || new Set(release.assets.map(asset => asset.name)).size !== names.length ||
@@ -46,17 +48,17 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
     throw new Error('Published assets do not match the release metadata');
   }
 
-  const sourceCommit = await json(SOURCE, `/commits/${metadata.sourceSha}`);
+  const sourceCommit = await json(sourceRepo, `/commits/${metadata.sourceSha}`);
   if (sourceCommit.sha !== metadata.sourceSha) throw new Error('Build source commit is unavailable');
-  let ref = await json(SOURCE, `/git/ref/tags/${tag}`, { optional: true });
+  let ref = await json(sourceRepo, `/git/ref/tags/${tag}`, { optional: true });
   if (ref) {
     let object = ref.object;
     for (let depth = 0; object.type === 'tag' && depth < 10; depth++) {
-      object = (await json(SOURCE, `/git/tags/${object.sha}`)).object;
+      object = (await json(sourceRepo, `/git/tags/${object.sha}`)).object;
     }
     if (object.type !== 'commit' || object.sha !== metadata.sourceSha) throw new Error('Existing source tag points to another commit; refusing to move it');
   }
-  let target = await json(SOURCE, `/releases/tags/${tag}`, { optional: true });
+  let target = await json(sourceRepo, `/releases/tags/${tag}`, { optional: true });
   if (target) {
     const previous = parseMetadata(target.body || '');
     if (!previous || previous.sourceSha !== metadata.sourceSha || previous.version !== metadata.version) {
@@ -79,9 +81,9 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
   // provenance and all other release notes stay identical to the original.
   const body = (release.body || '').replaceAll(
     `https://github.com/${RELEASE}/releases/download/${tag}/`,
-    `https://github.com/${SOURCE}/releases/download/${tag}/`);
+    `https://github.com/${sourceRepo}/releases/download/${tag}/`);
   const plan = { tag, sourceSha: metadata.sourceSha, packages: names, dryRun,
-    url: `https://github.com/${SOURCE}/releases/tag/${tag}` };
+    url: `https://github.com/${sourceRepo}/releases/tag/${tag}` };
   if (dryRun) return plan;
 
   const directory = mkdtempSync(join(tmpdir(), 'loopra-sync-'));
@@ -96,8 +98,8 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
       await pipeline(Readable.fromWeb(response.body), createWriteStream(path, { flags: 'wx' }));
       if (statSync(path).size !== asset.size || hashFile(path) !== expected[asset.name]) throw new Error(`Checksum or size mismatch: ${asset.name}`);
     }
-    if (!ref) await json(SOURCE, '/git/refs', { method: 'POST', body: { ref: `refs/tags/${tag}`, sha: metadata.sourceSha } });
-    if (!target) target = await json(SOURCE, '/releases', { method: 'POST', body: {
+    if (!ref) await json(sourceRepo, '/git/refs', { method: 'POST', body: { ref: `refs/tags/${tag}`, sha: metadata.sourceSha } });
+    if (!target) target = await json(sourceRepo, '/releases', { method: 'POST', body: {
       tag_name: tag, target_commitish: metadata.sourceSha, name: release.name || tag, body,
       draft: true, prerelease: release.prerelease,
     } });
@@ -107,10 +109,10 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
       if (existing) {
         // Never overwrite published bytes. A failed draft upload can be retried.
         if (!target.draft) throw new Error(`Published target asset differs: ${asset.name}`);
-        await json(SOURCE, `/releases/assets/${existing.id}`, { method: 'DELETE' });
+        await json(sourceRepo, `/releases/assets/${existing.id}`, { method: 'DELETE' });
       }
       const upload = new URL(target.upload_url.replace(/\{.*$/, ''));
-      if (upload.origin !== 'https://uploads.github.com' || upload.pathname !== `/repos/${SOURCE}/releases/${target.id}/assets`) {
+      if (upload.origin !== 'https://uploads.github.com' || upload.pathname !== `/repos/${sourceRepo}/releases/${target.id}/assets`) {
         throw new Error('Unexpected asset upload URL');
       }
       upload.searchParams.set('name', asset.name);
@@ -120,7 +122,7 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
       let response;
       try {
         response = await request(upload.href, { method: 'POST',
-          headers: headers(SOURCE, { 'Content-Type': asset.content_type || 'application/octet-stream', 'Content-Length': String(asset.size) }),
+          headers: headers(sourceRepo, { 'Content-Type': asset.content_type || 'application/octet-stream', 'Content-Length': String(asset.size) }),
           body: stream, duplex: 'half', signal: AbortSignal.timeout(600000),
         });
       } finally { stream.destroy(); await closed; }
@@ -131,7 +133,7 @@ export async function syncRelease({ tag, sourceToken, releaseToken, dryRun = fal
     }
     // Old backfills must not replace the current latest release.
     const latest = await json(RELEASE, '/releases/latest', { optional: true });
-    await json(SOURCE, `/releases/${target.id}`, { method: 'PATCH', body: {
+    await json(sourceRepo, `/releases/${target.id}`, { method: 'PATCH', body: {
       name: release.name || tag, body, draft: false, prerelease: release.prerelease,
       make_latest: !release.prerelease && latest?.tag_name === tag ? 'true' : 'false',
     } });

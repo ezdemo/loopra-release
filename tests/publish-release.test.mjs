@@ -1,15 +1,16 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { LOOPRAX_ASSETS } from '../.release/prepare-assets.mjs';
 import { metadataComment } from '../.release/release-metadata.mjs';
 import { publishRelease } from '../.release/publish-release.mjs';
 
 const tag = 'v26.10.1904';
 const releaseSha = 'a'.repeat(40);
 function fixture() {
-  const names = ['loopra-dist.tar.gz', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe'];
+  const names = [...LOOPRAX_ASSETS];
   const metadata = { version: tag.slice(1), npmVersion: tag.slice(1), sourceSha: 'b'.repeat(40), releaseSha,
-    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release',
-    artifacts: Object.fromEntries(names.map((name, i) => [name, String(i).repeat(64)])) };
+    sourceRepository: 'ezdemo/looprax', releaseRepository: 'ezdemo/loopra-release',
+    artifacts: Object.fromEntries(names.map((name, i) => [name, (i % 16).toString(16).repeat(64)])) };
   const state = { calls: [], patchStatus: 200, metadata,
     release: { id: 12, tag_name: tag, draft: true, prerelease: false, body: metadataComment(metadata),
       html_url: `https://github.com/ezdemo/loopra-release/releases/tag/${tag}`,
@@ -46,48 +47,6 @@ test('publishes a complete draft only after verifying every package and its buil
   assert.deepEqual(state.calls.map(call => call.method), ['GET', 'PATCH']);
 });
 
-test('publishes complete Windows update metadata and rejects a missing update asset', async () => {
-  for (const incomplete of [false, true]) {
-    const { state, run } = fixture();
-    for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap']) {
-      state.metadata.artifacts[name] = 'e'.repeat(64);
-      state.release.assets.push({ name, state: 'uploaded', size: 100, digest: `sha256:${'e'.repeat(64)}` });
-    }
-    state.release.body = metadataComment(state.metadata);
-    if (incomplete) {
-      state.release.assets.pop();
-      await assert.rejects(run(), /Uploaded packages/);
-    } else assert.equal((await run()).draft, false);
-  }
-});
-
-test('publishes all platform update assets only after every file passes the recorded checksums', async () => {
-  const { state, run } = fixture();
-  for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'Loopra-linux-x64.AppImage', 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap', 'latest-unsigned-mac.yml']) {
-    state.metadata.artifacts[name] = 'e'.repeat(64);
-    state.release.assets.push({ name, state: 'uploaded', size: 100, digest: `sha256:${'e'.repeat(64)}` });
-  }
-  state.release.body = metadataComment(state.metadata);
-  assert.equal((await run()).draft, false);
-});
-
-test('ad-hoc Mac publication requires the custom feed bytes to match their recorded hash', async () => {
-  for (const valid of [true, false]) {
-    const { state, run } = fixture();
-    for (const name of ['latest.yml', 'Loopra-windows-x64.exe.blockmap', 'latest-unsigned-mac.yml']) {
-      state.metadata.artifacts[name] = 'e'.repeat(64);
-      state.release.assets.push({ name, state: 'uploaded', size: 100, digest: `sha256:${'e'.repeat(64)}` });
-    }
-    state.release.body = metadataComment(state.metadata);
-    if (valid) assert.equal((await run()).draft, false);
-    else {
-      state.release.assets.at(-1).digest = `sha256:${'f'.repeat(64)}`;
-      await assert.rejects(run(), /checksums differ/);
-      assert.equal(state.release.draft, true);
-    }
-  }
-});
-
 test('incomplete, corrupted or unexpected uploaded packages remain unpublished', async () => {
   for (const change of [
     release => release.assets.pop(),
@@ -112,7 +71,7 @@ test('mismatched build metadata cannot publish a draft', async () => {
     state => { state.release.id = 13; },
     state => { state.release.tag_name = 'v26.10.1903'; },
     state => { state.metadata.releaseSha = 'c'.repeat(40); state.release.body = metadataComment(state.metadata); },
-    state => { delete state.metadata.artifacts['loopra-dist.tar.gz']; state.release.body = metadataComment(state.metadata); },
+    state => { delete state.metadata.artifacts['looprax-linux-amd64']; state.release.body = metadataComment(state.metadata); },
   ]) {
     const { state, run } = fixture();
     change(state);

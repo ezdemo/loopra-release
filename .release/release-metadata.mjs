@@ -1,10 +1,11 @@
-const SOURCE = 'ezdemo/loopra';
+export const CURRENT_SOURCE = 'ezdemo/looprax';
+const KNOWN_SOURCES = new Set(['ezdemo/loopra', CURRENT_SOURCE]);
 const REPO = 'ezdemo/loopra-release';
 
 export function validateMetadata(metadata) {
   if (!/^\d+\.\d+\.\d+(?:\.\d+)?$/.test(metadata.version || '') ||
       metadata.npmVersion !== metadata.version.split('.').slice(0, 3).join('.') ||
-      metadata.sourceRepository !== SOURCE || metadata.releaseRepository !== REPO ||
+      !KNOWN_SOURCES.has(metadata.sourceRepository) || metadata.releaseRepository !== REPO ||
       !/^[a-f0-9]{40}$/.test(metadata.sourceSha || '')) {
     throw new Error('Invalid release source metadata');
   }

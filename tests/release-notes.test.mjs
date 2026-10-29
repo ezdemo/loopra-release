@@ -27,7 +27,7 @@ function fixture(t) {
   const second = commit('fix: 修复会话切换');
   git('tag', '-a', 'v26.9.2', '-m', 'previous source release');
   const current = commit('feat: 支持独立发版');
-  const metadata = { version: '26.10.1', npmVersion: '26.10.1', sourceRepository: 'ezdemo/loopra', sourceSha: current, releaseRepository: 'ezdemo/loopra-release' };
+  const metadata = { version: '26.10.1', npmVersion: '26.10.1', sourceRepository: 'ezdemo/looprax', sourceSha: current, releaseRepository: 'ezdemo/loopra-release' };
   return { dir, git, commit, first, second, current, metadata };
 }
 
@@ -81,6 +81,18 @@ test('rejects unreadable or incorrect previous-release metadata instead of silen
     ? Response.json([{ tag_name: 'v26.9.2', assets: [{ id: 1, name: 'release-metadata.json' }] }])
     : Response.json({ ...f.metadata, sourceSha: 'a'.repeat(40) });
   await assert.rejects(findBaseline(f.dir, f.metadata, { request: badSha }), /not an ancestor/);
+});
+
+test('ignores published Loopra releases when the build is LoopraX', async t => {
+  const f = fixture(t);
+  const baseline = await findBaseline(f.dir, f.metadata, { request: async url => {
+    assert.ok(url.includes('/releases?'));
+    return Response.json([{
+      tag_name: 'v26.9.2', published_at: '2026-10-16',
+      body: metadataComment({ ...f.metadata, sourceRepository: 'ezdemo/loopra', version: '26.9.2', npmVersion: '26.9.2', sourceSha: 'c'.repeat(40) }),
+    }]);
+  }});
+  assert.deepEqual(baseline, { sha: f.second, tag: 'v26.9.2', kind: 'source-tag' });
 });
 
 test('reads the previous source SHA from the release body without a metadata download asset', async t => {

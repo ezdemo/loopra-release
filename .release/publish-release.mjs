@@ -1,10 +1,10 @@
 import { appendFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { releaseAssetName, validReleaseAssets } from './prepare-assets.mjs';
+import { downloadName, isLoopraxRelease } from './prepare-assets.mjs';
 import { parseMetadata } from './release-metadata.mjs';
 
-// Publishing is the last step: all uploaded packages/update assets must match the hashes
+// Publishing is the last step: every uploaded LoopraX package must match the hash
 // recorded when the build artifacts were prepared, before any release is public.
 export async function publishRelease({ tag, releaseId, releaseSha, token, request = fetch }) {
   if (!/^v\d+\.\d+\.\d+(?:\.\d+)?$/.test(tag || '')) throw new Error('Invalid release tag');
@@ -25,9 +25,8 @@ export async function publishRelease({ tag, releaseId, releaseSha, token, reques
   if (release.prerelease) throw new Error('Expected a stable release');
   const hashes = metadata.artifacts || {};
   const names = Object.keys(hashes);
-  if (!validReleaseAssets(names) ||
-      names.some(name => releaseAssetName(name) !== name || !/^[a-f0-9]{64}$/.test(hashes[name]))) {
-    throw new Error('Build metadata must contain core and all three desktop package checksums');
+  if (!isLoopraxRelease(names) || names.some(name => downloadName(name) !== name || !/^[a-f0-9]{64}$/.test(hashes[name]))) {
+    throw new Error('Build metadata must contain every LoopraX package checksum');
   }
   if (release.assets.length !== names.length || new Set(release.assets.map(asset => asset.name)).size !== names.length ||
       release.assets.some(asset => !names.includes(asset.name) || asset.state !== 'uploaded' ||
@@ -50,5 +49,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     releaseSha: process.env.GITHUB_SHA, token: process.env.GH_TOKEN });
   console.log(`Published ${release.tag_name}: ${release.html_url}`);
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-    `Published [${release.tag_name}](${release.html_url}) automatically after verifying all packages and update assets.\n`);
+    `Published [${release.tag_name}](${release.html_url}) automatically after verifying every LoopraX package.\n`);
 }

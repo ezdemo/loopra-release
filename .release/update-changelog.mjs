@@ -28,7 +28,7 @@ export function releaseEntry(release) {
   }).formatToParts(date).map(part => [part.type, part.value]));
   let notes = (release.body || '').replaceAll('\r\n', '\n')
     .replace(/<!-- loopra-release-metadata\s*\n[^\n]+\s*\n-->/g, '')
-    .replace(/^\s*##?\s+Loopra\s+v?[\d.]+[^\n]*\n?/, '')
+    .replace(/^\s*##?\s+LoopraX?\s+v?[\d.]+[^\n]*\n?/, '')
     .replace(/<details>\s*<summary>原始源码提交记录[^<]*<\/summary>[\s\S]*?<\/details>/g, '');
   // Download links and packaging notes belong on the Release page. Keep this
   // file focused on the changes, including the original source comparison link.
@@ -65,7 +65,7 @@ export function renderChangelog(existing, releases) {
   const blocks = [...entries.keys()].sort(compareTags).map(tag =>
     `<!-- loopra-release:${tag}:start -->\n${entries.get(tag)}\n<!-- loopra-release:${tag}:end -->`);
   const managed = `${START}\n\n${blocks.join('\n\n---\n\n')}\n\n${END}`;
-  const prefix = start >= 0 ? text.slice(0, start) : (text.trimEnd() || '# 更新日志\n\n这里归档 Loopra 正式发布版本的更新说明。');
+  const prefix = start >= 0 ? text.slice(0, start) : (text.trimEnd() || '# 更新日志\n\n这里归档正式发布版本的更新说明。2026-10-29 之前是 Loopra，之后是 LoopraX。');
   const suffix = end >= 0 ? text.slice(end + END.length) : '\n';
   return { content: `${prefix.trimEnd()}\n\n${managed}${suffix}`, versions: entries.size };
 }

@@ -5,9 +5,9 @@ import { dirname, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { createHash } from 'node:crypto';
+import { downloadName, LOOPRAX_ASSETS, prepareAssets } from '../.release/prepare-assets.mjs';
+import { stageAssets } from '../.release/stage-assets.mjs';
 import { readSourceVersion } from '../.release/source-metadata.mjs';
-import { prepareAssets, validateWindowsUpdate, validateUpdateManifest, validReleaseAssets } from '../.release/prepare-assets.mjs';
 import { checkRelease } from '../.release/check-release.mjs';
 import { parseMetadata } from '../.release/release-metadata.mjs';
 
@@ -27,168 +27,59 @@ function write(dir, file, text) {
   return dest;
 }
 
-test('reads source version consistency; mismatched tags and stale installer versions fail', t => {
+test('reads the LoopraX version and rejects a mismatched tag or a development version', t => {
   const dir = fixture(t);
-  write(dir, 'pom.xml', '<project><properties><loopra.version>26.10.1.2</loopra.version></properties></project>');
-  write(dir, 'loopra/src/installDist/bin/version.txt', '26.10.1.2\n');
-  write(dir, 'loopra-front/package.json', JSON.stringify({ version: '26.10.1' }));
+  write(dir, 'internal/controller/version.go', 'package controller\nvar Version = "26.10.1.2"\n');
   assert.deepEqual(readSourceVersion(dir, 'v26.10.1.2'), { version: '26.10.1.2', npmVersion: '26.10.1' });
   assert.throws(() => readSourceVersion(dir, 'v26.10.1'), /does not match/);
-  write(dir, 'loopra/src/installDist/bin/version.txt', '26.9.91\n');
-  assert.throws(() => readSourceVersion(dir), /versions disagree/);
-  write(dir, 'pom.xml', '<loopra.version>26.10.1-SNAPSHOT</loopra.version>');
+  write(dir, 'internal/controller/version.go', 'var Version = "0.1.0-go"\n');
   assert.throws(() => readSourceVersion(dir), /Invalid source version/);
 });
 
-function windowsUpdate(dir, installer = 'Loopra-windows-x64.exe') {
-  const bytes = readFileSync(join(dir, installer));
-  const sha512 = createHash('sha512').update(bytes).digest('base64');
-  write(dir, 'Loopra-windows-x64.exe.blockmap', 'blockmap fixture');
-  const text = `version: 26.10.1\nfiles:\n  - url: Loopra-windows-x64.exe\n    sha512: ${sha512}\n    size: ${bytes.length}\npath: Loopra-windows-x64.exe\nsha512: ${sha512}\nreleaseDate: '2026-10-20T00:00:00.000Z'\n`;
-  write(dir, 'latest.yml', text);
-  return text;
-}
+test('keeps LoopraX package names and still canonicalizes historical Loopra installers', () => {
+  assert.equal(downloadName('looprax-desktop-darwin-arm64.zip'), 'looprax-desktop-darwin-arm64.zip');
+  assert.equal(downloadName('looprax-windows-amd64.exe'), 'looprax-windows-amd64.exe');
+  assert.equal(downloadName('Loopra-26.10.1-arm64-mac.zip'), 'Loopra-macos-arm64.zip');
+  assert.equal(downloadName('loopra-dist.tar.gz'), 'loopra-dist.tar.gz');
+  assert.equal(downloadName('notes.md'), null);
+});
 
-function manifest(dir, name, files) {
-  const entries = files.map(file => {
-    const bytes = readFileSync(join(dir, file.name));
-    return { url: file.download, sha512: createHash('sha512').update(bytes).digest('base64'), size: bytes.length };
-  });
-  const text = `version: 26.10.1\nfiles:\n${entries.map(entry => `  - url: ${entry.url}\n    sha512: ${entry.sha512}\n    size: ${entry.size}`).join('\n')}\npath: ${entries[0].url}\nsha512: ${entries[0].sha512}\n`;
-  write(dir, name, text);
-  return text;
-}
-
-function linuxUpdate(dir, debName = 'Loopra-linux-amd64.deb') {
-  // electron-builder uses architecture names in both the files and update feed.
-  const appImageName = 'Loopra-linux-x86_64.AppImage';
-  write(dir, appImageName, 'appimage fixture');
-  const files = [{ name: appImageName, download: appImageName }, { name: debName, download: debName }];
-  manifest(dir, 'latest-linux.yml', files);
-  return files;
-}
-
-function desktopArtifacts(t, signed) {
-  const dir = fixture(t);
-  write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: 'a'.repeat(40), sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
-  write(dir, 'release-changes.md', '### 修复\n\n- 自动更新');
-  for (const name of ['loopra-dist.tar.gz', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-linux-amd64.deb']) write(dir, name, 'package fixture');
-  windowsUpdate(dir); linuxUpdate(dir);
-  write(dir, 'desktop-update-mac.json', JSON.stringify({ signed }));
-  if (signed) {
-    manifest(dir, 'latest-mac.yml', [{ name: 'Loopra-macos-arm64.zip', download: 'Loopra-macos-arm64.zip' }]);
-    write(dir, 'Loopra-macos-arm64.zip.blockmap', 'blockmap fixture');
-  }
-  return dir;
-}
-
-test('publishes five packages plus verified Windows/Linux update assets; metadata stays in the release body', t => {
+test('publishes every LoopraX package and leaves source metadata in the release body', t => {
   const dir = fixture(t);
   const sha = 'a'.repeat(40);
   write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: sha,
-    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
+    sourceRepository: 'ezdemo/looprax', releaseRepository: 'ezdemo/loopra-release' }));
   write(dir, 'release-changes.md', '### 新增\n\n- 一项可核对的更新');
-  for (const name of ['Loopra-26.10.1-arm64-mac.zip', 'Loopra.Setup.26.10.1.exe', 'loopra-front_26.10.1_amd64.deb', 'loopra-dist.tar.gz']) {
-    write(dir, name, 'package fixture');
-  }
+  for (const name of LOOPRAX_ASSETS) write(dir, name, `package ${name}`);
   write(dir, 'setup.ps1', 'installer script should stay out of download list');
-  write(dir, 'SHA256SUMS', 'old checksums should stay out of download list');
-  windowsUpdate(dir, 'Loopra.Setup.26.10.1.exe');
-  linuxUpdate(dir, 'loopra-front_26.10.1_amd64.deb');
-  write(dir, 'desktop-update-mac.json', '{"signed":false}');
+  write(dir, 'looprax-desktop-darwin-arm64.app', 'bundle directory is not a release asset');
   const notes = prepareAssets(dir);
-  assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
+  assert.match(notes, /## LoopraX v26\.10\.1/);
+  assert.match(notes, new RegExp(`ezdemo/looprax/commit/${sha}`));
   assert.match(notes, /一项可核对的更新/);
-  assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [
-    'Loopra-linux-x64.AppImage', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-windows-x64.exe.blockmap', 'latest-linux.yml', 'latest-unsigned-mac.yml', 'latest.yml', 'loopra-dist.tar.gz',
-  ]);
+  assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [...LOOPRAX_ASSETS].sort());
   assert.equal(parseMetadata(notes).sourceSha, sha);
-  assert.match(parseMetadata(notes).artifacts['loopra-dist.tar.gz'], /^[a-f0-9]{64}$/);
-  assert.match(parseMetadata(notes).artifacts['latest.yml'], /^[a-f0-9]{64}$/);
-  assert.doesNotMatch(notes.split('<!--')[0], /latest\.yml|\.blockmap/);
-  assert.doesNotMatch(notes, /setup\.ps1|SHA256SUMS/);
+  assert.equal(parseMetadata(notes).sourceRepository, 'ezdemo/looprax');
+  assert.match(parseMetadata(notes).artifacts['looprax-linux-amd64'], /^[a-f0-9]{64}$/);
+  assert.doesNotMatch(notes, /setup\.ps1|Loopra-macos/);
 });
 
-test('all macOS builds publish a custom-install feed; only signed builds publish the Squirrel feed', t => {
-  for (const signed of [false, true]) {
-    const dir = desktopArtifacts(t, signed);
-    const notes = prepareAssets(dir);
-    const names = readdirSync(join(dir, 'publish'));
-    assert.equal(names.length, signed ? 11 : 9);
-    assert.equal(names.includes('latest-mac.yml'), signed);
-    assert.equal(names.includes('desktop-update-mac.json'), false);
-    assert.equal(names.includes('latest-unsigned-mac.yml'), true);
-    assert.equal(parseMetadata(notes).desktopUpdates.mac, true);
-    assert.equal(parseMetadata(notes).desktopUpdates.macSigned, signed);
-    validateUpdateManifest(join(dir, 'publish'), 'latest-unsigned-mac.yml', '26.10.1',
-      [{ name: 'Loopra-macos-arm64.zip', download: 'Loopra-macos-arm64.zip' }]);
-  }
-});
-
-test('missing platform metadata or an ad-hoc Squirrel feed blocks publication', t => {
-  const adhoc = desktopArtifacts(t, false);
-  write(adhoc, 'latest-mac.yml', 'unsigned update');
-  assert.throws(() => prepareAssets(adhoc), /Ad-hoc/);
-  const signed = desktopArtifacts(t, true);
-  rmSync(join(signed, 'latest-mac.yml'));
-  assert.throws(() => prepareAssets(signed), /ENOENT/);
-  const linux = desktopArtifacts(t, false);
-  rmSync(join(linux, 'latest-linux.yml'));
-  assert.throws(() => prepareAssets(linux), /ENOENT/);
-});
-
-test('normalizes architecture-specific Linux feed entries and validates both packages', t => {
-  const dir = desktopArtifacts(t, false);
-  const generatedFiles = [
-    { name: 'Loopra-linux-x86_64.AppImage', download: 'Loopra-linux-x86_64.AppImage' },
-    { name: 'Loopra-linux-amd64.deb', download: 'Loopra-linux-amd64.deb' },
-  ];
-  const text = readFileSync(join(dir, 'latest-linux.yml'), 'utf8');
-  validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', generatedFiles);
-  for (const bad of [text.replace('Loopra-linux-amd64.deb', 'https://other.example/package.deb'),
-    text.replace('version: 26.10.1', 'version: 26.10.2'), text.replace(/(    sha512: .+\n)/, '$1$1')]) {
-    write(dir, 'latest-linux.yml', bad);
-    assert.throws(() => validateUpdateManifest(dir, 'latest-linux.yml', '26.10.1', generatedFiles), /Invalid|does not match/);
-  }
-  write(dir, 'latest-linux.yml', text);
-  prepareAssets(dir);
-  validateUpdateManifest(join(dir, 'publish'), 'latest-linux.yml', '26.10.1', [
-    { name: 'Loopra-linux-x64.AppImage', download: 'Loopra-linux-x64.AppImage' },
-    { name: 'Loopra-linux-x64.deb', download: 'Loopra-linux-x64.deb' },
-  ]);
-});
-
-test('legacy four/six assets and complete multiplatform groups are accepted, partial update feeds are rejected', () => {
-  const legacy = ['loopra-dist.tar.gz', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe', 'Loopra-linux-x64.deb'];
-  const windows = [...legacy, 'latest.yml', 'Loopra-windows-x64.exe.blockmap'];
-  const linux = [...windows, 'Loopra-linux-x64.AppImage', 'latest-linux.yml'];
-  const all = [...linux, 'latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap'];
-  for (const names of [legacy, windows, linux, all, [...linux, 'latest-unsigned-mac.yml'], [...all, 'latest-unsigned-mac.yml']]) assert.equal(validReleaseAssets(names), true);
-  for (const names of [[...linux, 'latest-mac.yml'], all.filter(name => name !== 'latest-linux.yml'),
-    all.filter(name => name !== 'Loopra-windows-x64.exe.blockmap'), [...linux, 'unexpected.yml']]) assert.equal(validReleaseAssets(names), false);
-});
-
-test('rejects missing/mismatched Windows manifests and installer checksums before publishing', t => {
+test('stages exactly the LoopraX release packages', t => {
   const dir = fixture(t);
-  write(dir, 'Loopra-windows-x64.exe', 'package fixture');
-  assert.throws(() => validateWindowsUpdate(dir, '26.10.1', 'Loopra-windows-x64.exe'), /ENOENT/);
-  const manifest = windowsUpdate(dir);
-  for (const text of [manifest.replace('version: 26.10.1', 'version: 26.10.2'),
-    manifest.replaceAll('Loopra-windows-x64.exe', 'other.exe'),
-    manifest.replace('size: 15', 'size: 16'),
-    manifest.replace(/sha512: .+/g, 'sha512: wrong')]) {
-    write(dir, 'latest.yml', text);
-    assert.throws(() => validateWindowsUpdate(dir, '26.10.1', 'Loopra-windows-x64.exe'), /does not match/);
-  }
-  write(dir, 'latest.yml', manifest);
-  write(dir, 'Loopra-windows-x64.exe', 'tampered');
-  assert.throws(() => validateWindowsUpdate(dir, '26.10.1', 'Loopra-windows-x64.exe'), /does not match/);
+  for (const name of LOOPRAX_ASSETS) write(dir, `bin/${name}`, name);
+  write(dir, 'bin/looprax.exe', 'windows alias stays out of the release');
+  const out = join(dir, 'out');
+  assert.deepEqual(stageAssets(join(dir, 'bin'), out).sort(), [...LOOPRAX_ASSETS].sort());
+  assert.deepEqual(readdirSync(out).sort(), [...LOOPRAX_ASSETS].sort());
+  mkdirSync(join(dir, 'empty'));
+  assert.throws(() => stageAssets(join(dir, 'empty'), join(dir, 'other')), /Missing LoopraX packages/);
 });
 
-test('shell installers use new release URLs and preserve mirror, version and GUI options', t => {
+test('shell installers download the matching LoopraX package', t => {
   const dir = fixture(t);
-  write(dir, 'payload/install.sh', '#!/usr/bin/env bash\nprintf "%s" "$*" > "$TRACE_ARGS"\n');
-  execFileSync('tar', ['-czf', join(dir, 'bundle.tar.gz'), '-C', join(dir, 'payload'), 'install.sh']);
+  const installDir = join(dir, 'install');
+  const binary = `looprax-binary\n${'x'.repeat(80)}`;
+  write(dir, 'bundle.bin', binary);
   const curl = write(dir, 'bin/curl', `#!/usr/bin/env bash
 set -eu
 while [[ $# -gt 0 ]]; do
@@ -202,55 +93,62 @@ done
   chmodSync(curl, 0o755);
   const run = (file, extra = {}) => {
     const env = { ...process.env, MOCK_BIN: shellPath(join(dir, 'bin')),
-      TRACE_URL: shellPath(join(dir, 'url')), TRACE_ARGS: shellPath(join(dir, 'args')),
-      MOCK_BUNDLE: shellPath(join(dir, 'bundle.tar.gz')), ...extra };
+      TRACE_URL: shellPath(join(dir, 'url')), MOCK_BUNDLE: shellPath(join(dir, 'bundle.bin')),
+      LOOPRAX_OS: 'linux', LOOPRAX_ARCH: 'amd64', LOOPRAX_INSTALL_DIR: shellPath(installDir),
+      LOOPRAX_SKIP_PATH: '1', ...extra };
     delete env.LOOPRA_MIRROR;
     delete env.LOOPRA_VERSION;
     Object.assign(env, extra);
     execFileSync(bash, ['-c', 'export PATH="$MOCK_BIN:$PATH"; exec bash "$@"', 'installer-test', shellPath(join(tooling, file))], { env, encoding: 'utf8' });
-    return { url: readFileSync(join(dir, 'url'), 'utf8'), args: readFileSync(join(dir, 'args'), 'utf8') };
+    return readFileSync(join(dir, 'url'), 'utf8');
   };
   const base = 'https://github.com/ezdemo/loopra-release/releases';
-  assert.deepEqual(run('setup.sh'), { url: `${base}/latest/download/loopra-dist.tar.gz`, args: '--setup' });
-  assert.deepEqual(run('setup-gui.sh', { LOOPRA_VERSION: 'v26.10.1' }), { url: `${base}/download/v26.10.1/loopra-dist.tar.gz`, args: '--gui --setup' });
-  assert.equal(run('setup-mirror.sh').url, `https://gh-proxy.org/${base}/latest/download/loopra-dist.tar.gz`);
-  assert.deepEqual(run('setup-gui-mirror.sh', { LOOPRA_MIRROR: 'https://mirror.example/', LOOPRA_VERSION: 'v26.10.1' }), {
-    url: `https://mirror.example/${base}/download/v26.10.1/loopra-dist.tar.gz`, args: '--gui --setup',
-  });
+  assert.equal(run('setup.sh'), `${base}/latest/download/looprax-linux-amd64`);
+  assert.equal(readFileSync(join(installDir, 'looprax'), 'utf8'), binary);
+  assert.equal(run('setup-gui.sh', { LOOPRA_VERSION: 'v26.10.1' }), `${base}/download/v26.10.1/looprax-desktop-linux-amd64`);
+  assert.equal(readFileSync(join(installDir, 'looprax-desktop'), 'utf8'), binary);
+  assert.equal(run('setup-mirror.sh'), `https://gh-proxy.org/${base}/latest/download/looprax-linux-amd64`);
+  assert.equal(run('setup-gui-mirror.sh', { LOOPRA_MIRROR: 'https://mirror.example/', LOOPRA_VERSION: 'v26.10.1' }),
+    `https://mirror.example/${base}/download/v26.10.1/looprax-desktop-linux-amd64`);
 });
 
-test('core embedding writes into the requested source checkout', t => {
+test('macOS desktop installer unpacks LoopraX.app', t => {
   const dir = fixture(t);
-  write(dir, 'source/pom.xml', '<project/>');
-  write(dir, 'payload/loopra-web.jar', 'fixture');
-  execFileSync('tar', ['-czf', join(dir, 'bundle.tar.gz'), '-C', join(dir, 'payload'), 'loopra-web.jar']);
-  execFileSync(bash, [shellPath(join(tooling, 'ci-embed-core.sh')), shellPath(join(dir, 'bundle.tar.gz'))], {
-    env: { ...process.env, LOOPRA_SOURCE_DIR: shellPath(join(dir, 'source')) },
+  const zip = join(dir, 'LoopraX.zip');
+  const apps = join(dir, 'apps');
+  const python = process.platform === 'win32' ? 'python' : 'python3';
+  execFileSync(python, ['-c', `
+import zipfile
+archive = zipfile.ZipFile(r'''${zip}''', 'w')
+payload = b'app-bin-' + b'x' * 64
+archive.writestr('looprax-desktop-darwin-arm64.app/Contents/Info.plist', b'plist')
+archive.writestr('looprax-desktop-darwin-arm64.app/Contents/MacOS/LoopraX', payload)
+archive.close()
+`]);
+  const curl = write(dir, 'bin/curl', `#!/usr/bin/env bash
+set -eu
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    http*) printf '%s' "$1" > "$TRACE_URL" ;;
+    -o) shift; cp "$MOCK_BUNDLE" "$1" ;;
+  esac
+  shift
+done
+`);
+  chmodSync(curl, 0o755);
+  execFileSync(bash, ['-c', 'export PATH="$MOCK_BIN:$PATH"; exec bash "$@"', 'installer-test', shellPath(join(tooling, 'setup-gui.sh'))], {
+    env: { ...process.env, MOCK_BIN: shellPath(join(dir, 'bin')), TRACE_URL: shellPath(join(dir, 'url')),
+      MOCK_BUNDLE: shellPath(zip), LOOPRAX_OS: 'darwin', LOOPRAX_ARCH: 'arm64',
+      LOOPRAX_INSTALL_DIR: shellPath(apps), LOOPRAX_SKIP_PATH: '1' },
+    encoding: 'utf8',
   });
-  assert.equal(readFileSync(join(dir, 'source/loopra-front/resources/loopra-core/loopra-web.jar'), 'utf8'), 'fixture');
-});
-
-test('frontend sync replaces old assets but preserves the source config.json', t => {
-  const dir = fixture(t);
-  write(dir, 'source/pom.xml', '<project/>');
-  write(dir, 'source/loopra-front/dist/renderer/index.html', 'new UI');
-  write(dir, 'source/loopra-front/dist/renderer/config.json', 'build config');
-  const staticDir = 'source/loopra/src/main/resources/static';
-  write(dir, `${staticDir}/config.json`, 'local config');
-  write(dir, `${staticDir}/assets/old.js`, 'stale');
-  const pnpm = write(dir, 'bin/pnpm', '#!/usr/bin/env bash\nexit 0\n');
-  chmodSync(pnpm, 0o755);
-  execFileSync(bash, ['-c', 'export PATH="$MOCK_BIN:$PATH"; exec bash "$@"', 'sync-test', shellPath(join(tooling, 'ci-sync-web-assets.sh'))], {
-    env: { ...process.env, MOCK_BIN: shellPath(join(dir, 'bin')), LOOPRA_SOURCE_DIR: shellPath(join(dir, 'source')) },
-  });
-  assert.equal(readFileSync(join(dir, staticDir, 'config.json'), 'utf8'), 'local config');
-  assert.equal(readFileSync(join(dir, staticDir, 'index.html'), 'utf8'), 'new UI');
-  assert.deepEqual(readdirSync(join(dir, staticDir)).sort(), ['config.json', 'index.html']);
+  assert.match(readFileSync(join(dir, 'url'), 'utf8'), /looprax-desktop-darwin-arm64\.zip$/);
+  assert.match(readFileSync(join(apps, 'LoopraX.app', 'Contents', 'MacOS', 'LoopraX'), 'utf8'), /^app-bin-/);
 });
 
 test('release guard permits a new version and rejects published or changed-source releases', async () => {
   const metadata = { version: '26.10.1', npmVersion: '26.10.1', sourceSha: 'a'.repeat(40),
-    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' };
+    sourceRepository: 'ezdemo/looprax', releaseRepository: 'ezdemo/loopra-release' };
   await checkRelease(metadata, 'test-token', async () => new Response('', { status: 404 }));
   await assert.rejects(checkRelease(metadata, 'test-token', async () => new Response('', { status: 403 })), /HTTP 403/);
   await assert.rejects(checkRelease(metadata, 'test-token', async () => Response.json({ draft: false })), /already published/);

@@ -1,6 +1,6 @@
 # 更新日志
 
-这里归档 Loopra 正式发布版本的更新说明。
+这里归档正式发布版本的更新说明。2026-10-29 之前是 Loopra，之后是 LoopraX。
 
 <!-- loopra-changelog:start -->
 

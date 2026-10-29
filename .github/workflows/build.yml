@@ -19,7 +19,7 @@ env:
   LOOPRA_SOURCE_DIR: ${{ github.workspace }}/source
 
 jobs:
-  # Resolve main once so every platform builds exactly the same source commit.
+  # Resolve main once so every package is built from the same source commit.
   prepare:
     runs-on: ubuntu-latest
     permissions:
@@ -32,10 +32,10 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Checkout Loopra main
+      - name: Checkout LoopraX main
         uses: actions/checkout@v7
         with:
-          repository: ezdemo/loopra
+          repository: ezdemo/looprax
           ref: main
           path: source
           fetch-depth: 0
@@ -71,63 +71,37 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  electron-build:
-    needs: [prepare, web-dist]
-    strategy:
-      matrix:
-        include:
-          - os: macos-latest
-            builder_flag: --mac
-            artifact_name: Loopra-mac
-            package_name: 'Loopra-macos-${arch}.${ext}'
-            upload_pattern: |
-              source/loopra-front/release/*.zip
-              source/loopra-front/release/*.zip.blockmap
-              source/loopra-front/release/latest-mac.yml
-              source/loopra-front/release/desktop-update-mac.json
-
-          - os: ubuntu-latest
-            builder_flag: --linux
-            artifact_name: Loopra-linux
-            package_name: 'Loopra-linux-${arch}.${ext}'
-            upload_pattern: |
-              source/loopra-front/release/*.deb
-              source/loopra-front/release/*.AppImage
-              source/loopra-front/release/latest-linux.yml
-
-          - os: windows-latest
-            builder_flag: --win
-            artifact_name: Loopra-win
-            package_name: 'Loopra-windows-${arch}.${ext}'
-            upload_pattern: |
-              source/loopra-front/release/*.exe
-              source/loopra-front/release/*.exe.blockmap
-              source/loopra-front/release/latest.yml
-
-    runs-on: ${{ matrix.os }}
-
+  # LoopraX cross-compiles with CGO disabled, so one Linux runner can produce
+  # the service binaries and desktop apps for every target in package-matrix.txt.
+  package:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - name: Checkout release tooling
         uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - name: Checkout pinned Loopra main
+      - name: Checkout pinned LoopraX main
         uses: actions/checkout@v7
         with:
-          repository: ezdemo/loopra
+          repository: ezdemo/looprax
           ref: ${{ needs.prepare.outputs.source_sha }}
           path: source
           token: ${{ secrets.SOURCE_READ_TOKEN || github.token }}
           persist-credentials: false
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: source/go.mod
+          cache-dependency-path: source/go.sum
+
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6
         with:
           version: 10
           run_install: false
@@ -136,206 +110,30 @@ jobs:
         env:
           RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         run: node .release/set-version.mjs source "$RELEASE_VERSION"
-        shell: bash
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "store=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Cache pnpm store
-        uses: actions/cache@v6
-        with:
-          path: ${{ steps.pnpm-cache.outputs.store }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('source/loopra-front/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
-      - name: Cache Electron
-        uses: actions/cache@v6
-        with:
-          path: |
-            ~/.cache/electron
-            ~/.cache/electron-builder
-          key: ${{ runner.os }}-electron-${{ hashFiles('source/loopra-front/pnpm-lock.yaml') }}
-
-      - name: Install dependencies
-        working-directory: source/loopra-front
-        run: pnpm install --frozen-lockfile
-
-      - name: Build Vite bundles
-        working-directory: source/loopra-front
-        run: pnpm run build:vite
-
-      # 核心运行时（loopra-dist 产物）嵌入前端安装包：用户安装桌面端后无需再下载核心包
-      - name: Download loopra dist artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: loopra-dist
-          path: web-dist-artifact
-
-      - name: Embed core runtime into installer
-        run: bash .release/ci-embed-core.sh web-dist-artifact/loopra-dist.tar.gz
-
-      # macOS 代码签名 + 公证：
-      # - 配置了 MAC_CERTIFICATE_P12（Developer ID 证书 base64）时，将其写入
-      #   CSC_LINK 交给 electron-builder 自动签名；
-      # - 同时配置了 APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID 时，
-      #   electron-builder 会对产物做 notarization（公证），否则 Gatekeeper 仍会拦截；
-      # - 未配置任何凭据时，回退为 ad-hoc 签名（无需 Apple 开发者账户，
-      #   electron-builder >= 26.0.12 支持 -c.mac.identity=-）。ad-hoc 签名后
-      #   Apple Silicon 上不会出现无法绕过的“已损坏”提示，但 Gatekeeper 仍会
-      #   提示“无法验证开发者”，用户首次需右键 → 打开。
-      - name: Prepare macOS code signing
-        if: runner.os == 'macOS'
-        shell: bash
+      - name: Install icon dependency
         env:
-          MAC_CERTIFICATE_P12: ${{ secrets.MAC_CERTIFICATE_P12 }}
-          MAC_CERTIFICATE_P12_PASSWORD: ${{ secrets.MAC_CERTIFICATE_P12_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: |
-          if [ -z "$MAC_CERTIFICATE_P12" ]; then
-            echo "::notice::未配置 MAC_CERTIFICATE_P12，macOS 构建将使用 ad-hoc 签名（无需 Apple 开发者账户；用户首次打开需右键 → 打开）"
-            echo "MAC_USE_ADHOC=1" >> "$GITHUB_ENV"
-            exit 0
-          fi
-          echo "MAC_USE_ADHOC=0" >> "$GITHUB_ENV"
-          echo "$MAC_CERTIFICATE_P12" | base64 --decode > "$RUNNER_TEMP/loopra-mac-cert.p12"
-          chmod 600 "$RUNNER_TEMP/loopra-mac-cert.p12"
-          echo "CSC_LINK=$RUNNER_TEMP/loopra-mac-cert.p12" >> "$GITHUB_ENV"
-          echo "CSC_KEY_PASSWORD=$MAC_CERTIFICATE_P12_PASSWORD" >> "$GITHUB_ENV"
-          if [ -z "$APPLE_ID" ] || [ -z "$APPLE_APP_SPECIFIC_PASSWORD" ] || [ -z "$APPLE_TEAM_ID" ]; then
-            echo "::warning::Apple 公证凭据不完整（APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID），本次仅签名不公证"
-            exit 0
-          fi
-          echo "APPLE_ID=$APPLE_ID" >> "$GITHUB_ENV"
-          echo "APPLE_APP_SPECIFIC_PASSWORD=$APPLE_APP_SPECIFIC_PASSWORD" >> "$GITHUB_ENV"
-          echo "APPLE_TEAM_ID=$APPLE_TEAM_ID" >> "$GITHUB_ENV"
-          echo "::notice::macOS 代码签名与公证凭据已就绪"
+          PIP_BREAK_SYSTEM_PACKAGES: '1'
+        run: python3 -m pip install pillow || echo "::warning::Pillow is unavailable; Windows and macOS packages will not have icons"
 
-      - name: Package with electron-builder
-        working-directory: source/loopra-front
-        shell: bash
-        env:
-          # 无证书时禁止自动发现，避免 runner 上意外使用无效证书导致打包失败
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-          BUILDER_ARTIFACT_NAME: ${{ matrix.package_name }}
-        run: |
-          if [ "$RUNNER_OS" = "macOS" ] && [ "$MAC_USE_ADHOC" = "1" ]; then
-            # 无 Developer ID 证书 → 显式 ad-hoc 签名（identity "-" 与 codesign 约定一致）
-            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.mac.identity=- -c.extraMetadata.loopraDesktopUpdate.macSigned=false -c.artifactName="$BUILDER_ARTIFACT_NAME"
-          elif [ "$RUNNER_OS" = "macOS" ]; then
-            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.extraMetadata.loopraDesktopUpdate.macSigned=true -c.artifactName="$BUILDER_ARTIFACT_NAME"
-          else
-            npx electron-builder ${{ matrix.builder_flag }} --publish=never -c.artifactName="$BUILDER_ARTIFACT_NAME"
-          fi
+      - name: Package LoopraX
+        run: bash source/scripts/package.sh --out "$GITHUB_WORKSPACE/dist"
 
-      - name: Record macOS automatic update support
-        if: runner.os == 'macOS'
-        working-directory: source/loopra-front
-        shell: bash
-        run: |
-          if [ "$MAC_USE_ADHOC" = "0" ]; then
-            found=0
-            for bundle in release/mac*/Loopra.app; do
-              [ -d "$bundle" ] || continue
-              codesign --verify --deep --strict "$bundle"
-              signature=$(codesign -dv --verbose=4 "$bundle" 2>&1)
-              if [[ "$signature" != *"Authority=Developer ID Application:"* ]]; then
-                echo "::error::macOS 自动更新需要 Developer ID Application 正式签名"
-                exit 1
-              fi
-              found=1
-            done
-            [ "$found" = "1" ] || { echo "::error::未找到已签名的 Loopra.app"; exit 1; }
-          else
-            # Custom-install clients use latest-unsigned-mac.yml, generated by
-            # prepare-assets. Never expose an ad-hoc ZIP to Squirrel clients.
-            rm -f release/latest-mac.yml
-          fi
-          node -e 'require("fs").writeFileSync("release/desktop-update-mac.json", JSON.stringify({signed: process.env.MAC_USE_ADHOC === "0"}))'
+      - name: Stage release packages
+        run: node .release/stage-assets.mjs dist release-packages
 
-      - name: Upload artifacts
+      - name: Upload packages
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.artifact_name }}
+          name: looprax-packages
           overwrite: true
-          path: ${{ matrix.upload_pattern }}
+          path: release-packages/*
           if-no-files-found: error
-          retention-days: 7
-
-  # ──────────────────────────────────────────────
-  # 2. Web 分发包
-  #    前端资产同步 + Maven 打包（与原 master-pipeline 行为一致）
-  # ──────────────────────────────────────────────
-  web-dist:
-    needs: prepare
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout release tooling
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Checkout pinned Loopra main
-        uses: actions/checkout@v7
-        with:
-          repository: ezdemo/loopra
-          ref: ${{ needs.prepare.outputs.source_sha }}
-          path: source
-          token: ${{ secrets.SOURCE_READ_TOKEN || github.token }}
-          persist-credentials: false
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
-          cache: maven
-          cache-dependency-path: source/**/pom.xml
-
-      # 脚本依赖 PATH 中的 pnpm（corepack prepare 不会创建 pnpm 命令），
-      # 这里显式安装，与 electron-build job 保持一致
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 10
-          run_install: false
-
-      - name: Sync frontend assets
-        env:
-          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
-        run: |
-          node .release/set-version.mjs source "$RELEASE_VERSION"
-          bash .release/ci-sync-web-assets.sh
-
-      - name: Package web distribution
-        working-directory: source
-        run: mvn -B -ntp -DskipTests -gs ../.release/maven-central-settings.xml -s ../.release/maven-central-settings.xml clean verify
-
-      - name: Verify artifact
-        run: test -f ./source/loopra/target/loopra-dist.tar.gz
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: loopra-dist
-          path: ./source/loopra/target/loopra-dist.tar.gz
-          overwrite: true
           retention-days: 7
 
   release:
     if: inputs.create_release
-    needs: [prepare, electron-build, web-dist]
+    needs: [prepare, package]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -360,7 +158,7 @@ jobs:
         with:
           tag_name: v${{ needs.prepare.outputs.version }}
           target_commitish: ${{ github.sha }}
-          name: Loopra v${{ needs.prepare.outputs.version }}
+          name: LoopraX v${{ needs.prepare.outputs.version }}
           body_path: release-notes.md
           draft: true
           prerelease: false
@@ -374,22 +172,7 @@ jobs:
         run: node .release/publish-release.mjs
 
   # Releases published with GITHUB_TOKEN do not emit workflow-triggering release
-  # events. Dispatch downstream workflows explicitly, keeping npm OIDC bound
-  # to npm-publish.yml and allowing each downstream task to fail independently.
-  dispatch-npm:
-    needs: [prepare, release]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write
-    steps:
-      - name: Start npm publishing
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: v${{ needs.prepare.outputs.version }}
-        run: gh workflow run npm-publish.yml --ref main -f "tag=$RELEASE_TAG"
-
+  # events. Dispatch the follow-up workflows explicitly so each can fail alone.
   dispatch-source-sync:
     needs: [prepare, release]
     runs-on: ubuntu-latest

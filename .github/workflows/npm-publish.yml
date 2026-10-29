@@ -1,12 +1,12 @@
-name: Publish core to npm
+name: Publish historical Loopra core to npm
 
+# LoopraX releases do not publish loopra-dist. This workflow remains only so an
+# older Loopra tag can be retried by hand.
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Published release tag, e.g. v26.9.91'
+        description: 'Published Loopra release tag, e.g. v26.10.2005'
         required: true
         type: string
 

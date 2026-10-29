@@ -63,31 +63,28 @@ function fixture(t) {
     mkdirSync(dirname(join(dir, file)), { recursive: true });
     writeFileSync(join(dir, file), value);
   };
-  write('pom.xml', '<project><version>1.0-SNAPSHOT</version><properties><cutin.version>1.0-SNAPSHOT</cutin.version><loopra.version>26.9.91</loopra.version></properties></project>');
-  write('loopra/pom.xml', '<project><parent><version>1.0-SNAPSHOT</version></parent><artifactId>loopra</artifactId>\n<version>26.9.91</version></project>');
-  write('loopra-front/package.json', '{"version":"26.9.91","dependencies":{"test":"1.2.3"}}');
-  write('loopra/src/installDist/bin/version.txt', '26.9.91\n');
+  write('internal/controller/version.go', 'package controller\n\nvar Version = "0.1.0-go"\nvar BuildTime = ""\n');
   return { dir, write, read: file => readFileSync(join(dir, file), 'utf8') };
 }
 
-test('injects one build version into Maven, desktop and core while preserving framework versions', t => {
+test('injects one build version into version.go and preserves the build timestamp variable', t => {
   const f = fixture(t);
   setBuildVersion(f.dir, '26.10.1901');
   assert.deepEqual(readSourceVersion(f.dir), { version: '26.10.1901', npmVersion: '26.10.1901' });
-  assert.match(f.read('loopra/pom.xml'), /<artifactId>loopra<\/artifactId>\n<version>26\.10\.1901<\/version>/);
-  assert.match(f.read('pom.xml'), /<cutin.version>1.0-SNAPSHOT<\/cutin.version>/);
-  assert.match(f.read('loopra/pom.xml'), /<parent><version>1.0-SNAPSHOT<\/version><\/parent>/);
-  assert.equal(JSON.parse(f.read('loopra-front/package.json')).dependencies.test, '1.2.3');
+  assert.match(f.read('internal/controller/version.go'), /var Version = "26\.10\.1901"/);
+  assert.match(f.read('internal/controller/version.go'), /var BuildTime = ""/);
   setBuildVersion(f.dir, '26.10.1901');
-  assert.equal(f.read('loopra/src/installDist/bin/version.txt'), '26.10.1901\n');
+  assert.match(f.read('internal/controller/version.go'), /var Version = "26\.10\.1901"/);
 });
 
-test('validates the whole build layout before writing any version file', t => {
+test('validates version.go before writing any version file', t => {
   const f = fixture(t);
-  f.write('loopra/pom.xml', '<project/>');
+  f.write('internal/controller/version.go', 'var Version = "0.1.0-go"\nvar Version = "9.9.9"\n');
   assert.throws(() => setBuildVersion(f.dir, '26.10.1901'), /exactly one/);
-  assert.match(f.read('pom.xml'), /26\.9\.91/);
+  assert.match(f.read('internal/controller/version.go'), /0\.1\.0-go/);
+  f.write('internal/controller/version.go', 'package controller\n\nvar Version = "0.1.0-go"\n');
   assert.throws(() => setBuildVersion(f.dir, '26.01.1901'), /SemVer/);
+  assert.match(f.read('internal/controller/version.go'), /0\.1\.0-go/);
 });
 
 test('records the original source version and SHA independently of the generated release version', t => {
@@ -99,7 +96,8 @@ test('records the original source version and SHA independently of the generated
   const metadata = createSourceMetadata(f.dir, '26.10.1901', releaseSha);
   assert.equal(metadata.version, '26.10.1901');
   assert.equal(metadata.npmVersion, '26.10.1901');
-  assert.equal(metadata.originalSourceVersion, '26.9.91');
+  assert.equal(metadata.originalSourceVersion, '0.1.0-go');
+  assert.equal(metadata.sourceRepository, 'ezdemo/looprax');
   assert.equal(metadata.sourceSha, sourceSha);
   assert.equal(metadata.releaseSha, releaseSha);
   assert.equal(git('rev-parse', 'HEAD'), sourceSha);
