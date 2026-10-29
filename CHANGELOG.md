@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2903:start -->
+## [26.10.2903](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2903)
+
+发布日期：2026-10-29 19:40（UTC+8）
+
+### 修复
+- 修复桌面端启动时闪现命令窗口的问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/looprax/compare/f392ee9757903a62c03b61e217ef9d5c698aeb06...58514089a462185681879c5c526a75ba75bc4a9c>) · 从 v26.10.2902 到本次构建
+<!-- loopra-release:v26.10.2903:end -->
+
+---
+
 <!-- loopra-release:v26.10.2902:start -->
 ## [26.10.2902](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2902)
 
