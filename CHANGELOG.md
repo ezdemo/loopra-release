@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2904:start -->
+## [26.10.2904](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2904)
+
+发布日期：2026-10-29 20:37（UTC+8）
+
+### 改进
+
+- 项目已替换为 LoopraX 代码库。本次变更涉及整体代码替换，更新时建议按全新安装方式处理，并留意原有配置与数据的兼容情况。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/c7b70f846985b0fd1b488c431c7f2c64551c89ba...aae592b87981a0c0f862c31697955c91863427b4>) · 从 v26.10.2703 到本次构建
+<!-- loopra-release:v26.10.2904:end -->
+
+---
+
 <!-- loopra-release:v26.10.2903:start -->
 ## [26.10.2903](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2903)
 
