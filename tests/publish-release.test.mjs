@@ -9,7 +9,7 @@ const releaseSha = 'a'.repeat(40);
 function fixture() {
   const names = [...LOOPRAX_ASSETS];
   const metadata = { version: tag.slice(1), npmVersion: tag.slice(1), sourceSha: 'b'.repeat(40), releaseSha,
-    sourceRepository: 'ezdemo/looprax', releaseRepository: 'ezdemo/loopra-release',
+    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release',
     artifacts: Object.fromEntries(names.map((name, i) => [name, (i % 16).toString(16).repeat(64)])) };
   const state = { calls: [], patchStatus: 200, metadata,
     release: { id: 12, tag_name: tag, draft: true, prerelease: false, body: metadataComment(metadata),

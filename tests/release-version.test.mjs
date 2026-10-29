@@ -97,7 +97,7 @@ test('records the original source version and SHA independently of the generated
   assert.equal(metadata.version, '26.10.1901');
   assert.equal(metadata.npmVersion, '26.10.1901');
   assert.equal(metadata.originalSourceVersion, '0.1.0-go');
-  assert.equal(metadata.sourceRepository, 'ezdemo/looprax');
+  assert.equal(metadata.sourceRepository, 'ezdemo/loopra');
   assert.equal(metadata.sourceSha, sourceSha);
   assert.equal(metadata.releaseSha, releaseSha);
   assert.equal(git('rev-parse', 'HEAD'), sourceSha);

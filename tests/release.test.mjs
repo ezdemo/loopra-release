@@ -48,18 +48,18 @@ test('publishes every LoopraX package and leaves source metadata in the release 
   const dir = fixture(t);
   const sha = 'a'.repeat(40);
   write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: sha,
-    sourceRepository: 'ezdemo/looprax', releaseRepository: 'ezdemo/loopra-release' }));
+    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
   write(dir, 'release-changes.md', '### 新增\n\n- 一项可核对的更新');
   for (const name of LOOPRAX_ASSETS) write(dir, name, `package ${name}`);
   write(dir, 'setup.ps1', 'installer script should stay out of download list');
   write(dir, 'looprax-desktop-darwin-arm64.app', 'bundle directory is not a release asset');
   const notes = prepareAssets(dir);
   assert.match(notes, /## LoopraX v26\.10\.1/);
-  assert.match(notes, new RegExp(`ezdemo/looprax/commit/${sha}`));
+  assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
   assert.match(notes, /一项可核对的更新/);
   assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [...LOOPRAX_ASSETS].sort());
   assert.equal(parseMetadata(notes).sourceSha, sha);
-  assert.equal(parseMetadata(notes).sourceRepository, 'ezdemo/looprax');
+  assert.equal(parseMetadata(notes).sourceRepository, 'ezdemo/loopra');
   assert.match(parseMetadata(notes).artifacts['looprax-linux-amd64'], /^[a-f0-9]{64}$/);
   assert.doesNotMatch(notes, /setup\.ps1|Loopra-macos/);
 });
@@ -148,7 +148,7 @@ done
 
 test('release guard permits a new version and rejects published or changed-source releases', async () => {
   const metadata = { version: '26.10.1', npmVersion: '26.10.1', sourceSha: 'a'.repeat(40),
-    sourceRepository: 'ezdemo/looprax', releaseRepository: 'ezdemo/loopra-release' };
+    sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' };
   await checkRelease(metadata, 'test-token', async () => new Response('', { status: 404 }));
   await assert.rejects(checkRelease(metadata, 'test-token', async () => new Response('', { status: 403 })), /HTTP 403/);
   await assert.rejects(checkRelease(metadata, 'test-token', async () => Response.json({ draft: false })), /already published/);

@@ -1,5 +1,5 @@
-export const CURRENT_SOURCE = 'ezdemo/looprax';
-const KNOWN_SOURCES = new Set(['ezdemo/loopra', CURRENT_SOURCE]);
+export const CURRENT_SOURCE = 'ezdemo/loopra';
+const KNOWN_SOURCES = new Set([CURRENT_SOURCE, 'ezdemo/looprax']);
 const REPO = 'ezdemo/loopra-release';
 
 export function validateMetadata(metadata) {

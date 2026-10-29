@@ -47,8 +47,9 @@ export async function findBaseline(sourceDir, metadata, { token, request = fetch
     if (batch.length < 100) break;
   }
   releases.sort((a, b) => String(b.published_at || '').localeCompare(String(a.published_at || '')));
-  // Loopra releases live in this repository too. Their commits are not ancestors
-  // of LoopraX, so a different source repository starts a new changelog range.
+  // A release recorded against another source repository is a different history.
+  // Skip it. Earlier releases from the current source stay in range when their
+  // commit is an ancestor of this build.
   let sawOtherProduct = false;
   for (const previous of releases) {
     const old = await readReleaseMetadata(previous, { token, request });

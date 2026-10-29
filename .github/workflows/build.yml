@@ -35,7 +35,7 @@ jobs:
       - name: Checkout LoopraX main
         uses: actions/checkout@v7
         with:
-          repository: ezdemo/looprax
+          repository: ezdemo/loopra
           ref: main
           path: source
           fetch-depth: 0
@@ -86,7 +86,7 @@ jobs:
       - name: Checkout pinned LoopraX main
         uses: actions/checkout@v7
         with:
-          repository: ezdemo/looprax
+          repository: ezdemo/loopra
           ref: ${{ needs.prepare.outputs.source_sha }}
           path: source
           token: ${{ secrets.SOURCE_READ_TOKEN || github.token }}

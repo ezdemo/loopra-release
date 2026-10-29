@@ -1,14 +1,14 @@
 # LoopraX Releases
 
-LoopraX 的独立构建、安装与发布仓库。源码和问题反馈位于 [ezdemo/looprax](https://github.com/ezdemo/looprax)，下载见 [Releases](https://github.com/ezdemo/loopra-release/releases/latest)。
+LoopraX 的独立构建、安装与发布仓库。源码和问题反馈位于 [ezdemo/loopra](https://github.com/ezdemo/loopra)，下载见 [Releases](https://github.com/ezdemo/loopra-release/releases/latest)。
 
-参考 [yetone/magpie-releases](https://github.com/yetone/magpie-releases) 的源码与发布仓库分离方式。此仓库固定从 `ezdemo/looprax` 的 **main** 分支获取源码，开始构建时锁定提交 SHA，服务端和桌面端都使用该提交。
+参考 [yetone/magpie-releases](https://github.com/yetone/magpie-releases) 的源码与发布仓库分离方式。此仓库固定从 `ezdemo/loopra` 的 **main** 分支获取源码，开始构建时锁定提交 SHA，服务端和桌面端都使用该提交。`main` 现在是 LoopraX 源码树。
 
 2026-10-29 起只发布 LoopraX。更早的 Release 是 Java / Electron 版 Loopra，仍然可以下载，但流水线不再构建它。
 
 ## 构建与发版
 
-1. 把要发布的源码合并到 `ezdemo/looprax` 的 **main**。开发版本留在源码里的 `internal/controller/version.go`，无需为发版手动改版本号。
+1. 把要发布的源码合并到 `ezdemo/loopra` 的 **main**。开发版本留在源码里的 `internal/controller/version.go`，无需为发版手动改版本号。
 2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。`create_release` 默认勾选：构建成功后自动正式发布；取消勾选则只构建。
 3. 工作流自动领取版本，锁定源码提交，并在打包前把该版本写入检出的 `version.go`。无需手动打标签；标签由流水线创建，推送标签不会触发新构建。
 4. 全部安装包构建成功后，流水线先上传到临时草稿，核对每个附件的 SHA-256 和构建身份，再自动正式发布。随后分别启动源码仓库 Release 同步和 `CHANGELOG.md` 归档。
@@ -29,9 +29,9 @@ LoopraX 不再发布 npm 上的 `loopra-dist`。**Publish historical Loopra core
 
 ### 自动同步源码仓库 Release
 
-正式发布本仓库的 Release 后，**Sync release to source repository** 工作流会将同一版本单向同步到发布元数据里的源码仓库。新版本同步到 `ezdemo/looprax`。旧的 Loopra Release 如果重试同步，仍写回 `ezdemo/loopra`。同步不会重新构建软件包。
+正式发布本仓库的 Release 后，**Sync release to source repository** 工作流会将同一版本单向同步到发布元数据里的源码仓库。现在的 LoopraX 和更早的 Java 版 Loopra 都写回 `ezdemo/loopra`。如果某次发布的元数据仍是 `ezdemo/looprax`，同步会写回那个仓库。同步不会重新构建软件包。
 
-首次配置：创建 Fine-grained PAT，Repository access 选择 **ezdemo/looprax**（若还要补同步旧 Loopra 版本，再加入 **ezdemo/loopra**），Repository permissions 授予 **Contents: Read and write**。在本仓库 [Actions Secrets](https://github.com/ezdemo/loopra-release/settings/secrets/actions) 添加 **`SOURCE_RELEASE_TOKEN`**。该凭据用于反向创建源码标签和 Release，与源码仓库触发构建用的凭据不同；不要把 token 写进代码或更新说明。
+首次配置：创建 Fine-grained PAT，Repository access 选择 **ezdemo/loopra**（若要补同步曾经从 `ezdemo/looprax` 构建的版本，再加入 **ezdemo/looprax**），Repository permissions 授予 **Contents: Read and write**。在本仓库 [Actions Secrets](https://github.com/ezdemo/loopra-release/settings/secrets/actions) 添加 **`SOURCE_RELEASE_TOKEN`**。该凭据用于反向创建源码标签和 Release，与源码仓库触发构建用的凭据不同；不要把 token 写进代码或更新说明。
 
 同步复制标题、说明和全部安装包，下载与上传都校验 SHA-256。补同步旧的 Loopra Release 时，仍接受当时的安装包和自动更新附件。源码仓库同名标签指向发布元数据中的 `sourceSha`，而不是当前 `main` 或发布工具提交。说明中的下载链接改为源码仓库的对应附件，其余正文与构建元数据保留。目标先创建草稿，附件齐全后才发布；预发布状态同步保留，补同步旧版本不会抢占最新正式版本。
 
@@ -58,7 +58,7 @@ Release 下载区包含 `scripts/package-matrix.txt` 里的服务端二进制，
 
 ## 自动生成更新说明
 
-工作流从上次**同一产品线**的正式、非预发布 Release 正文中的隐藏记录读取 `sourceSha`（兼容旧版 `release-metadata.json` 附件），与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/looprax` 的源码历史。更早的 Loopra Release 属于另一条产品线，不作为比较基准。草稿、预发布以及晚于本次版本的 Release 也不作为基准。
+工作流从上次正式、非预发布 Release 正文中的隐藏记录读取 `sourceSha`（兼容旧版 `release-metadata.json` 附件），与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/loopra` 的源码历史。源码仓库不同的 Release 不作为比较基准。同一仓库上更早的 Release，只要其源码提交是本次提交的祖先，就作为比较基准。草稿、预发布以及晚于本次版本的 Release 也不作为基准。
 
 使用 **OpenAI 兼容的 Chat Completions 协议**（JSON 请求、`Authorization: Bearer <Key>`）。默认网关为 `https://amr-link.open-design.ai/v1`，实际请求 `POST https://amr-link.open-design.ai/v1/chat/completions`。请求只使用通用 Chat Completions 字段。
 
@@ -72,7 +72,7 @@ Release 下载区包含 `scripts/package-matrix.txt` 里的服务端二进制，
 
 API Key 只在生成摘要步骤使用，不会写进产物或日志。未配置 Key、API 超时/失败或返回不完整时，自动保留原始提交列表。AI 摘要附带可展开的原始提交记录和源码比较链接。没有新增提交时不调用 AI。
 
-首次发布 LoopraX 时，如果源码仓库没有更低的版本标签，更新说明从源码初始历史开始，并受 500 条提交的展示上限约束。
+第一次从当前 `main` 发版时，比较基准是上一份正式 Release 的源码提交。没有可比较的正式 Release、源码仓库也没有更低版本标签时，才从源码初始历史开始，并受 500 条提交的展示上限约束。
 
 更新说明在 `prepare` 阶段生成。只构建模式也能在该 job 的 Summary 和 `release-metadata` Artifact 中查看 **`release-changes.md`**；创建 Release 时自动并入正文，不作为下载附件。
 
@@ -111,7 +111,7 @@ curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release
 在此仓库目录中准备源码（Go 见 `go.mod`，Node 22、pnpm 10）：
 
 ```bash
-git clone --branch main --single-branch https://github.com/ezdemo/looprax.git source
+git clone --branch main --single-branch https://github.com/ezdemo/loopra.git source
 bash source/scripts/package.sh --out dist
 ```
 
