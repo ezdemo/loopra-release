@@ -78,7 +78,7 @@ API Key 只在生成摘要步骤使用，不会写进产物或日志。未配置
 
 ## 安装
 
-服务端（命令行里的 `looprax`）：
+命令行安装后，启动命令是 `loopra`（`loopra`、`loopra web`、`loopra web 0`、`loopra web 4567`、`loopra acp`）。
 
 Windows PowerShell：
 
@@ -92,17 +92,65 @@ macOS / Linux：
 curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup.sh | bash
 ```
 
+国内网络可选用 Github 镜像脚本（脚本与安装包仍从 Github 下载，速度更快）：
+
+Windows PowerShell：
+
+```powershell
+irm https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup-mirror.ps1 | iex
+```
+
+macOS / Linux：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup-mirror.sh | bash
+```
+
 桌面端：
+
+Windows PowerShell：
 
 ```powershell
 irm https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup-gui.ps1 | iex
 ```
 
+macOS / Linux：
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup-gui.sh | bash
 ```
 
-`main` 上的脚本默认安装最新的**正式** Release，并按当前系统选择安装包。服务端装到 `~/.looprax/bin`（Windows 为 `%LOCALAPPDATA%\LoopraX\bin`）。macOS 桌面端解压到 `~/Applications/LoopraX.app`。使用 `setup-mirror` 变体可通过 GitHub 镜像下载；`LOOPRA_MIRROR` 可指定镜像。`LOOPRA_VERSION=v26.10.2901` 可指定版本。
+桌面端镜像：
+
+Windows PowerShell：
+
+```powershell
+irm https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup-gui-mirror.ps1 | iex
+```
+
+macOS / Linux：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup-gui-mirror.sh | bash
+```
+
+所有安装脚本（`setup.ps1` / `setup.sh` 及其 `-mirror`、`-gui` 变体）都支持通过 `LOOPRA_MIRROR` 环境变量指定具体镜像（镜像列表可在桌面端下载源选择中自动测速排序后挑选）：
+
+Windows PowerShell：
+
+```powershell
+$env:LOOPRA_MIRROR='https://gh-proxy.org/'; irm https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup.ps1 | iex
+```
+
+macOS / Linux：
+
+```bash
+export LOOPRA_MIRROR='https://gh-proxy.org/'; curl -fsSL https://raw.githubusercontent.com/ezdemo/loopra-release/main/.release/setup.sh | bash
+```
+
+未设置 `LOOPRA_MIRROR` 时：直连脚本走 GitHub 官方源，镜像脚本（`-mirror` 变体）默认使用 `gh-proxy.org`。
+
+`main` 上的脚本默认安装最新的正式 Release，并按当前系统选择安装包。`LOOPRA_VERSION=v26.10.2901` 可指定版本。命令行装到 `~/.looprax/bin`（Windows 为 `%LOCALAPPDATA%\LoopraX\bin`）。macOS 桌面端解压到 `~/Applications/LoopraX.app`。
 
 应用内更新默认读取本仓库的最新 Release。`arm` 对应安装包名里的 `armv7`，不会误选 `arm64`。桌面进程只更新带 `desktop` 的附件。
 

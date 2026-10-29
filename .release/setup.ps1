@@ -64,7 +64,7 @@ try {
 
     $destDir = if ($env:LOOPRAX_INSTALL_DIR) { $env:LOOPRAX_INSTALL_DIR } else { Join-Path $env:LOCALAPPDATA 'LoopraX\bin' }
     New-Item -ItemType Directory -Force -Path $destDir | Out-Null
-    $leaf = if ($Variant -eq 'desktop') { 'looprax-desktop.exe' } else { 'looprax.exe' }
+    $leaf = if ($Variant -eq 'desktop') { 'looprax-desktop.exe' } else { 'loopra.exe' }
     $dest = Join-Path $destDir $leaf
     Copy-Item -LiteralPath $packageFile -Destination $dest -Force
 
@@ -87,7 +87,11 @@ try {
     Write-Host ''
     Write-Info "Installed $dest"
     Write-Host 'You can now run: ' -NoNewline
-    Write-Host $leaf -ForegroundColor Cyan
+    if ($Variant -eq 'desktop') {
+        Write-Host 'looprax-desktop' -ForegroundColor Cyan
+    } else {
+        Write-Host 'loopra web' -ForegroundColor Cyan
+    }
     Write-Host 'Open a new terminal if the command is not found yet.'
     Write-Host ''
 } finally {

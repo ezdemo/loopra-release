@@ -202,7 +202,7 @@ fi
 if [ "$VARIANT" = desktop ]; then
   BIN=looprax-desktop
 else
-  BIN=looprax
+  BIN=loopra
 fi
 if [ "$OS_NAME" = windows ]; then
   BIN=$BIN.exe
@@ -214,5 +214,9 @@ chmod 755 "$DEST/$BIN" || true
 ensure_path "$DEST"
 echo ""
 info "Installed $DEST/$BIN"
-echo -e "You can now run: ${CYAN}${BIN}${NC}"
+if [ "$VARIANT" = desktop ]; then
+  echo -e "You can now run: ${CYAN}${BIN}${NC}"
+else
+  echo -e "You can now run: ${CYAN}loopra web${NC}"
+fi
 echo "Open a new terminal if the command is not found yet."

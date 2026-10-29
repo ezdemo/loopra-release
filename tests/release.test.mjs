@@ -104,7 +104,7 @@ done
   };
   const base = 'https://github.com/ezdemo/loopra-release/releases';
   assert.equal(run('setup.sh'), `${base}/latest/download/looprax-linux-amd64`);
-  assert.equal(readFileSync(join(installDir, 'looprax'), 'utf8'), binary);
+  assert.equal(readFileSync(join(installDir, 'loopra'), 'utf8'), binary);
   assert.equal(run('setup-gui.sh', { LOOPRA_VERSION: 'v26.10.1' }), `${base}/download/v26.10.1/looprax-desktop-linux-amd64`);
   assert.equal(readFileSync(join(installDir, 'looprax-desktop'), 'utf8'), binary);
   assert.equal(run('setup-mirror.sh'), `https://gh-proxy.org/${base}/latest/download/looprax-linux-amd64`);
