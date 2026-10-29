@@ -4,6 +4,93 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.2902:start -->
+## [26.10.2902](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2902)
+
+发布日期：2026-10-29 18:53（UTC+8）
+
+### 更新内容
+
+- fix: 为 xlsx 压缩包补上完整性校验 ([f392ee9](https://github.com/ezdemo/looprax/commit/f392ee9757903a62c03b61e217ef9d5c698aeb06))
+- feat: 让应用内更新读取 loopra-release 的 LoopraX 安装包 ([ba852ea](https://github.com/ezdemo/looprax/commit/ba852ea3642da08c53ba6ba88165707b314ef6a8))
+- docs: 按 Loopra 的产品说明重写 README ([1acde0c](https://github.com/ezdemo/looprax/commit/1acde0c6b409ae7139ac4acf8505a5c5a3c4f1d2))
+- feat: 刷新后恢复上次选中的项目并展开它 ([ea117ad](https://github.com/ezdemo/looprax/commit/ea117ad76625acc7a71292f95781c3917a3c029c))
+- feat: 初次进入时默认折叠全部工作区会话 ([b055c96](https://github.com/ezdemo/looprax/commit/b055c96c0b81137acb718f5bf69a6f47014aea0e))
+- feat: 修复获取模型的选择，并按模型 ID 生成展示名称 ([58d44b1](https://github.com/ezdemo/looprax/commit/58d44b1b8328fa28b94a3b301f4c314a4deca1a8))
+- feat: 让纯聊天脱离项目工具，并改用统一的 web 检索 ([7159670](https://github.com/ezdemo/looprax/commit/715967099bb0f880dca30112ef5029058141f984))
+- feat: 增加多平台打包，并把 LoopraX 图标打进桌面产物 ([2f886e5](https://github.com/ezdemo/looprax/commit/2f886e5b060f7021efa26aa298aa3696118154ca))
+- feat: 用 acp-go-sdk 对外提供 looprax acp，工作台继续走 Native ([f27f985](https://github.com/ezdemo/looprax/commit/f27f985e4c1bd7439056d17b9ac664478fdc7cb2))
+- chore: 不再跟踪 looprax.exe ([d09f8d4](https://github.com/ezdemo/looprax/commit/d09f8d46efdf633d04d8c9344e6fdc17f6960318))
+- feat: 把 React 工作台放进仓库，并用 mygo 打开桌面窗口 ([8e6f898](https://github.com/ezdemo/looprax/commit/8e6f8985c703607fd6442e8ae2cb8b6e7e9faf89))
+- feat: 控制台日志改成 Spring Boot 风格的多色一行 ([79c9e5a](https://github.com/ezdemo/looprax/commit/79c9e5ab81d352a77afa9785f1153e85d55d9fc5))
+- refactor: 把 ACP 会话进程从 Controller 移到 service/acp ([e3eb5a7](https://github.com/ezdemo/looprax/commit/e3eb5a7706d719764ac06a67305ee24fb25befd9))
+- refactor: 按工作区缓存 ProjectRuntime，不再复制整份 Controller ([75ea206](https://github.com/ezdemo/looprax/commit/75ea2064e38871b5da2bc4295486605963a227a4))
+- refactor: 把需求、定时任务、Git 和会话文件从 Controller 拆出 ([318cfae](https://github.com/ezdemo/looprax/commit/318cfae753a5b1102777f6e06d50e0dd8f10e97b))
+- refactor: 迁移到 GoFrame + Spring 风格 IoC ([c1e689e](https://github.com/ezdemo/looprax/commit/c1e689e3ed5a7450e2caf217eb87680fbf6e7ba5))
+- test: HITL elicitation 测试增加超时防止用例挂死 ([646b50c](https://github.com/ezdemo/looprax/commit/646b50ce57285e78231042943101bb484f6ab92e))
+- feat: 原生接入外部 ACP 引擎，统一会话、审批与运行日志 ([1716eca](https://github.com/ezdemo/looprax/commit/1716eca0acc3b0f3c413670f998f3578278907a6))
+- fix: 兼容 reasoning 思考字段并修正会话与工具结果契约 ([c5870cb](https://github.com/ezdemo/looprax/commit/c5870cb87875dc071fd218e4315f8ab002f1204e))
+- fix: 会话日志惰性创建，列表仅返回有消息的会话 ([4216650](https://github.com/ezdemo/looprax/commit/4216650522b00350a4fb01fc611e231d83fc52a5))
+- fix: 对齐 Git API 契约，修复未跟踪项、init 参数与环境提交 ([ae084f6](https://github.com/ezdemo/looprax/commit/ae084f69720fce1ef9ad9066351325638e28f29f))
+- fix: 修复工具参数 JSON Schema 下发与并行 tool\_call 解析 ([82c4300](https://github.com/ezdemo/looprax/commit/82c430037473492c6b355eaa4d27c85bce6b162d))
+- fix: 改用 InstructionProvider 避免提示词花括号被当作状态占位符 ([db7e96f](https://github.com/ezdemo/looprax/commit/db7e96fb24b3eb58f843ae9398cf957b3c806e24))
+- feat: shell 工具新增 cwd、max\_char 与超时控制并优化输出截断 ([846c235](https://github.com/ezdemo/looprax/commit/846c23551fc9b593fbed4c55a5aab043f1416a01))
+- feat: 内嵌原生 ripgrep 并以 rg 工具替换 grep/glob/ls ([506f58c](https://github.com/ezdemo/looprax/commit/506f58c25d07305d6ff1f24ddc8ee2ab74ddbecc))
+- feat: 新增跨平台进程树管理并优化 bash 会话进程终止 ([d721ed1](https://github.com/ezdemo/looprax/commit/d721ed1a347a957d7734be3596df32a5ff7051cc))
+- feat: 按运行环境动态选择 shell 工具并注入环境提示 ([d3d6314](https://github.com/ezdemo/looprax/commit/d3d631404cbed2136aac8874d9a2e2f94de07490))
+- feat: 新增 MCP 工具检索与动态调用入口 ([9307898](https://github.com/ezdemo/looprax/commit/93078980ef63fcf1cc7729d459a128ff9f2f3bef))
+- refactor: structure backend with Echo and gontainer ([eb4acaf](https://github.com/ezdemo/looprax/commit/eb4acaf4691675641f313d32c31d42e40c099b7b))
+- fix: generate conversation titles with message fallback ([2fdb607](https://github.com/ezdemo/looprax/commit/2fdb607d40446af680571f13141d6123dfc26177))
+- docs(i18n): translate code comments and docs to Chinese ([b5f6b3e](https://github.com/ezdemo/looprax/commit/b5f6b3e765eb71398c4e9b57e73602e3f5b49bb6))
+- feat(web): expand Loopra API compatibility ([c870134](https://github.com/ezdemo/looprax/commit/c870134c69dedd7a8d3c9812e188ba9ec2b29a34))
+- test(subagent): isolate the flow test under a temp home ([0d61567](https://github.com/ezdemo/looprax/commit/0d615670a1b207298a745664a8fb09d28b0f2673))
+- feat(subagent): native sub-agent runtime with live sub\_\* streaming ([47744db](https://github.com/ezdemo/looprax/commit/47744db79977e8db54eb33f4058ade84d62ac0d6))
+- fix(hitl): Java-parity chain details from agent4j spec ([ad861f9](https://github.com/ezdemo/looprax/commit/ad861f90780dfb74abd858ba9476d7e85442f376))
+- feat(hitl): auto-mode AI pre-review and abort cancellation ([e707c18](https://github.com/ezdemo/looprax/commit/e707c1877cad7fbf0bbb66d28a2b40d5dd64484a))
+- feat(hitl): six-stage approval chain over ADK tool confirmation ([e932ff7](https://github.com/ezdemo/looprax/commit/e932ff7e9daaeb6c2cbfe5d305ee9304e01ebf8f))
+- feat(web): version/update endpoints in honest no-updater state ([c6d2b23](https://github.com/ezdemo/looprax/commit/c6d2b235285acc5fbe12c8da882a81203609061a))
+- feat(web): files image preview, name search and guarded delete ([2e84957](https://github.com/ezdemo/looprax/commit/2e849571239a0d22863f727608c3a3e458c01bcc))
+- feat(web): pets surface over ~/.loopra/pets directories ([1a4b91f](https://github.com/ezdemo/looprax/commit/1a4b91fd8db8a4a5d4979aba5f686e100532da27))
+- feat(web): frontend bundle hosting with SPA fallback ([0db3089](https://github.com/ezdemo/looprax/commit/0db308939bddcd4ef2f26b576cf830edb34decf1))
+- feat(web): chat permissions endpoints in truthful pre-HITL state ([cfec16d](https://github.com/ezdemo/looprax/commit/cfec16d0aeacea9fdf86c5a01309acc0a127d789))
+- feat(web): sub-sessions read surface (list, events, delete) ([2cf778b](https://github.com/ezdemo/looprax/commit/2cf778b161bc6fa9f33a3a766d97803a7c122a06))
+- feat(web): file-changes/revert with whole-file diff reverse-apply ([ed51ac2](https://github.com/ezdemo/looprax/commit/ed51ac23543044bfe3bb3dcc8d7331af3c3ffbcd))
+- feat(web): agent history and session-status endpoints ([e9176ed](https://github.com/ezdemo/looprax/commit/e9176ed0e7d14113403c1dea46cdaee149e73774))
+- feat(web): session deep endpoints and agent cfg wiring fix ([a2ff213](https://github.com/ezdemo/looprax/commit/a2ff2134ee90e72dc36a5bcce74f7ca202082716))
+- feat(mcp): servers CRUD with dual-format interop, export config ([22e024e](https://github.com/ezdemo/looprax/commit/22e024ecee148b410041fe653de7559754313cb1))
+- feat(web): schedules surface with 6-field cron engine ([8fd5bc2](https://github.com/ezdemo/looprax/commit/8fd5bc2201789c058bf652f68b4cf10cdee38c35))
+- feat(web): requirements surface with real turn execution ([3f9f3a8](https://github.com/ezdemo/looprax/commit/3f9f3a85a30b10c6ec8e51c5c5a8adaecd491017))
+- feat(web): sub-agents profiles with builtin restore semantics ([ae4a4dc](https://github.com/ezdemo/looprax/commit/ae4a4dc43b0b234d977161eab7d174a68096c7cf))
+- feat(tools): interactive bash session quartet with panel endpoints ([e91c75d](https://github.com/ezdemo/looprax/commit/e91c75d1d0ed98c9635b15331443128930f7c719))
+- feat(web): plugin/extpack/skill-market/openapi surfaces ([69cc9d0](https://github.com/ezdemo/looprax/commit/69cc9d09821dba932e0b6cde89c744cde832db8e))
+- feat(mcp): McpServer DTO with transport validation ([c66db5f](https://github.com/ezdemo/looprax/commit/c66db5fde1f3c08b40e908a4d2993fd26877be12))
+- feat(web): CORS parity with the Java CrossFilter chain ([9dd9f95](https://github.com/ezdemo/looprax/commit/9dd9f9506f7248f190d7d8f0b8fe2fec67adff75))
+- feat(git): git, worktree and snapshot surfaces over git plumbing ([6a60fac](https://github.com/ezdemo/looprax/commit/6a60fac9c1ecaa85e3db73905a162e7a2bd68498))
+- feat(web): agent-engines list endpoint (native) ([cf9f153](https://github.com/ezdemo/looprax/commit/cf9f153ad793c70cb2e3e8e1b4be73bd4ca6db9f))
+- feat(web): pets list and model-meta refresh endpoints ([cf5c5d1](https://github.com/ezdemo/looprax/commit/cf5c5d1f74c50a6b844394080c849f6c352cc04d))
+- feat(web): agent status, system, version-check and files controllers ([da457bf](https://github.com/ezdemo/looprax/commit/da457bf000a5bcc8623a3787ec1638ad8cd03c9d))
+- feat(tools): built-in tool registry with dynamic enable/disable and core controllers ([041f80e](https://github.com/ezdemo/looprax/commit/041f80eb39b8e274f4c3655eac7042a5ac2e03b5))
+- feat(echo): stream thought deltas so reasoning reaches the SSE contract ([15c0400](https://github.com/ezdemo/looprax/commit/15c0400e9cc52147cf1a8d78d8fa46c4f0ec4659))
+- feat(web): 1:1 Loopra chat stream endpoint over the ADK agent ([58eadf2](https://github.com/ezdemo/looprax/commit/58eadf29c2c1516b059dafaa5010e88253b0d2d4))
+- feat(adk): Loopra-compatible JSONL session service for ADK ([fcb386a](https://github.com/ezdemo/looprax/commit/fcb386ac09d50f8c9c44e59e5b8169e8a6fd7c23))
+- feat(adk): adopt ADK Go v2 with three-protocol model providers ([f4f0760](https://github.com/ezdemo/looprax/commit/f4f0760da75d9ee6fc2e8cf2d5fcaa2a3bf324d2))
+- feat(cutin-go): add durable human approval, crash-safe tool journal and recovery ([9ba31e2](https://github.com/ezdemo/looprax/commit/9ba31e2a84964fa899eccbafa819e47bd9a704f8))
+- test(cutin-go): send real SSE newlines in Anthropic error fixture ([f5d0516](https://github.com/ezdemo/looprax/commit/f5d05167dfac2c0df3442bef5569dfc896828f32))
+- docs(cutin-go): integrate graph streaming step, CLI example and provider migration map ([664c1d4](https://github.com/ezdemo/looprax/commit/664c1d42d54acd0c8a5d4cf0e7e471f758dfbb5c))
+- feat(cutin-go): add Anthropic Messages sync and SSE tool-use provider ([0ecf1cb](https://github.com/ezdemo/looprax/commit/0ecf1cba0b4d526941d694306835869df278569a))
+- feat(cutin-go): add OpenAI Responses synchronous and streaming provider ([1bbf317](https://github.com/ezdemo/looprax/commit/1bbf3179f4945636b82c8ae34952185ac9fa79ab))
+- feat(cutin-go): stream OpenAI Chat Completions text and function call deltas ([73f1fa8](https://github.com/ezdemo/looprax/commit/73f1fa87aeaffdb200fcf4682b500cf8d3cd1a44))
+- feat(cutin-go): introduce SSE decoder and streaming model/agent contracts ([9eef3c5](https://github.com/ezdemo/looprax/commit/9eef3c5bd280fa8e2073086d20cf5df09ce5b2a3))
+- fix(cutin-go): allow before-exit suspension and retry to resume safely ([89773cc](https://github.com/ezdemo/looprax/commit/89773ccdf246fc1423b4269eb2c3363953f91de2))
+- feat(cutin-go): port graph engine, lifecycle interceptors, durable checkpoints and chat provider ([3939bb4](https://github.com/ezdemo/looprax/commit/3939bb4f37b6707327576eabfa54cfe566c62837))
+- feat(cutin-go): bootstrap protocol-neutral agent runtime, tools, sessions and tests ([c22b844](https://github.com/ezdemo/looprax/commit/c22b844fff3e66e16c2333c22bea7d247c53b594))
+- chore: initialize LoopraX repository ([2771cde](https://github.com/ezdemo/looprax/commit/2771cde7f78c69cfa7125f4b86edff1e36c904e0))
+
+[查看完整源码变更](<https://github.com/ezdemo/looprax/commits/f392ee9757903a62c03b61e217ef9d5c698aeb06>) · 首次发版，从源码初始历史到本次构建
+<!-- loopra-release:v26.10.2902:end -->
+
+---
+
 <!-- loopra-release:v26.10.2703:start -->
 ## [26.10.2703](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2703)
 
