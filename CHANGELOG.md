@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.3001:start -->
+## [26.10.3001](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.3001)
+
+发布日期：2026-10-30 09:58（UTC+8）
+
+### 新增
+- 启动命令统一为 `loopra`。
+- ACP 支持在同一工作区内让空闲会话复用同一个 agent 进程，减少重复启动。
+
+### 修复
+- Web 控制台保持安静，并复用上一次使用的 ACP 工具栏。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/aae592b87981a0c0f862c31697955c91863427b4...8e0849e010451f5cb58fe3a896a1f7492bc2c72b>) · 从 v26.10.2904 到本次构建
+<!-- loopra-release:v26.10.3001:end -->
+
+---
+
 <!-- loopra-release:v26.10.2904:start -->
 ## [26.10.2904](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.2904)
 
