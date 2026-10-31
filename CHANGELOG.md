@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.3103:start -->
+## [26.10.3103](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.3103)
+
+发布日期：2026-10-31 14:05（UTC+8）
+
+### 新增
+- 新增 OpenAPI 插件，并提供可在设置中配置的设置菜单。
+
+### 修复
+- 修复在 Windows 放大桌面宠物窗口时，桌面宠物可能不可见的问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/95d8703a5722c69af7863ceb1bb35beb9eb66369...dea2ea54c7435fc5df099d27c6821a494e0f2680>) · 从 v26.10.3102 到本次构建
+<!-- loopra-release:v26.10.3103:end -->
+
+---
+
 <!-- loopra-release:v26.10.3102:start -->
 ## [26.10.3102](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.3102)
 
