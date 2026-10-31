@@ -71,7 +71,7 @@ test('mismatched build metadata cannot publish a draft', async () => {
     state => { state.release.id = 13; },
     state => { state.release.tag_name = 'v26.10.1903'; },
     state => { state.metadata.releaseSha = 'c'.repeat(40); state.release.body = metadataComment(state.metadata); },
-    state => { delete state.metadata.artifacts['looprax-linux-amd64']; state.release.body = metadataComment(state.metadata); },
+    state => { delete state.metadata.artifacts['loopra-linux-amd64']; state.release.body = metadataComment(state.metadata); },
   ]) {
     const { state, run } = fixture();
     change(state);

@@ -40,7 +40,7 @@ function Get-LoopraxArch {
 
 $arch = Get-LoopraxArch
 if ($Variant -eq 'desktop' -and $arch -eq '386') { Fail 'No LoopraX desktop package for 386' }
-$prefix = if ($Variant -eq 'desktop') { 'looprax-desktop' } else { 'looprax' }
+$prefix = if ($Variant -eq 'desktop') { 'loopra-desktop' } else { 'loopra' }
 $asset = "$prefix-windows-$arch.exe"
 $version = if ($env:LOOPRA_VERSION) { $env:LOOPRA_VERSION } else { 'latest' }
 $releasePath = if ($version -eq 'latest') { 'latest/download' } else { "download/$version" }
@@ -64,7 +64,7 @@ try {
 
     $destDir = if ($env:LOOPRAX_INSTALL_DIR) { $env:LOOPRAX_INSTALL_DIR } else { Join-Path $env:LOCALAPPDATA 'LoopraX\bin' }
     New-Item -ItemType Directory -Force -Path $destDir | Out-Null
-    $leaf = if ($Variant -eq 'desktop') { 'looprax-desktop.exe' } else { 'loopra.exe' }
+    $leaf = if ($Variant -eq 'desktop') { 'loopra-desktop.exe' } else { 'loopra.exe' }
     $dest = Join-Path $destDir $leaf
     Copy-Item -LiteralPath $packageFile -Destination $dest -Force
 
@@ -88,7 +88,7 @@ try {
     Write-Info "Installed $dest"
     Write-Host 'You can now run: ' -NoNewline
     if ($Variant -eq 'desktop') {
-        Write-Host 'looprax-desktop' -ForegroundColor Cyan
+        Write-Host 'loopra-desktop' -ForegroundColor Cyan
     } else {
         Write-Host 'loopra web' -ForegroundColor Cyan
     }

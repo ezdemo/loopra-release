@@ -60,9 +60,9 @@ detect_target() {
 }
 
 asset_name() {
-  local prefix=looprax
+  local prefix=loopra
   if [ "$VARIANT" = desktop ]; then
-    prefix=looprax-desktop
+    prefix=loopra-desktop
   fi
   case "$OS_NAME:$ARCH_NAME:$VARIANT" in
     windows:amd64:web|windows:arm64:web|windows:386:web|windows:amd64:desktop|windows:arm64:desktop)
@@ -139,18 +139,18 @@ with zipfile.ZipFile(archive) as bundle:
                     apps.append(os.path.join(root, entry))
         if len(apps) != 1:
             raise SystemExit("archive must contain exactly one .app")
-        target = os.path.join(dest, "LoopraX.app")
+        target = os.path.join(dest, "Loopra.app")
         shutil.rmtree(target, ignore_errors=True)
         shutil.move(apps[0], target)
-        executable = os.path.join(target, "Contents", "MacOS", "LoopraX")
+        executable = os.path.join(target, "Contents", "MacOS", "Loopra")
         if not os.path.isfile(executable):
-            raise SystemExit("archive has no LoopraX executable")
+            raise SystemExit("archive has no Loopra executable")
         os.chmod(executable, 0o755)
     finally:
         shutil.rmtree(work, ignore_errors=True)
 PY
-  info "Installed $dest/LoopraX.app"
-  echo -e "Open it with: ${CYAN}open \"$dest/LoopraX.app\"${NC}"
+  info "Installed $dest/Loopra.app"
+  echo -e "Open it with: ${CYAN}open \"$dest/Loopra.app\"${NC}"
 }
 
 detect_target
@@ -200,7 +200,7 @@ if [ "$VARIANT" = desktop ] && [ "$OS_NAME" = darwin ]; then
 fi
 
 if [ "$VARIANT" = desktop ]; then
-  BIN=looprax-desktop
+  BIN=loopra-desktop
 else
   BIN=looprax
 fi

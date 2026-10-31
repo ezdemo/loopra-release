@@ -4,24 +4,24 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { metadataComment, validateMetadata } from './release-metadata.mjs';
 
-// Names produced by looprax/scripts/package.sh. Darwin desktop ships the zip,
+// Names produced by scripts/package.sh. Darwin desktop ships the zip,
 // which keeps the executable bit; the .app directory is not a release asset.
 export const LOOPRAX_ASSETS = [
-  'looprax-windows-amd64.exe',
-  'looprax-windows-arm64.exe',
-  'looprax-windows-386.exe',
-  'looprax-darwin-amd64',
-  'looprax-darwin-arm64',
-  'looprax-linux-amd64',
-  'looprax-linux-arm64',
-  'looprax-linux-armv7',
-  'looprax-linux-s390x',
-  'looprax-desktop-windows-amd64.exe',
-  'looprax-desktop-windows-arm64.exe',
-  'looprax-desktop-darwin-amd64.zip',
-  'looprax-desktop-darwin-arm64.zip',
-  'looprax-desktop-linux-amd64',
-  'looprax-desktop-linux-arm64',
+  'loopra-windows-amd64.exe',
+  'loopra-windows-arm64.exe',
+  'loopra-windows-386.exe',
+  'loopra-darwin-amd64',
+  'loopra-darwin-arm64',
+  'loopra-linux-amd64',
+  'loopra-linux-arm64',
+  'loopra-linux-armv7',
+  'loopra-linux-s390x',
+  'loopra-desktop-windows-amd64.exe',
+  'loopra-desktop-windows-arm64.exe',
+  'loopra-desktop-darwin-amd64.zip',
+  'loopra-desktop-darwin-arm64.zip',
+  'loopra-desktop-linux-amd64',
+  'loopra-desktop-linux-arm64',
 ];
 
 export function isLoopraxRelease(names) {

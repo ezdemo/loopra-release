@@ -37,8 +37,8 @@ test('reads the LoopraX version and rejects a mismatched tag or a development ve
 });
 
 test('keeps LoopraX package names and still canonicalizes historical Loopra installers', () => {
-  assert.equal(downloadName('looprax-desktop-darwin-arm64.zip'), 'looprax-desktop-darwin-arm64.zip');
-  assert.equal(downloadName('looprax-windows-amd64.exe'), 'looprax-windows-amd64.exe');
+  assert.equal(downloadName('loopra-desktop-darwin-arm64.zip'), 'loopra-desktop-darwin-arm64.zip');
+  assert.equal(downloadName('loopra-windows-amd64.exe'), 'loopra-windows-amd64.exe');
   assert.equal(downloadName('Loopra-26.10.1-arm64-mac.zip'), 'Loopra-macos-arm64.zip');
   assert.equal(downloadName('loopra-dist.tar.gz'), 'loopra-dist.tar.gz');
   assert.equal(downloadName('notes.md'), null);
@@ -52,7 +52,7 @@ test('publishes every LoopraX package and leaves source metadata in the release 
   write(dir, 'release-changes.md', '### 新增\n\n- 一项可核对的更新');
   for (const name of LOOPRAX_ASSETS) write(dir, name, `package ${name}`);
   write(dir, 'setup.ps1', 'installer script should stay out of download list');
-  write(dir, 'looprax-desktop-darwin-arm64.app', 'bundle directory is not a release asset');
+  write(dir, 'loopra-desktop-darwin-arm64.app', 'bundle directory is not a release asset');
   const notes = prepareAssets(dir);
   assert.match(notes, /## LoopraX v26\.10\.1/);
   assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
@@ -60,14 +60,14 @@ test('publishes every LoopraX package and leaves source metadata in the release 
   assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [...LOOPRAX_ASSETS].sort());
   assert.equal(parseMetadata(notes).sourceSha, sha);
   assert.equal(parseMetadata(notes).sourceRepository, 'ezdemo/loopra');
-  assert.match(parseMetadata(notes).artifacts['looprax-linux-amd64'], /^[a-f0-9]{64}$/);
+  assert.match(parseMetadata(notes).artifacts['loopra-linux-amd64'], /^[a-f0-9]{64}$/);
   assert.doesNotMatch(notes, /setup\.ps1|Loopra-macos/);
 });
 
 test('stages exactly the LoopraX release packages', t => {
   const dir = fixture(t);
   for (const name of LOOPRAX_ASSETS) write(dir, `bin/${name}`, name);
-  write(dir, 'bin/looprax.exe', 'windows alias stays out of the release');
+  write(dir, 'bin/loopra.exe', 'windows alias stays out of the release');
   const out = join(dir, 'out');
   assert.deepEqual(stageAssets(join(dir, 'bin'), out).sort(), [...LOOPRAX_ASSETS].sort());
   assert.deepEqual(readdirSync(out).sort(), [...LOOPRAX_ASSETS].sort());
@@ -103,16 +103,16 @@ done
     return readFileSync(join(dir, 'url'), 'utf8');
   };
   const base = 'https://github.com/ezdemo/loopra-release/releases';
-  assert.equal(run('setup.sh'), `${base}/latest/download/looprax-linux-amd64`);
+  assert.equal(run('setup.sh'), `${base}/latest/download/loopra-linux-amd64`);
   assert.equal(readFileSync(join(installDir, 'loopra'), 'utf8'), binary);
-  assert.equal(run('setup-gui.sh', { LOOPRA_VERSION: 'v26.10.1' }), `${base}/download/v26.10.1/looprax-desktop-linux-amd64`);
-  assert.equal(readFileSync(join(installDir, 'looprax-desktop'), 'utf8'), binary);
-  assert.equal(run('setup-mirror.sh'), `https://gh-proxy.org/${base}/latest/download/looprax-linux-amd64`);
+  assert.equal(run('setup-gui.sh', { LOOPRA_VERSION: 'v26.10.1' }), `${base}/download/v26.10.1/loopra-desktop-linux-amd64`);
+  assert.equal(readFileSync(join(installDir, 'loopra-desktop'), 'utf8'), binary);
+  assert.equal(run('setup-mirror.sh'), `https://gh-proxy.org/${base}/latest/download/loopra-linux-amd64`);
   assert.equal(run('setup-gui-mirror.sh', { LOOPRA_MIRROR: 'https://mirror.example/', LOOPRA_VERSION: 'v26.10.1' }),
-    `https://mirror.example/${base}/download/v26.10.1/looprax-desktop-linux-amd64`);
+    `https://mirror.example/${base}/download/v26.10.1/loopra-desktop-linux-amd64`);
 });
 
-test('macOS desktop installer unpacks LoopraX.app', t => {
+test('macOS desktop installer unpacks Loopra.app', t => {
   const dir = fixture(t);
   const zip = join(dir, 'LoopraX.zip');
   const apps = join(dir, 'apps');
@@ -121,8 +121,8 @@ test('macOS desktop installer unpacks LoopraX.app', t => {
 import zipfile
 archive = zipfile.ZipFile(r'''${zip}''', 'w')
 payload = b'app-bin-' + b'x' * 64
-archive.writestr('looprax-desktop-darwin-arm64.app/Contents/Info.plist', b'plist')
-archive.writestr('looprax-desktop-darwin-arm64.app/Contents/MacOS/LoopraX', payload)
+archive.writestr('loopra-desktop-darwin-arm64.app/Contents/Info.plist', b'plist')
+archive.writestr('loopra-desktop-darwin-arm64.app/Contents/MacOS/Loopra', payload)
 archive.close()
 `]);
   const curl = write(dir, 'bin/curl', `#!/usr/bin/env bash
@@ -142,8 +142,8 @@ done
       LOOPRAX_INSTALL_DIR: shellPath(apps), LOOPRAX_SKIP_PATH: '1' },
     encoding: 'utf8',
   });
-  assert.match(readFileSync(join(dir, 'url'), 'utf8'), /looprax-desktop-darwin-arm64\.zip$/);
-  assert.match(readFileSync(join(apps, 'LoopraX.app', 'Contents', 'MacOS', 'LoopraX'), 'utf8'), /^app-bin-/);
+  assert.match(readFileSync(join(dir, 'url'), 'utf8'), /loopra-desktop-darwin-arm64\.zip$/);
+  assert.match(readFileSync(join(apps, 'Loopra.app', 'Contents', 'MacOS', 'Loopra'), 'utf8'), /^app-bin-/);
 });
 
 test('release guard permits a new version and rejects published or changed-source releases', async () => {

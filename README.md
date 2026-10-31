@@ -54,7 +54,7 @@ LoopraX 不再发布 npm 上的 `loopra-dist`。**Publish historical Loopra core
 
 版本写入检出副本的 `internal/controller/version.go`。源码仓库保留开发版本 `0.1.0-go`。发版元数据同时记录原源码版本、源码提交 SHA 和实际构建版本。软件包文件名不带版本号，应用内部仍是这次构建的版本。
 
-Release 下载区包含 `scripts/package-matrix.txt` 里的服务端二进制，以及桌面端安装包。Darwin 桌面端是带可执行权限的 `.zip`，里面是 `LoopraX.app`。安装脚本在仓库中提供，不作为 Release 附件。更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
+Release 下载区包含 `scripts/package-matrix.txt` 里的服务端二进制，以及桌面端安装包。Darwin 桌面端是带可执行权限的 `.zip`，里面是 `Loopra.app`。安装脚本在仓库中提供，不作为 Release 附件。更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
 
 ## 自动生成更新说明
 
@@ -150,7 +150,7 @@ export LOOPRA_MIRROR='https://gh-proxy.org/'; curl -fsSL https://raw.githubuserc
 
 未设置 `LOOPRA_MIRROR` 时：直连脚本走 GitHub 官方源，镜像脚本（`-mirror` 变体）默认使用 `gh-proxy.org`。
 
-`main` 上的脚本默认安装最新的正式 Release，并按当前系统选择安装包。`LOOPRA_VERSION=v26.10.2901` 可指定版本。命令行装到 `~/.looprax/bin`（Windows 为 `%LOCALAPPDATA%\LoopraX\bin`）。macOS 桌面端解压到 `~/Applications/LoopraX.app`。
+`main` 上的脚本默认安装最新的正式 Release，并按当前系统选择安装包。`LOOPRA_VERSION=v26.10.2901` 可指定版本。命令行装到 `~/.looprax/bin`（Windows 为 `%LOCALAPPDATA%\LoopraX\bin`）。macOS 桌面端解压到 `~/Applications/Loopra.app`。
 
 应用内更新默认读取本仓库的最新 Release。`arm` 对应安装包名里的 `armv7`，不会误选 `arm64`。桌面进程只更新带 `desktop` 的附件。
 
