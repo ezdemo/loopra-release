@@ -4,6 +4,31 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.10.3102:start -->
+## [26.10.3102](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.3102)
+
+发布日期：2026-10-31 12:18（UTC+8）
+
+### 新增
+- 桌面宠物改为在独立窗口中绘制，并移除隐藏会话。
+- 工作台设置支持在服务端持久化，启动时优先应用已保存的主题。
+- 插件可提供技能、子代理和计划任务，并可挂载侧边栏入口、设置菜单与图标。
+- 插件可打开沙箱化设置页。
+- 支持从 npm 或 GitHub 安装插件，并使用 moejs 运行。
+- Web 已移入插件，同时支持本地插件路径。
+
+### 修复
+- 修复复制控制器时偏好设置锁被带入的问题。
+- 修复 32 位软件包在无插件运行时的编译问题。
+
+### 改进
+- 文档中的安装路径统一使用 Loopra 名称，并列出全部发布包。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/8e0849e010451f5cb58fe3a896a1f7492bc2c72b...95d8703a5722c69af7863ceb1bb35beb9eb66369>) · 从 v26.10.3001 到本次构建
+<!-- loopra-release:v26.10.3102:end -->
+
+---
+
 <!-- loopra-release:v26.10.3001:start -->
 ## [26.10.3001](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.3001)
 
