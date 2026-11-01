@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.108:start -->
+## [26.11.108](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.108)
+
+发布日期：2026-11-01 22:23（UTC+8）
+
+### 修复
+- 更新器不再获取开发版更新，同时保留发布说明的展示。
+
+### 改进
+- 同步插件更新生命周期，以及当前界面和宿主 API 的文档说明。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/271669d528cc7c62116cfd72ccf6bcf31ff111dc...d706039f2c83ed514258c1863d8b5d67d8561af9>) · 从 v26.11.107 到本次构建
+<!-- loopra-release:v26.11.108:end -->
+
+---
+
 <!-- loopra-release:v26.11.107:start -->
 ## [26.11.107](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.107)
 
