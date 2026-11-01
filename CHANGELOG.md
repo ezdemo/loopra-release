@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.103:start -->
+## [26.11.103](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.103)
+
+发布日期：2026-11-01 17:48（UTC+8）
+
+### 新增
+- 桌面端支持原生在线更新。
+
+### 修复
+- 修正桌面端发布版本信息。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/88b94b6cf3bc42ff490cbd936ff1a0525384a3d6...ae8cb082ec519f9f0a5f2a041393b582c9ccd413>) · 从 v26.11.102 到本次构建
+<!-- loopra-release:v26.11.103:end -->
+
+---
+
 <!-- loopra-release:v26.11.102:start -->
 ## [26.11.102](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.102)
 
