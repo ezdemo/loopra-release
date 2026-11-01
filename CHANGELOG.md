@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.109:start -->
+## [26.11.109](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.109)
+
+发布日期：2026-11-01 22:29（UTC+8）
+
+### 新增
+- 新增 ReadImage 工具。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/d706039f2c83ed514258c1863d8b5d67d8561af9...7e7f562dfecf906f32780b775c42c230390c9c01>) · 从 v26.11.108 到本次构建
+<!-- loopra-release:v26.11.109:end -->
+
+---
+
 <!-- loopra-release:v26.11.108:start -->
 ## [26.11.108](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.108)
 
