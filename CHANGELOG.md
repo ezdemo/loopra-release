@@ -4,6 +4,30 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.101:start -->
+## [26.11.101](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.101)
+
+发布日期：2026-11-01 15:05（UTC+8）
+
+### 新增
+
+- 插件更新支持回滚，并在更新过程中保留状态。
+- 为 context lens 提供按会话范围的使用信息。
+
+### 修复
+
+- 统一跨协议的集合类工具 schema，规范化 MiMo 工具 schema，并拒绝格式错误的参数。
+- 流式模型响应改用空闲超时。
+
+### 改进
+
+- 代理上下文支持压缩，并保留原始工具结果。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/6ddb528ca6b5df73f732155d045cef55553e2b61...fe2862ac11d3a7e701aa1b1df72ad1ccf8431a9a>) · 从 v26.10.3104 到本次构建
+<!-- loopra-release:v26.11.101:end -->
+
+---
+
 <!-- loopra-release:v26.10.3104:start -->
 ## [26.10.3104](https://github.com/ezdemo/loopra-release/releases/tag/v26.10.3104)
 
