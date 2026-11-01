@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.107:start -->
+## [26.11.107](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.107)
+
+发布日期：2026-11-01 21:15（UTC+8）
+
+### 修复
+- 插件更新后的反馈信息现在改为通过全局提示显示，以免遗漏更新结果。
+- 修复技能发现逻辑，使其能够识别关联默认代理所挂载的技能。
+
+### 改进
+- 插件与技能标签页已移至页面头部，入口更直观、便于访问。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/9f62e8012320da1c544c621701ffd7feddba856e...271669d528cc7c62116cfd72ccf6bcf31ff111dc>) · 从 v26.11.106 到本次构建
+<!-- loopra-release:v26.11.107:end -->
+
+---
+
 <!-- loopra-release:v26.11.106:start -->
 ## [26.11.106](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.106)
 
