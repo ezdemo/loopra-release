@@ -56,6 +56,10 @@ LoopraX 不再发布 npm 上的 `loopra-dist`。**Publish historical Loopra core
 
 Release 下载区包含 `scripts/package-matrix.txt` 里的服务端二进制，以及桌面端安装包。Darwin 桌面端是带可执行权限的 `.zip`，里面是 `Loopra.app`。安装脚本在仓库中提供，不作为 Release 附件。更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
 
+Windows 桌面端默认下载 `loopra-desktop-windows-<arch>-setup.exe`：按当前用户安装到 `%LOCALAPPDATA%\Programs\Loopra`，提供开始菜单、可选桌面快捷方式与卸载项。不带 `-setup` 的桌面 EXE 作为便携版保留，供直接运行和旧版便携更新使用。安装版的在线更新通过新版安装包升级；卸载保留用户数据。
+
+PowerShell 桌面安装脚本优先运行安装包；指定的历史版本尚无安装包时，会提示并下载该版本的便携 EXE。
+
 ## 自动生成更新说明
 
 工作流从上次正式、非预发布 Release 正文中的隐藏记录读取 `sourceSha`（兼容旧版 `release-metadata.json` 附件），与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/loopra` 的源码历史。源码仓库不同的 Release 不作为比较基准。同一仓库上更早的 Release，只要其源码提交是本次提交的祖先，就作为比较基准。草稿、预发布以及晚于本次版本的 Release 也不作为基准。

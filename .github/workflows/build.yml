@@ -111,10 +111,13 @@ jobs:
           RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         run: node .release/set-version.mjs source "$RELEASE_VERSION"
 
+      - name: Install Windows installer compiler
+        run: sudo apt-get update && sudo apt-get install -y nsis
+
       - name: Install icon dependency
         env:
           PIP_BREAK_SYSTEM_PACKAGES: '1'
-        run: python3 -m pip install pillow || echo "::warning::Pillow is unavailable; Windows and macOS packages will not have icons"
+        run: python3 -m pip install pillow
 
       - name: Package LoopraX
         env:

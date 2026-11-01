@@ -16,6 +16,8 @@ export const LOOPRAX_ASSETS = [
   'loopra-linux-arm64',
   'loopra-linux-armv7',
   'loopra-linux-s390x',
+  'loopra-desktop-windows-amd64-setup.exe',
+  'loopra-desktop-windows-arm64-setup.exe',
   'loopra-desktop-windows-amd64.exe',
   'loopra-desktop-windows-arm64.exe',
   'loopra-desktop-darwin-amd64.zip',
@@ -24,9 +26,11 @@ export const LOOPRAX_ASSETS = [
   'loopra-desktop-linux-arm64',
 ];
 
-export function isLoopraxRelease(names) {
+export function isLoopraxRelease(names, requireInstallers = false) {
   const set = new Set(names);
-  return set.size === LOOPRAX_ASSETS.length && LOOPRAX_ASSETS.every(name => set.has(name));
+  const expected = !requireInstallers && !names.some(name => name.endsWith('-setup.exe'))
+    ? LOOPRAX_ASSETS.filter(name => !name.endsWith('-setup.exe')) : LOOPRAX_ASSETS;
+  return set.size === names.length && set.size === expected.length && expected.every(name => set.has(name));
 }
 
 export function isHistoricalLoopraRelease(names) {
@@ -91,7 +95,7 @@ export function hashFile(path, algorithm = 'sha256', encoding = 'hex') {
 export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'publish')) {
   const metadata = validateMetadata(JSON.parse(readFileSync(resolve(artifactDir, 'release-metadata.json'), 'utf8')));
   const packages = readdirSync(artifactDir).filter(name => LOOPRAX_ASSETS.includes(name));
-  if (!isLoopraxRelease(packages)) throw new Error('Every LoopraX package is required');
+  if (!isLoopraxRelease(packages, true)) throw new Error('Every LoopraX package, including Windows installers, is required');
   mkdirSync(publishDir, { recursive: true });
   if (readdirSync(publishDir).length) throw new Error('Publish directory must be empty');
   metadata.artifacts = {};
@@ -102,7 +106,8 @@ export function prepareAssets(artifactDir, publishDir = resolve(artifactDir, 'pu
   }
   const link = name => `- [${name}](https://github.com/ezdemo/loopra-release/releases/download/v${metadata.version}/${name})`;
   const service = LOOPRAX_ASSETS.filter(name => !name.includes('-desktop-')).map(link).join('\n');
-  const desktop = LOOPRAX_ASSETS.filter(name => name.includes('-desktop-')).map(link).join('\n');
+  const desktop = LOOPRAX_ASSETS.filter(name => name.includes('-desktop-') && !/^loopra-desktop-windows-\w+\.exe$/.test(name)).map(link).join('\n');
+  const portable = LOOPRAX_ASSETS.filter(name => /^loopra-desktop-windows-\w+\.exe$/.test(name)).map(link).join('\n');
   return `## LoopraX v${metadata.version}
 
 ${readFileSync(resolve(artifactDir, 'release-changes.md'), 'utf8').trim()}
@@ -116,6 +121,10 @@ ${service}
 #### 桌面
 
 ${desktop}
+
+#### Windows 便携版
+
+${portable}
 
 [构建源码](https://github.com/${metadata.sourceRepository}/commit/${metadata.sourceSha})
 

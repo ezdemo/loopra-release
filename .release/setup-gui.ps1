@@ -41,7 +41,7 @@ function Get-LoopraxArch {
 $arch = Get-LoopraxArch
 if ($Variant -eq 'desktop' -and $arch -eq '386') { Fail 'No LoopraX desktop package for 386' }
 $prefix = if ($Variant -eq 'desktop') { 'loopra-desktop' } else { 'loopra' }
-$asset = "$prefix-windows-$arch.exe"
+$asset = "$prefix-windows-$arch-setup.exe"
 $version = if ($env:LOOPRA_VERSION) { $env:LOOPRA_VERSION } else { 'latest' }
 $releasePath = if ($version -eq 'latest') { 'latest/download' } else { "download/$version" }
 $mirror = $env:LOOPRA_MIRROR
@@ -58,38 +58,48 @@ try {
         Write-Info "Downloading LoopraX $Variant $version ($asset)"
     }
     $packageFile = Join-Path $tempRoot $asset
-    Invoke-WebRequest -Uri $packageUrl -OutFile $packageFile -UseBasicParsing
+    $portable = $false
+    try {
+        Invoke-WebRequest -Uri $packageUrl -OutFile $packageFile -UseBasicParsing
+    } catch {
+        if ($null -eq $_.Exception.Response -or [int]$_.Exception.Response.StatusCode -ne 404) { throw }
+        # Releases before Windows installers were added still offer the portable EXE.
+        $portable = $true
+        $asset = $asset -replace '-setup\.exe$', '.exe'
+        $packageUrl = $packageUrl -replace '-setup\.exe$', '.exe'
+        $packageFile = Join-Path $tempRoot $asset
+        Write-Info 'This release has no Windows installer; downloading its portable version.'
+        Invoke-WebRequest -Uri $packageUrl -OutFile $packageFile -UseBasicParsing
+    }
     $bytes = [System.IO.File]::ReadAllBytes($packageFile)
-    if ($bytes.Length -lt 64 -or $bytes[0] -eq 60) { Fail 'Download is not a LoopraX package' }
-
-    $destDir = if ($env:LOOPRAX_INSTALL_DIR) { $env:LOOPRAX_INSTALL_DIR } else { Join-Path $env:LOCALAPPDATA 'LoopraX\bin' }
-    New-Item -ItemType Directory -Force -Path $destDir | Out-Null
-    $leaf = if ($Variant -eq 'desktop') { 'loopra-desktop.exe' } else { 'loopra.exe' }
-    $dest = Join-Path $destDir $leaf
-    Copy-Item -LiteralPath $packageFile -Destination $dest -Force
-
-    if ($env:LOOPRAX_SKIP_PATH -ne '1') {
-        $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
-        if (-not $userPath) { $userPath = '' }
-        $parts = @($userPath -split ';' | Where-Object { $_ -ne '' })
-        $normalized = $destDir.TrimEnd('\')
-        $already = $false
-        foreach ($part in $parts) {
-            if ($part.TrimEnd('\') -eq $normalized) { $already = $true }
-        }
-        if (-not $already) {
-            $joined = (@($parts) + $destDir) -join ';'
-            [Environment]::SetEnvironmentVariable('Path', $joined, 'User')
-        }
-        if ($env:Path -notlike "$destDir*") { $env:Path = $destDir + ';' + $env:Path }
+    if ($bytes.Length -lt 64 -or $bytes[0] -ne 77 -or $bytes[1] -ne 90) { Fail 'Download is not a Windows executable' }
+    if ($portable) {
+        $destination = if ($env:LOOPRAX_INSTALL_DIR) { $env:LOOPRAX_INSTALL_DIR } else { Join-Path $env:LOCALAPPDATA 'LoopraX\bin' }
+        New-Item -ItemType Directory -Force -Path $destination | Out-Null
+        $destination = Join-Path $destination 'loopra-desktop.exe'
+        Copy-Item -LiteralPath $packageFile -Destination $destination -Force
+        Write-Info "Portable version saved to $destination"
+        return
     }
 
-    Write-Host ''
-    Write-Info "Installed $dest"
-    Write-Host 'You can now run: ' -NoNewline
-    Write-Host $leaf -ForegroundColor Cyan
-    Write-Host 'Open a new terminal if the command is not found yet.'
-    Write-Host ''
+    $arguments = '/S'
+    if ($env:LOOPRAX_INSTALL_DIR) { $arguments += ' /D=' + [System.IO.Path]::GetFullPath($env:LOOPRAX_INSTALL_DIR) }
+    $start = New-Object System.Diagnostics.ProcessStartInfo
+    $start.FileName = $packageFile
+    $start.Arguments = $arguments
+    $start.UseShellExecute = $false
+    $start.CreateNoWindow = $true
+    $start.WindowStyle = 'Hidden'
+    $installer = [System.Diagnostics.Process]::Start($start)
+    $installer.WaitForExit()
+    if ($installer.ExitCode -ne 0) { Fail "Loopra installation failed (exit $($installer.ExitCode))" }
+    Write-Info 'Installed Loopra. Open it from the Start menu.'
+    return
+
 } finally {
-    Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+    $resolvedTemp = [System.IO.Path]::GetFullPath($tempRoot)
+    $allowedTemp = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath()).TrimEnd('\') + '\'
+    if ($resolvedTemp.StartsWith($allowedTemp, [System.StringComparison]::OrdinalIgnoreCase) -and (Split-Path -Leaf $resolvedTemp) -like 'looprax-install-*') {
+        Remove-Item -LiteralPath $resolvedTemp -Recurse -Force -ErrorAction SilentlyContinue
+    }
 }

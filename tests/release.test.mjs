@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { downloadName, LOOPRAX_ASSETS, prepareAssets } from '../.release/prepare-assets.mjs';
+import { downloadName, isLoopraxRelease, LOOPRAX_ASSETS, prepareAssets } from '../.release/prepare-assets.mjs';
 import { stageAssets } from '../.release/stage-assets.mjs';
 import { readSourceVersion } from '../.release/source-metadata.mjs';
 import { checkRelease } from '../.release/check-release.mjs';
@@ -37,11 +37,23 @@ test('reads the LoopraX version and rejects a mismatched tag or a development ve
 });
 
 test('keeps LoopraX package names and still canonicalizes historical Loopra installers', () => {
+  assert.equal(downloadName('loopra-desktop-windows-amd64-setup.exe'), 'loopra-desktop-windows-amd64-setup.exe');
   assert.equal(downloadName('loopra-desktop-darwin-arm64.zip'), 'loopra-desktop-darwin-arm64.zip');
   assert.equal(downloadName('loopra-windows-amd64.exe'), 'loopra-windows-amd64.exe');
   assert.equal(downloadName('Loopra-26.10.1-arm64-mac.zip'), 'Loopra-macos-arm64.zip');
   assert.equal(downloadName('loopra-dist.tar.gz'), 'loopra-dist.tar.gz');
   assert.equal(downloadName('notes.md'), null);
+});
+
+test('legacy portable releases remain readable and new releases require both Windows installers', t => {
+  const legacy = LOOPRAX_ASSETS.filter(name => !name.endsWith('-setup.exe'));
+  assert.equal(isLoopraxRelease(legacy), true);
+  assert.equal(isLoopraxRelease(legacy, true), false);
+  assert.equal(isLoopraxRelease([...legacy, 'loopra-desktop-windows-amd64-setup.exe']), false);
+  const dir = fixture(t);
+  write(dir, 'release-metadata.json', JSON.stringify({ version: '26.11.105', npmVersion: '26.11.105', sourceSha: 'a'.repeat(40), sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
+  for (const name of legacy) write(dir, name, 'payload');
+  assert.throws(() => prepareAssets(dir), /including Windows installers/);
 });
 
 test('publishes every LoopraX package and leaves source metadata in the release body', t => {
@@ -57,6 +69,8 @@ test('publishes every LoopraX package and leaves source metadata in the release 
   assert.match(notes, /## LoopraX v26\.10\.1/);
   assert.match(notes, new RegExp(`ezdemo/loopra/commit/${sha}`));
   assert.match(notes, /一项可核对的更新/);
+  assert.ok(notes.indexOf('loopra-desktop-windows-amd64-setup.exe') < notes.indexOf('#### Windows 便携版'));
+  assert.ok(notes.indexOf('loopra-desktop-windows-amd64.exe') > notes.indexOf('#### Windows 便携版'));
   assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [...LOOPRAX_ASSETS].sort());
   assert.equal(parseMetadata(notes).sourceSha, sha);
   assert.equal(parseMetadata(notes).sourceRepository, 'ezdemo/loopra');
