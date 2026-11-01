@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.105:start -->
+## [26.11.105](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.105)
+
+发布日期：2026-11-01 19:24（UTC+8）
+
+### 新增
+- Windows 桌面版提供按用户安装的安装程序，安装范围限于当前用户。
+
+### 改进
+- 更新 Windows 安装程序。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/4a053393f7f618ce1559570793b361e08ddb8076...e616c59df25ab4512f8f463df5e29eb7886a66d6>) · 从 v26.11.104 到本次构建
+<!-- loopra-release:v26.11.105:end -->
+
+---
+
 <!-- loopra-release:v26.11.104:start -->
 ## [26.11.104](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.104)
 
