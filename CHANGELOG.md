@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.106:start -->
+## [26.11.106](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.106)
+
+发布日期：2026-11-01 19:48（UTC+8）
+
+### 修复
+- 修复 Windows Modern UI 安装程序未使用 Loopra 图标的问题。
+
+### 改进
+- 更新成功后会清理旧备份，减少备份文件残留。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/e616c59df25ab4512f8f463df5e29eb7886a66d6...9f62e8012320da1c544c621701ffd7feddba856e>) · 从 v26.11.105 到本次构建
+<!-- loopra-release:v26.11.106:end -->
+
+---
+
 <!-- loopra-release:v26.11.105:start -->
 ## [26.11.105](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.105)
 
