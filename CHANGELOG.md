@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.102:start -->
+## [26.11.102](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.102)
+
+发布日期：2026-11-01 15:24（UTC+8）
+
+### 修复
+
+- macOS 上的命令行工具与桌面启动器现在优先使用 zsh。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/fe2862ac11d3a7e701aa1b1df72ad1ccf8431a9a...88b94b6cf3bc42ff490cbd936ff1a0525384a3d6>) · 从 v26.11.101 到本次构建
+<!-- loopra-release:v26.11.102:end -->
+
+---
+
 <!-- loopra-release:v26.11.101:start -->
 ## [26.11.101](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.101)
 
