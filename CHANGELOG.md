@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.104:start -->
+## [26.11.104](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.104)
+
+发布日期：2026-11-01 18:45（UTC+8）
+
+### 修复
+- 修正 macOS 应用包的名称，打包产物统一为 `Loopra.app`，避免安装后应用名称与预期不一致。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/ae8cb082ec519f9f0a5f2a041393b582c9ccd413...4a053393f7f618ce1559570793b361e08ddb8076>) · 从 v26.11.103 到本次构建
+<!-- loopra-release:v26.11.104:end -->
+
+---
+
 <!-- loopra-release:v26.11.103:start -->
 ## [26.11.103](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.103)
 
