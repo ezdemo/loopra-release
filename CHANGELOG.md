@@ -4,6 +4,21 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.201:start -->
+## [26.11.201](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.201)
+
+发布日期：2026-11-02 09:45（UTC+8）
+
+### 修复
+
+- 兼容 Responses 摘要以数组形式返回的情况。
+- 处理模型输出过大的情况。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/7e7f562dfecf906f32780b775c42c230390c9c01...62d9692a7d697b02aff8fb7ee849a0370417b91f>) · 从 v26.11.109 到本次构建
+<!-- loopra-release:v26.11.201:end -->
+
+---
+
 <!-- loopra-release:v26.11.109:start -->
 ## [26.11.109](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.109)
 
