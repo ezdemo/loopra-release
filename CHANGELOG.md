@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.202:start -->
+## [26.11.202](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.202)
+
+发布日期：2026-11-02 17:32（UTC+8）
+
+### 新增
+- 新增可交互的终端停靠面板，支持在界面内直接操作终端。
+
+### 改进
+- 优化工作区导航与编辑器命令的交互体验。
+- 调整终端停靠面板的行为与主题样式，使其在不同主题下显示更协调。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/62d9692a7d697b02aff8fb7ee849a0370417b91f...e2d0b0c84dc4baea48ef640ec89e41f1861f6a9b>) · 从 v26.11.201 到本次构建
+<!-- loopra-release:v26.11.202:end -->
+
+---
+
 <!-- loopra-release:v26.11.201:start -->
 ## [26.11.201](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.201)
 
