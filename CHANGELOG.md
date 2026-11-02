@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.204:start -->
+## [26.11.204](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.204)
+
+发布日期：2026-11-02 20:08（UTC+8）
+
+### 修复
+
+- 修复 Windows 核心更新器的校验和验证问题，校验过程不再依赖外部组件，可独立完成。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/6c9b96bc9588d51e391abde1572d9c12a74791af...920dcf2c81c4fa08775a34c8204d825367e268a2>) · 从 v26.11.203 到本次构建
+<!-- loopra-release:v26.11.204:end -->
+
+---
+
 <!-- loopra-release:v26.11.203:start -->
 ## [26.11.203](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.203)
 
