@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.203:start -->
+## [26.11.203](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.203)
+
+发布日期：2026-11-02 19:44（UTC+8）
+
+### 改进
+- 优化在线更新器的镜像命令与日志输出。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/e2d0b0c84dc4baea48ef640ec89e41f1861f6a9b...6c9b96bc9588d51e391abde1572d9c12a74791af>) · 从 v26.11.202 到本次构建
+<!-- loopra-release:v26.11.203:end -->
+
+---
+
 <!-- loopra-release:v26.11.202:start -->
 ## [26.11.202](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.202)
 
