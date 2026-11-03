@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.301:start -->
+## [26.11.301](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.301)
+
+发布日期：2026-11-03 09:39（UTC+8）
+
+### 新增
+- 项目与智能体已分离，二者可以分别独立管理。
+
+### 改进
+- 使用 NextUI 优化技能与插件的管理。
+
+### 修复
+- 提升深色主题下的对比度，改善界面内容的可读性。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/920dcf2c81c4fa08775a34c8204d825367e268a2...b17c5212fb0664cc22798ddfe2e3cec1d699dfdd>) · 从 v26.11.204 到本次构建
+<!-- loopra-release:v26.11.301:end -->
+
+---
+
 <!-- loopra-release:v26.11.204:start -->
 ## [26.11.204](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.204)
 
