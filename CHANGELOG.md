@@ -4,6 +4,28 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.302:start -->
+## [26.11.302](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.302)
+
+发布日期：2026-11-03 22:57（UTC+8）
+
+### 更新内容
+
+- feat: fade streamed reply characters in instead of snapping them ([17a8614](https://github.com/ezdemo/loopra/commit/17a8614b7dba3a040e9d1ae049239ba1faded499))
+- test: refresh assertions the main sources already moved past ([9c3fa44](https://github.com/ezdemo/loopra/commit/9c3fa44671c756042e312dd6d9ec84e5bbc1136e))
+- feat: render workspace file links as an inline file chip ([beb9656](https://github.com/ezdemo/loopra/commit/beb9656f869f123fc9c13d12444725a5519fb145))
+- feat: remember the last opened project on the service ([79b1ad4](https://github.com/ezdemo/loopra/commit/79b1ad418e1fdd841ccaec40ff6085b1bf71ed8f))
+- fix: shrink and soften the thinking/tool row chrome ([b94d0f9](https://github.com/ezdemo/loopra/commit/b94d0f98238be361c850a3850238ebb1826cac73))
+- fix: even out assistant process row rhythm and drop the tool-name trail ([1c7dd04](https://github.com/ezdemo/loopra/commit/1c7dd04ae201194e04b4b6cfae6f96e8c71e1119))
+- fix: isolate ACP turn streaming and report occupied Codex sessions ([5003b5d](https://github.com/ezdemo/loopra/commit/5003b5dbf9a24ca414d57529f99f247bae5f09c2))
+- feat: report native file diffs in chat and persist them ([ef7ccfe](https://github.com/ezdemo/loopra/commit/ef7ccfe3d5da037420538b18a976a35a2c74f1f8))
+- fix: match plugin iframe color scheme in dark mode ([bb24ecc](https://github.com/ezdemo/loopra/commit/bb24eccb1c4873cc90034f21669782c5fd38f71c))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b17c5212fb0664cc22798ddfe2e3cec1d699dfdd...17a8614b7dba3a040e9d1ae049239ba1faded499>) · 从 v26.11.301 到本次构建
+<!-- loopra-release:v26.11.302:end -->
+
+---
+
 <!-- loopra-release:v26.11.301:start -->
 ## [26.11.301](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.301)
 
