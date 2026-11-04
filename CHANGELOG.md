@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.405:start -->
+## [26.11.405](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.405)
+
+发布日期：2026-11-04 15:57（UTC+8）
+
+### 更新内容
+
+- fix: isolate session state and preserve subagent file changes ([0e2859f](https://github.com/ezdemo/loopra/commit/0e2859f2cf9b6da46a3c6d0c494f9ed534596ab7))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/7c28654ea7f76ed76a5888237f314562aa66dcd8...0e2859f2cf9b6da46a3c6d0c494f9ed534596ab7>) · 从 v26.11.404 到本次构建
+<!-- loopra-release:v26.11.405:end -->
+
+---
+
 <!-- loopra-release:v26.11.404:start -->
 ## [26.11.404](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.404)
 
