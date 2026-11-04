@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.404:start -->
+## [26.11.404](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.404)
+
+发布日期：2026-11-04 15:26（UTC+8）
+
+### 更新内容
+
+- fix: leave the shell tool's cwd out of the workspace scope ([7c28654](https://github.com/ezdemo/loopra/commit/7c28654ea7f76ed76a5888237f314562aa66dcd8))
+- feat: page reads by line and make the tool scope write-only ([192c84e](https://github.com/ezdemo/loopra/commit/192c84e202d7d91b06bf9f9e0f3623f94b042612))
+- fix: pass the session owner in the unix shell session test ([31f155f](https://github.com/ezdemo/loopra/commit/31f155f32f7be02922f0ff7e4766ec1b5e596f32))
+- fix: branch sessions by visible history lines ([33689cd](https://github.com/ezdemo/loopra/commit/33689cdc938741c6b0251cad5fe7aeeae79cfdef))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/56c1cc56b48f4abf6b00713dbb1b4a604b02adc8...7c28654ea7f76ed76a5888237f314562aa66dcd8>) · 从 v26.11.403 到本次构建
+<!-- loopra-release:v26.11.404:end -->
+
+---
+
 <!-- loopra-release:v26.11.403:start -->
 ## [26.11.403](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.403)
 
