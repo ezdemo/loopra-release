@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.407:start -->
+## [26.11.407](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.407)
+
+发布日期：2026-11-04 16:43（UTC+8）
+
+### 更新内容
+
+- feat: unify tool timeout parameter on timeout\_ms ([dbc3ee9](https://github.com/ezdemo/loopra/commit/dbc3ee9b89a0cba8194c50c2518490661fffa636))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/d1e8fc26c107d8f02cd9d53ad65ae0275cf4dc8d...dbc3ee9b89a0cba8194c50c2518490661fffa636>) · 从 v26.11.406 到本次构建
+<!-- loopra-release:v26.11.407:end -->
+
+---
+
 <!-- loopra-release:v26.11.406:start -->
 ## [26.11.406](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.406)
 
