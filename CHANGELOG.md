@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.409:start -->
+## [26.11.409](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.409)
+
+发布日期：2026-11-04 22:19（UTC+8）
+
+### 更新内容
+
+- feat: add scoped long-term memory with management UI and agent tools ([c52ee0c](https://github.com/ezdemo/loopra/commit/c52ee0cffd57d308e414b915294c071321f02fe1))
+- docs: define project development and frontend conventions ([d15f7f3](https://github.com/ezdemo/loopra/commit/d15f7f34ddc995c0ede1e60909c83c874a9e0016))
+- fix: continue agent loop after malformed tool arguments ([e6a2ff2](https://github.com/ezdemo/loopra/commit/e6a2ff2efe487db999c259faa532296985346a66))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/33262977435b113419baf4d875481cee779fb968...c52ee0cffd57d308e414b915294c071321f02fe1>) · 从 v26.11.408 到本次构建
+<!-- loopra-release:v26.11.409:end -->
+
+---
+
 <!-- loopra-release:v26.11.408:start -->
 ## [26.11.408](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.408)
 
