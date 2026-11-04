@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.406:start -->
+## [26.11.406](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.406)
+
+发布日期：2026-11-04 16:37（UTC+8）
+
+### 更新内容
+
+- fix: cancel session commands immediately and prevent lost aborts ([d1e8fc2](https://github.com/ezdemo/loopra/commit/d1e8fc26c107d8f02cd9d53ad65ae0275cf4dc8d))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/0e2859f2cf9b6da46a3c6d0c494f9ed534596ab7...d1e8fc26c107d8f02cd9d53ad65ae0275cf4dc8d>) · 从 v26.11.405 到本次构建
+<!-- loopra-release:v26.11.406:end -->
+
+---
+
 <!-- loopra-release:v26.11.405:start -->
 ## [26.11.405](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.405)
 
