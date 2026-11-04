@@ -4,6 +4,21 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.401:start -->
+## [26.11.401](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.401)
+
+发布日期：2026-11-04 10:33（UTC+8）
+
+### 更新内容
+
+- fix: scope background shell processes to their owning session ([119f0ee](https://github.com/ezdemo/loopra/commit/119f0eeaeaf3a70566cc1181de116f2108b14c72))
+- fix: show native desktop context menus in Chinese ([c009c75](https://github.com/ezdemo/loopra/commit/c009c750528147240187013b51926d5428c090dc))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/17a8614b7dba3a040e9d1ae049239ba1faded499...119f0eeaeaf3a70566cc1181de116f2108b14c72>) · 从 v26.11.302 到本次构建
+<!-- loopra-release:v26.11.401:end -->
+
+---
+
 <!-- loopra-release:v26.11.302:start -->
 ## [26.11.302](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.302)
 
