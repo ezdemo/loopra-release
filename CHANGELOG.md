@@ -4,6 +4,21 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.403:start -->
+## [26.11.403](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.403)
+
+发布日期：2026-11-04 13:14（UTC+8）
+
+### 更新内容
+
+- fix: close the pure-chat rollback failure ([56c1cc5](https://github.com/ezdemo/loopra/commit/56c1cc56b48f4abf6b00713dbb1b4a604b02adc8))
+- fix: let pure chat roll back messages without a code snapshot ([7d8eac5](https://github.com/ezdemo/loopra/commit/7d8eac50ca927028d3806a4decb6f33582a05aa1))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/5b1551592f89a44f285206a335436fd3cd5541fd...56c1cc56b48f4abf6b00713dbb1b4a604b02adc8>) · 从 v26.11.402 到本次构建
+<!-- loopra-release:v26.11.403:end -->
+
+---
+
 <!-- loopra-release:v26.11.402:start -->
 ## [26.11.402](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.402)
 
