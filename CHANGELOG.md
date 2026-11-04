@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.408:start -->
+## [26.11.408](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.408)
+
+发布日期：2026-11-04 17:33（UTC+8）
+
+### 更新内容
+
+- fix: preserve interrupted native turns in history ([3326297](https://github.com/ezdemo/loopra/commit/33262977435b113419baf4d875481cee779fb968))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/dbc3ee9b89a0cba8194c50c2518490661fffa636...33262977435b113419baf4d875481cee779fb968>) · 从 v26.11.407 到本次构建
+<!-- loopra-release:v26.11.408:end -->
+
+---
+
 <!-- loopra-release:v26.11.407:start -->
 ## [26.11.407](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.407)
 
