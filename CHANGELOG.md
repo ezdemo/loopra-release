@@ -4,6 +4,24 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.402:start -->
+## [26.11.402](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.402)
+
+发布日期：2026-11-04 12:34（UTC+8）
+
+### 更新内容
+
+- fix: tune the 项目 section header's action icons ([5b15515](https://github.com/ezdemo/loopra/commit/5b1551592f89a44f285206a335436fd3cd5541fd))
+- fix: use a folder plus for the 项目 section's add button ([162cfc4](https://github.com/ezdemo/loopra/commit/162cfc4f173565dc742ac78a60bb12b8c6c247f5))
+- feat: add a project button to the 项目 section header ([a0c99cf](https://github.com/ezdemo/loopra/commit/a0c99cf82eba7af3bd010f36ce7ff00c1ec077ed))
+- fix: spin the running turn's duration row like the composer's stop button ([67e1fe6](https://github.com/ezdemo/loopra/commit/67e1fe68fee7c0aeb7e99664ae49ab488a6de651))
+- fix: list newly added projects at the top ([56484ae](https://github.com/ezdemo/loopra/commit/56484ae0978c1ece0f5601fa87247f4534096b6b))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/119f0eeaeaf3a70566cc1181de116f2108b14c72...5b1551592f89a44f285206a335436fd3cd5541fd>) · 从 v26.11.401 到本次构建
+<!-- loopra-release:v26.11.402:end -->
+
+---
+
 <!-- loopra-release:v26.11.401:start -->
 ## [26.11.401](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.401)
 
