@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.505:start -->
+## [26.11.505](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.505)
+
+发布日期：2026-11-05 15:39（UTC+8）
+
+### 新增
+- 支持直接链接目录，无需创建项目
+
+### 修复
+- 修复工具预览显示异常，并去重命令标题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/ad8540a708a30b95a7913b3978a5c35fcb64d2af...b28cebe6d3eb45aa854c99587b4c6d81162c403e>) · 从 v26.11.504 到本次构建
+<!-- loopra-release:v26.11.505:end -->
+
+---
+
 <!-- loopra-release:v26.11.504:start -->
 ## [26.11.504](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.504)
 
