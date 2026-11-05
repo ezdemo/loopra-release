@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.502:start -->
+## [26.11.502](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.502)
+
+发布日期：2026-11-05 11:21（UTC+8）
+
+### 新增
+- 在多工作区权限下持久化关联的项目
+
+### 修复
+- 重新打开 ACP 会话时保留已保存的代理配置
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/c52ee0cffd57d308e414b915294c071321f02fe1...34cc6d0dd0a58266889f369329bcfc233a327a8f>) · 从 v26.11.409 到本次构建
+<!-- loopra-release:v26.11.502:end -->
+
+---
+
 <!-- loopra-release:v26.11.409:start -->
 ## [26.11.409](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.409)
 
