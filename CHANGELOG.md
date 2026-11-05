@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.504:start -->
+## [26.11.504](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.504)
+
+发布日期：2026-11-05 14:19（UTC+8）
+
+### 修复
+- 修复了新建的 Codex 会话在关联项目后可能丢失的问题，现会正确保留这些会话。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/5eb27cfdd43c5a4a51295d2961a8eb9a849fa789...ad8540a708a30b95a7913b3978a5c35fcb64d2af>) · 从 v26.11.503 到本次构建
+<!-- loopra-release:v26.11.504:end -->
+
+---
+
 <!-- loopra-release:v26.11.503:start -->
 ## [26.11.503](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.503)
 
