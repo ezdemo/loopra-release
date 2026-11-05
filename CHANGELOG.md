@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.509:start -->
+## [26.11.509](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.509)
+
+发布日期：2026-11-05 21:50（UTC+8）
+
+### 新增
+- 在 AI 回复中显示本地图片
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a26beba32d72cdf6c2f5c02e44003a6bb89f5870...1fcba4dff7d31ab8b93560f1b53ac1ed64a81d23>) · 从 v26.11.508 到本次构建
+<!-- loopra-release:v26.11.509:end -->
+
+---
+
 <!-- loopra-release:v26.11.508:start -->
 ## [26.11.508](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.508)
 
