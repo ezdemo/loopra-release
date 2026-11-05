@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.507:start -->
+## [26.11.507](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.507)
+
+发布日期：2026-11-05 19:42（UTC+8）
+
+### 改进
+- 统一 Loopra 品牌视觉，并新增 Logo 动画效果。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/58b992d7bbc4528f09110d291d113df0915d6881...a9b3cd762bcbf878f0f04e7e3ae6008a3110544f>) · 从 v26.11.506 到本次构建
+<!-- loopra-release:v26.11.507:end -->
+
+---
+
 <!-- loopra-release:v26.11.506:start -->
 ## [26.11.506](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.506)
 
