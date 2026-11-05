@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.506:start -->
+## [26.11.506](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.506)
+
+发布日期：2026-11-05 17:43（UTC+8）
+
+### 新增
+- 支持通过拖动顶部边缘调整编辑器大小
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b28cebe6d3eb45aa854c99587b4c6d81162c403e...58b992d7bbc4528f09110d291d113df0915d6881>) · 从 v26.11.505 到本次构建
+<!-- loopra-release:v26.11.506:end -->
+
+---
+
 <!-- loopra-release:v26.11.505:start -->
 ## [26.11.505](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.505)
 
