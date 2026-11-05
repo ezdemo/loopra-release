@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.503:start -->
+## [26.11.503](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.503)
+
+发布日期：2026-11-05 12:29（UTC+8）
+
+### 新增
+- 会话列表支持显示代理图标
+
+### 修复
+- 修复切换会话时待定选择与草稿内容丢失的问题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/34cc6d0dd0a58266889f369329bcfc233a327a8f...5eb27cfdd43c5a4a51295d2961a8eb9a849fa789>) · 从 v26.11.502 到本次构建
+<!-- loopra-release:v26.11.503:end -->
+
+---
+
 <!-- loopra-release:v26.11.502:start -->
 ## [26.11.502](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.502)
 
