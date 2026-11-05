@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.508:start -->
+## [26.11.508](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.508)
+
+发布日期：2026-11-05 20:49（UTC+8）
+
+### 更新内容
+
+- fix: preserve attachments and unify message context previews ([a26beba](https://github.com/ezdemo/loopra/commit/a26beba32d72cdf6c2f5c02e44003a6bb89f5870))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a9b3cd762bcbf878f0f04e7e3ae6008a3110544f...a26beba32d72cdf6c2f5c02e44003a6bb89f5870>) · 从 v26.11.507 到本次构建
+<!-- loopra-release:v26.11.508:end -->
+
+---
+
 <!-- loopra-release:v26.11.507:start -->
 ## [26.11.507](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.507)
 
