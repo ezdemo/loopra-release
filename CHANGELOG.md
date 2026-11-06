@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.606:start -->
+## [26.11.606](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.606)
+
+发布日期：2026-11-06 18:38（UTC+8）
+
+### 修复
+- 隔离 Codex 会话进程，防止分支写入器冲突。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/4339692f90d08cb723f91ff064b3b1c49bd4bb5c...e0cfefca9fa281a9670cbed6db8a69b06bceeb27>) · 从 v26.11.605 到本次构建
+<!-- loopra-release:v26.11.606:end -->
+
+---
+
 <!-- loopra-release:v26.11.605:start -->
 ## [26.11.605](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.605)
 
