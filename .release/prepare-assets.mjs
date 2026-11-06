@@ -6,15 +6,14 @@ import { metadataComment, validateMetadata } from './release-metadata.mjs';
 
 // Names produced by scripts/package.sh. Darwin desktop ships the zip,
 // which keeps the executable bit; the .app directory is not a release asset.
+// Windows 386 and Linux ARMv7 are paused in the source package matrix.
 export const LOOPRAX_ASSETS = [
   'loopra-windows-amd64.exe',
   'loopra-windows-arm64.exe',
-  'loopra-windows-386.exe',
   'loopra-darwin-amd64',
   'loopra-darwin-arm64',
   'loopra-linux-amd64',
   'loopra-linux-arm64',
-  'loopra-linux-armv7',
   'loopra-linux-s390x',
   'loopra-desktop-windows-amd64-setup.exe',
   'loopra-desktop-windows-arm64-setup.exe',

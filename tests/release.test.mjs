@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { downloadName, isLoopraxRelease, LOOPRAX_ASSETS, prepareAssets } from '../.release/prepare-assets.mjs';
+import { downloadName, isLoopraxRelease, prepareAssets } from '../.release/prepare-assets.mjs';
 import { stageAssets } from '../.release/stage-assets.mjs';
 import { readSourceVersion } from '../.release/source-metadata.mjs';
 import { checkRelease } from '../.release/check-release.mjs';
@@ -15,6 +15,25 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const tooling = join(root, '.release');
 const bash = process.env.BASH_EXE || (process.platform === 'win32' ? 'C:/Program Files/Git/bin/bash.exe' : '/bin/bash');
 const shellPath = path => path.replaceAll('\\', '/').replace(/^([A-Za-z]):\//, (_, drive) => `/${drive.toLowerCase()}/`);
+// Model actual build output independently of the release tooling's allowlist.
+// The source package matrix pauses Windows 386 and Linux ARMv7.
+const releasePackages = [
+  'loopra-windows-amd64.exe',
+  'loopra-windows-arm64.exe',
+  'loopra-darwin-amd64',
+  'loopra-darwin-arm64',
+  'loopra-linux-amd64',
+  'loopra-linux-arm64',
+  'loopra-linux-s390x',
+  'loopra-desktop-windows-amd64-setup.exe',
+  'loopra-desktop-windows-arm64-setup.exe',
+  'loopra-desktop-windows-amd64.exe',
+  'loopra-desktop-windows-arm64.exe',
+  'loopra-desktop-darwin-amd64.zip',
+  'loopra-desktop-darwin-arm64.zip',
+  'loopra-desktop-linux-amd64',
+  'loopra-desktop-linux-arm64',
+];
 function fixture(t) {
   const dir = mkdtempSync(join(tmpdir(), 'loopra-release-test-'));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
@@ -46,7 +65,7 @@ test('keeps LoopraX package names and still canonicalizes historical Loopra inst
 });
 
 test('legacy portable releases remain readable and new releases require both Windows installers', t => {
-  const legacy = LOOPRAX_ASSETS.filter(name => !name.endsWith('-setup.exe'));
+  const legacy = releasePackages.filter(name => !name.endsWith('-setup.exe'));
   assert.equal(isLoopraxRelease(legacy), true);
   assert.equal(isLoopraxRelease(legacy, true), false);
   assert.equal(isLoopraxRelease([...legacy, 'loopra-desktop-windows-amd64-setup.exe']), false);
@@ -56,13 +75,13 @@ test('legacy portable releases remain readable and new releases require both Win
   assert.throws(() => prepareAssets(dir), /including Windows installers/);
 });
 
-test('publishes every LoopraX package and leaves source metadata in the release body', t => {
+test('prepares all active LoopraX packages without paused 32-bit targets and preserves metadata', t => {
   const dir = fixture(t);
   const sha = 'a'.repeat(40);
   write(dir, 'release-metadata.json', JSON.stringify({ version: '26.10.1', npmVersion: '26.10.1', sourceSha: sha,
     sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release' }));
   write(dir, 'release-changes.md', '### 新增\n\n- 一项可核对的更新');
-  for (const name of LOOPRAX_ASSETS) write(dir, name, `package ${name}`);
+  for (const name of releasePackages) write(dir, name, `package ${name}`);
   write(dir, 'setup.ps1', 'installer script should stay out of download list');
   write(dir, 'loopra-desktop-darwin-arm64.app', 'bundle directory is not a release asset');
   const notes = prepareAssets(dir);
@@ -71,20 +90,25 @@ test('publishes every LoopraX package and leaves source metadata in the release 
   assert.match(notes, /一项可核对的更新/);
   assert.ok(notes.indexOf('loopra-desktop-windows-amd64-setup.exe') < notes.indexOf('#### Windows 便携版'));
   assert.ok(notes.indexOf('loopra-desktop-windows-amd64.exe') > notes.indexOf('#### Windows 便携版'));
-  assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [...LOOPRAX_ASSETS].sort());
+  assert.deepEqual(readdirSync(join(dir, 'publish')).sort(), [...releasePackages].sort());
   assert.equal(parseMetadata(notes).sourceSha, sha);
   assert.equal(parseMetadata(notes).sourceRepository, 'ezdemo/loopra');
   assert.match(parseMetadata(notes).artifacts['loopra-linux-amd64'], /^[a-f0-9]{64}$/);
-  assert.doesNotMatch(notes, /setup\.ps1|Loopra-macos/);
+  assert.doesNotMatch(notes, /setup\.ps1|Loopra-macos|loopra-windows-386\.exe|loopra-linux-armv7/);
+  rmSync(join(dir, 'loopra-linux-amd64'));
+  assert.throws(() => prepareAssets(dir, join(dir, 'incomplete')), /Every LoopraX package, including Windows installers, is required/);
 });
 
-test('stages exactly the LoopraX release packages', t => {
+test('stages all active LoopraX packages without paused 32-bit targets and rejects missing active targets', t => {
   const dir = fixture(t);
-  for (const name of LOOPRAX_ASSETS) write(dir, `bin/${name}`, name);
+  for (const name of releasePackages) write(dir, `bin/${name}`, name);
   write(dir, 'bin/loopra.exe', 'windows alias stays out of the release');
   const out = join(dir, 'out');
-  assert.deepEqual(stageAssets(join(dir, 'bin'), out).sort(), [...LOOPRAX_ASSETS].sort());
-  assert.deepEqual(readdirSync(out).sort(), [...LOOPRAX_ASSETS].sort());
+  assert.deepEqual(stageAssets(join(dir, 'bin'), out).sort(), [...releasePackages].sort());
+  assert.deepEqual(readdirSync(out).sort(), [...releasePackages].sort());
+  rmSync(join(dir, 'bin', 'loopra-linux-amd64'));
+  assert.throws(() => stageAssets(join(dir, 'bin'), join(dir, 'incomplete')),
+    /Missing LoopraX packages: loopra-linux-amd64$/);
   mkdirSync(join(dir, 'empty'));
   assert.throws(() => stageAssets(join(dir, 'empty'), join(dir, 'other')), /Missing LoopraX packages/);
 });

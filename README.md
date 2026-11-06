@@ -60,6 +60,8 @@ Windows 桌面端默认下载 `loopra-desktop-windows-<arch>-setup.exe`：按当
 
 PowerShell 桌面安装脚本优先运行安装包；指定的历史版本尚无安装包时，会提示并下载该版本的便携 EXE。
 
+当前源码构建矩阵已暂停 Windows 386 和 Linux ARMv7 两个 32 位目标，发布清单同步排除它们，包含两个 Windows 桌面安装包在内共发布 15 个包。恢复这些目标时，需要同时更新源码构建矩阵与本仓库 `.release/prepare-assets.mjs` 中的 `LOOPRAX_ASSETS` 清单。
+
 ## 自动生成更新说明
 
 工作流从上次正式、非预发布 Release 正文中的隐藏记录读取 `sourceSha`（兼容旧版 `release-metadata.json` 附件），与本次构建锁定的源码 SHA 比较，提取期间的非合并提交。读取的是 `ezdemo/loopra` 的源码历史。源码仓库不同的 Release 不作为比较基准。同一仓库上更早的 Release，只要其源码提交是本次提交的祖先，就作为比较基准。草稿、预发布以及晚于本次版本的 Release 也不作为基准。
