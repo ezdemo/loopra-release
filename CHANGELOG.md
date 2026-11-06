@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.604:start -->
+## [26.11.604](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.604)
+
+发布日期：2026-11-06 15:31（UTC+8）
+
+### 修复
+- 改进暗色主题下文本选择的对比度，提升可读性。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/42669a577d9d378f6d384b8ea44d42371c73fe1a...1be1941f9f46001142d8fd631a22631775dbc089>) · 从 v26.11.603 到本次构建
+<!-- loopra-release:v26.11.604:end -->
+
+---
+
 <!-- loopra-release:v26.11.603:start -->
 ## [26.11.603](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.603)
 
