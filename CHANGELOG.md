@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.605:start -->
+## [26.11.605](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.605)
+
+发布日期：2026-11-06 16:10（UTC+8）
+
+### 修复
+
+- 恢复原生紧凑命令执行功能
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/1be1941f9f46001142d8fd631a22631775dbc089...4339692f90d08cb723f91ff064b3b1c49bd4bb5c>) · 从 v26.11.604 到本次构建
+<!-- loopra-release:v26.11.605:end -->
+
+---
+
 <!-- loopra-release:v26.11.604:start -->
 ## [26.11.604](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.604)
 
