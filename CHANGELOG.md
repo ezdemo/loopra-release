@@ -4,6 +4,24 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.603:start -->
+## [26.11.603](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.603)
+
+发布日期：2026-11-06 15:25（UTC+8）
+
+### 更新内容
+
+- refactor: remove native plan mode and submit\_plan tool ([42669a5](https://github.com/ezdemo/loopra/commit/42669a577d9d378f6d384b8ea44d42371c73fe1a))
+- fix: remove show\_requirements tool ([930b1e4](https://github.com/ezdemo/loopra/commit/930b1e4ba2162c8f4ca201294b1de48f583dc656))
+- fix: 暂停 32 位平台打包 ([f54cf25](https://github.com/ezdemo/loopra/commit/f54cf251019caf5612fc7503f14bb25e1ba3fef6))
+- fix: link projects by directory so removal keeps associations ([61a0d0b](https://github.com/ezdemo/loopra/commit/61a0d0b8edb06dabfbc9206786f3818f01dcb65f))
+- feat: add Feishu bots with QR authorization and chat sessions ([920f0e8](https://github.com/ezdemo/loopra/commit/920f0e8ff8ccc9623ce0024a795f78aaafc968e2))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/1fcba4dff7d31ab8b93560f1b53ac1ed64a81d23...42669a577d9d378f6d384b8ea44d42371c73fe1a>) · 从 v26.11.509 到本次构建
+<!-- loopra-release:v26.11.603:end -->
+
+---
+
 <!-- loopra-release:v26.11.509:start -->
 ## [26.11.509](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.509)
 
