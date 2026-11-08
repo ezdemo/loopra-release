@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.801:start -->
+## [26.11.801](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.801)
+
+发布日期：2026-11-08 15:11（UTC+8）
+
+### 新增
+- 支持异步工具执行与结果交付
+
+### 修复
+- 修复在 Markdown 中保留 Windows 图片路径的问题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/e0cfefca9fa281a9670cbed6db8a69b06bceeb27...27862e7fa4148376b8783e38b31e931fb4ad86ab>) · 从 v26.11.606 到本次构建
+<!-- loopra-release:v26.11.801:end -->
+
+---
+
 <!-- loopra-release:v26.11.606:start -->
 ## [26.11.606](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.606)
 
