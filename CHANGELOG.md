@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.901:start -->
+## [26.11.901](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.901)
+
+发布日期：2026-11-09 15:15（UTC+8）
+
+### 新增
+- 为 rg 工具添加偏移分页功能
+- 桌面程序支持在系统托盘中保持运行
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/27862e7fa4148376b8783e38b31e931fb4ad86ab...a00a07f1f4600045420a81c2868c5b9af9c61ae9>) · 从 v26.11.801 到本次构建
+<!-- loopra-release:v26.11.901:end -->
+
+---
+
 <!-- loopra-release:v26.11.801:start -->
 ## [26.11.801](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.801)
 
