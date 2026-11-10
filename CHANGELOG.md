@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1001:start -->
+## [26.11.1001](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1001)
+
+发布日期：2026-11-10 09:21（UTC+8）
+
+### 新增
+- 添加 Loopra 移动客户端，支持在移动设备上使用
+- 添加加密中继，提升通信安全性
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a00a07f1f4600045420a81c2868c5b9af9c61ae9...a3e270d50fc5ef1b9e6e191ce679505d9cfea136>) · 从 v26.11.901 到本次构建
+<!-- loopra-release:v26.11.1001:end -->
+
+---
+
 <!-- loopra-release:v26.11.901:start -->
 ## [26.11.901](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.901)
 
