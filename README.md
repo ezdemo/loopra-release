@@ -23,6 +23,8 @@ LoopraX 不再发布 npm 上的 `loopra-dist`。**Publish historical Loopra core
 
 `build_android` 启用时，`package-android` 在 Ubuntu 24.04 上使用 Java 21、Android SDK / Build Tools 37.0.0、NDK 28.2.13676358 和 Rust `aarch64-linux-android` 构建调试包。它与桌面任务共用锁定的源码 SHA 和上海日期版本号，运行移动端、Rust 中继和 Android 单元测试，验证 APK 签名、包名、版本及 ABI 后上传构建产物。
 
+工作流通过 `android-actions/setup-android` 安装 Android 命令行工具、配置 `sdkmanager` 的 PATH 并接受 SDK 许可，再安装指定版本的 SDK / Build Tools 和 NDK。
+
 从该次 Actions 运行页面底部的 **Artifacts → `loopra-android-arm64-debug`** 下载，保留 7 天，包含：
 
 - `loopra-mobile-<version>-arm64-debug.apk`：Android 7.0 及以上、ARM64 的调试安装包。
