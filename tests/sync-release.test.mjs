@@ -3,14 +3,16 @@ import { createHash } from 'node:crypto';
 import { test } from 'node:test';
 import { metadataComment } from '../.release/release-metadata.mjs';
 import { syncRelease } from '../.release/sync-release.mjs';
+import { ANDROID_DEBUG_ASSET, LOOPRAX_ASSETS } from '../.release/prepare-assets.mjs';
 
 const tag = 'v26.10.1901';
 const sha = 'a'.repeat(40);
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const clone = value => JSON.parse(JSON.stringify(value));
 function server(withUpdates = false) {
-  const packages = ['loopra-dist.tar.gz', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe'];
-  if (withUpdates) packages.push('latest.yml', 'Loopra-windows-x64.exe.blockmap');
+  const packages = withUpdates === 'android' ? [...LOOPRAX_ASSETS, ANDROID_DEBUG_ASSET]
+    : ['loopra-dist.tar.gz', 'Loopra-linux-x64.deb', 'Loopra-macos-arm64.zip', 'Loopra-windows-x64.exe'];
+  if (withUpdates && withUpdates !== 'android') packages.push('latest.yml', 'Loopra-windows-x64.exe.blockmap');
   if (withUpdates === 'all' || withUpdates === 'unsigned') packages.push('latest-linux.yml', 'Loopra-linux-x64.AppImage', 'latest-unsigned-mac.yml');
   if (withUpdates === 'all') packages.push('latest-mac.yml', 'Loopra-macos-arm64.zip.blockmap');
   const bytes = Object.fromEntries(packages.map(name => [name, Buffer.from(`package bytes: ${name}`)]));
@@ -80,6 +82,17 @@ function server(withUpdates = false) {
   return { state, run: options => syncRelease({ tag, sourceToken: 'source-token', releaseToken: 'release-token', request, ...options }) };
 }
 const writes = state => state.calls.filter(call => call.method !== 'GET');
+
+test('mirrors the Android debug APK and checksum together with all current desktop packages', async () => {
+  const { state, run } = server('android');
+  state.release.body = state.release.body.replace('/loopra-dist.tar.gz\n', `/${ANDROID_DEBUG_ASSET}\n`);
+  const result = await run();
+  assert.equal(state.target.draft, false);
+  assert.deepEqual(result.packages.sort(), [...LOOPRAX_ASSETS, ANDROID_DEBUG_ASSET].sort());
+  const apk = state.target.assets.find(asset => asset.name === ANDROID_DEBUG_ASSET);
+  assert.equal(apk.digest, state.release.assets.find(asset => asset.name === ANDROID_DEBUG_ASSET).digest);
+  assert.ok(state.target.body.includes(`ezdemo/loopra/releases/download/${tag}/${ANDROID_DEBUG_ASSET}`));
+});
 
 test('mirrors Windows update manifest and blockmap along with all packages', async () => {
   const { state, run } = server(true);

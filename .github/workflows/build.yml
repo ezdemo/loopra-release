@@ -7,6 +7,10 @@ on:
         description: 'Automatically publish the release after building (off: build only)'
         type: boolean
         default: true
+      build_android:
+        description: 'Build an Android ARM64 debug APK and include it when publishing'
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -136,9 +140,68 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  # Android is optional, but must finish successfully before a release includes it.
+  package-android:
+    if: inputs.build_android
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout release tooling
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Checkout pinned Loopra main
+        uses: actions/checkout@v7
+        with:
+          repository: ezdemo/loopra
+          ref: ${{ needs.prepare.outputs.source_sha }}
+          path: source
+          token: ${{ secrets.SOURCE_READ_TOKEN || github.token }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-metadata
+          path: android-metadata
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+          run_install: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install Tauri build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: Prepare Rust and Android toolchains
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          rustup target add aarch64-linux-android
+          sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;28.2.13676358"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358" >> "$GITHUB_ENV"
+      - name: Build and verify Android debug APK
+        run: bash .release/build-android.sh source android-artifact android-metadata/release-metadata.json
+      - name: Upload Android debug artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: loopra-android-arm64-debug
+          path: android-artifact/*
+          if-no-files-found: error
+          retention-days: 7
+
   release:
-    if: inputs.create_release
-    needs: [prepare, package]
+    if: >-
+      ${{ !cancelled() && inputs.create_release &&
+          needs.prepare.result == 'success' && needs.package.result == 'success' &&
+          (needs['package-android'].result == 'success' ||
+           (!inputs.build_android && needs['package-android'].result == 'skipped')) }}
+    needs: [prepare, package, package-android]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -149,12 +212,25 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
-      - name: Download build artifacts
+      - name: Download release metadata
         uses: actions/download-artifact@v8
         with:
+          name: release-metadata
           path: release-artifacts
-          merge-multiple: true
+      - name: Download desktop and service packages
+        uses: actions/download-artifact@v8
+        with:
+          name: looprax-packages
+          path: release-artifacts
+      - name: Download Android debug package
+        if: inputs.build_android
+        uses: actions/download-artifact@v8
+        with:
+          name: loopra-android-arm64-debug
+          path: release-artifacts/android
       - name: Prepare packages and release notes
+        env:
+          INCLUDE_ANDROID: ${{ inputs.build_android }}
         run: node .release/prepare-assets.mjs release-artifacts
       # Upload into a temporary draft so users never see incomplete packages.
       - name: Upload release packages

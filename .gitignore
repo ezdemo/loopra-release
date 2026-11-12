@@ -5,6 +5,8 @@
 /release-notes.md
 /release-changes.md
 /node_modules/
+/android-artifact/
+/android-metadata/
 /.release/npm/loopra-dist/loopra-dist.tar.gz
 *.tgz
 .DS_Store

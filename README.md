@@ -2,22 +2,46 @@
 
 LoopraX 的独立构建、安装与发布仓库。源码和问题反馈位于 [ezdemo/loopra](https://github.com/ezdemo/loopra)，下载见 [Releases](https://github.com/ezdemo/loopra-release/releases/latest)。
 
-参考 [yetone/magpie-releases](https://github.com/yetone/magpie-releases) 的源码与发布仓库分离方式。此仓库固定从 `ezdemo/loopra` 的 **main** 分支获取源码，开始构建时锁定提交 SHA，服务端和桌面端都使用该提交。`main` 现在是 LoopraX 源码树。
+参考 [yetone/magpie-releases](https://github.com/yetone/magpie-releases) 的源码与发布仓库分离方式。此仓库固定从 `ezdemo/loopra` 的 **main** 分支获取源码，开始构建时锁定提交 SHA，服务端、桌面端和 Android 调试包都使用该提交。`main` 现在是 LoopraX 源码树。
 
 2026-10-29 起只发布 LoopraX。更早的 Release 是 Java / Electron 版 Loopra，仍然可以下载，但流水线不再构建它。
 
 ## 构建与发版
 
 1. 把要发布的源码合并到 `ezdemo/loopra` 的 **main**。开发版本留在源码里的 `internal/controller/version.go`，无需为发版手动改版本号。
-2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。`create_release` 默认勾选：构建成功后自动正式发布；取消勾选则只构建。
+2. 在本仓库 Actions → **Build & Release** → **Run workflow** 选择 `main`。`create_release` 默认勾选：构建成功后自动正式发布；取消勾选则只构建。`build_android` 默认勾选，额外构建 Android ARM64 调试 APK。
 3. 工作流自动领取版本，锁定源码提交，并在打包前把该版本写入检出的 `version.go`。无需手动打标签；标签由流水线创建，推送标签不会触发新构建。
 4. 全部安装包构建成功后，流水线先上传到临时草稿，核对每个附件的 SHA-256 和构建身份，再自动正式发布。随后分别启动源码仓库 Release 同步和 `CHANGELOG.md` 归档。
 
-普通提交只运行轻量检查。构建失败不会创建 Release；上传或校验失败时临时草稿不会正式发布，也不会启动源码同步。只构建模式不会发布 Release。
+普通提交只运行轻量检查。服务端或桌面构建失败不会创建 Release；启用 Android 时，也必须等 Android 构建和校验通过。上传或校验失败时临时草稿不会正式发布，也不会启动源码同步。只构建模式不会发布 Release；关闭 `build_android` 时仍按原来的服务端和桌面流程发布。
 
 GitHub 不会为使用 `GITHUB_TOKEN` 发布的 Release 自动触发其他 `release.published` 工作流，因此构建流程在正式发布成功后，通过 `workflow_dispatch` 启动 **Sync release to source repository** 和 **Update release changelog**。两个任务独立运行，失败时可以从各自入口重试。人工正式发布已有草稿时，原来的 `release.published` 入口仍然有效。
 
 LoopraX 不再发布 npm 上的 `loopra-dist`。**Publish historical Loopra core to npm** 只用于手动重试旧的 Loopra 标签，不会在新版本发布后自动运行。
+
+### Android 调试 APK
+
+`build_android` 启用时，`package-android` 在 Ubuntu 24.04 上使用 Java 21、Android SDK / Build Tools 37.0.0、NDK 28.2.13676358 和 Rust `aarch64-linux-android` 构建调试包。它与桌面任务共用锁定的源码 SHA 和上海日期版本号，运行移动端、Rust 中继和 Android 单元测试，验证 APK 签名、包名、版本及 ABI 后上传构建产物。
+
+从该次 Actions 运行页面底部的 **Artifacts → `loopra-android-arm64-debug`** 下载，保留 7 天，包含：
+
+- `loopra-mobile-<version>-arm64-debug.apk`：Android 7.0 及以上、ARM64 的调试安装包。
+- `SHA256SUMS`：APK 的 SHA-256。
+- `android-build.json`：构建版本、Android versionCode、源码 SHA 和校验值。
+
+`create_release=true` 时，验证过的 APK 还会以 **`loopra-mobile-android-arm64-debug.apk`** 加入 GitHub Release，在“Android 调试版”分组下提供下载，并随同桌面包同步到源码仓库 Release。发布前核对 Android 与桌面包的版本、源码 SHA 和构建工具 SHA，并检查 APK 的 SHA-256；构建信息不符或文件缺失时不发布。
+
+`create_release=false` 时仅保留 Actions Artifact。桌面安装脚本不会下载 APK。不需要新增签名 Secrets。Debug APK 可直接安装使用；调试证书由构建环境生成，不保证不同运行之间使用同一张证书，因此与本机或其他 CI 调试包不保证可直接覆盖安装。长期分发与稳定升级需另行接入固定的正式签名。
+
+打包时仅修改检出的源码副本：同步 `mobile/package.json`、Tauri 配置、Rust 包及其锁文件中的版本。Android versionCode 使用 `年 × 1,000,000 + 月 × 10,000 + 日期序号`，例如 `26.11.1101 → 26111101`，避免桌面日期版本的第三段超过 999 后与下个月产生冲突。
+
+准备好相同的 Linux 构建环境和已有 `release-metadata.json` 后，也可运行：
+
+```bash
+bash .release/build-android.sh source android-artifact release-metadata.json
+```
+
+脚本只生成调试包，不发布或上传。构建依赖见 [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/)。
 
 ### 自动归档变更列表
 
@@ -54,7 +78,7 @@ LoopraX 不再发布 npm 上的 `loopra-dist`。**Publish historical Loopra core
 
 版本写入检出副本的 `internal/controller/version.go`。源码仓库保留开发版本 `0.1.0-go`。发版元数据同时记录原源码版本、源码提交 SHA 和实际构建版本。软件包文件名不带版本号，应用内部仍是这次构建的版本。
 
-Release 下载区包含 `scripts/package-matrix.txt` 里的服务端二进制，以及桌面端安装包。Darwin 桌面端是带可执行权限的 `.zip`，里面是 `Loopra.app`。安装脚本在仓库中提供，不作为 Release 附件。更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
+Release 下载区包含 `scripts/package-matrix.txt` 里的服务端二进制、桌面端安装包，以及启用 Android 时的 ARM64 调试 APK。Darwin 桌面端是带可执行权限的 `.zip`，里面是 `Loopra.app`。安装脚本在仓库中提供，不作为 Release 附件。更新说明直接显示在 Release 正文；源码 SHA 和校验信息保存在正文隐藏记录中。
 
 Windows 桌面端默认下载 `loopra-desktop-windows-<arch>-setup.exe`：按当前用户安装到 `%LOCALAPPDATA%\Programs\Loopra`，提供开始菜单、可选桌面快捷方式与卸载项。不带 `-setup` 的桌面 EXE 作为便携版保留，供直接运行和旧版便携更新使用。安装版的在线更新通过新版安装包升级；卸载保留用户数据。
 

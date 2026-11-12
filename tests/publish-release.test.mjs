@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { LOOPRAX_ASSETS } from '../.release/prepare-assets.mjs';
+import { ANDROID_DEBUG_ASSET, LOOPRAX_ASSETS } from '../.release/prepare-assets.mjs';
 import { metadataComment } from '../.release/release-metadata.mjs';
 import { publishRelease } from '../.release/publish-release.mjs';
 
 const tag = 'v26.10.1904';
 const releaseSha = 'a'.repeat(40);
-function fixture() {
-  const names = [...LOOPRAX_ASSETS];
+function fixture(android = false) {
+  const names = [...LOOPRAX_ASSETS, ...(android ? [ANDROID_DEBUG_ASSET] : [])];
   const metadata = { version: tag.slice(1), npmVersion: tag.slice(1), sourceSha: 'b'.repeat(40), releaseSha,
     sourceRepository: 'ezdemo/loopra', releaseRepository: 'ezdemo/loopra-release',
     artifacts: Object.fromEntries(names.map((name, i) => [name, (i % 16).toString(16).repeat(64)])) };
@@ -45,6 +45,25 @@ test('publishes a complete draft only after verifying every package and its buil
   const { state, run } = fixture();
   assert.equal((await run()).draft, false);
   assert.deepEqual(state.calls.map(call => call.method), ['GET', 'PATCH']);
+});
+
+test('publishes Android debug APKs only when the expected attachment and checksum are both present', async () => {
+  const { state, run } = fixture(true);
+  assert.equal((await run()).draft, false);
+  assert.ok(state.release.assets.some(asset => asset.name === ANDROID_DEBUG_ASSET));
+  for (const change of [
+    release => { release.assets = release.assets.filter(asset => asset.name !== ANDROID_DEBUG_ASSET); },
+    release => {
+      const asset = release.assets.find(asset => asset.name === ANDROID_DEBUG_ASSET);
+      asset.digest = asset.digest.replace(/.$/, char => char === '0' ? '1' : '0');
+    },
+  ]) {
+    const f = fixture(true);
+    change(f.state.release);
+    await assert.rejects(f.run(), /Uploaded packages/);
+    assert.equal(f.state.release.draft, true);
+    assert.deepEqual(f.state.calls.map(call => call.method), ['GET']);
+  }
 });
 
 test('incomplete, corrupted or unexpected uploaded packages remain unpublished', async () => {
