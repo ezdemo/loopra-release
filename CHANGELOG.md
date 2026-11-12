@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1203:start -->
+## [26.11.1203](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1203)
+
+发布日期：2026-11-12 10:02（UTC+8）
+
+### 修复
+- 避免移动端中继请求上下文竞争。
+
+### 改进
+- 改进移动端原生中继和工作区体验。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a3e270d50fc5ef1b9e6e191ce679505d9cfea136...9d177efe014799e9344225747087080a0f54870d>) · 从 v26.11.1001 到本次构建
+<!-- loopra-release:v26.11.1203:end -->
+
+---
+
 <!-- loopra-release:v26.11.1001:start -->
 ## [26.11.1001](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1001)
 
