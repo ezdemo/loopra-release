@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1401:start -->
+## [26.11.1401](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1401)
+
+发布日期：2026-11-14 23:17（UTC+8）
+
+### 新增
+- 支持为内置和自定义服务添加连接器。
+- 新增自定义智能体，支持绑定到项目会话，并配置工具/技能允许列表。
+
+### 修复
+- 修复了切换视图时顶部工具栏不稳定的问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/9d177efe014799e9344225747087080a0f54870d...922534363fdc6de27cab561f1fad17625605eeb8>) · 从 v26.11.1203 到本次构建
+<!-- loopra-release:v26.11.1401:end -->
+
+---
+
 <!-- loopra-release:v26.11.1203:start -->
 ## [26.11.1203](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1203)
 
