@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1501:start -->
+## [26.11.1501](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1501)
+
+发布日期：2026-11-15 13:29（UTC+8）
+
+### 新增
+- 为自定义代理添加连接器允许列表
+- 支持用户自定义代理的自定义图标
+
+### 修复
+- 修正 README 中的克隆 URL，并调整飞书机器人文档位置
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/922534363fdc6de27cab561f1fad17625605eeb8...822b7832f82ede19a414cc33d0c8b48599dff56e>) · 从 v26.11.1401 到本次构建
+<!-- loopra-release:v26.11.1501:end -->
+
+---
+
 <!-- loopra-release:v26.11.1401:start -->
 ## [26.11.1401](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1401)
 
