@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1502:start -->
+## [26.11.1502](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1502)
+
+发布日期：2026-11-15 22:01（UTC+8）
+
+### 新增
+- 添加 Devin ACP 引擎，并支持会话感知的请求路由。
+
+### 改进
+- 将内置代理图标切换为 DiceBear 体素机器人风格。
+- 移除 ACP 中不再需要的 pi 和 dsh 提供者，简化架构。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/822b7832f82ede19a414cc33d0c8b48599dff56e...c5c3b3ac62c4729b01be2246ad5831cb40dca89a>) · 从 v26.11.1501 到本次构建
+<!-- loopra-release:v26.11.1502:end -->
+
+---
+
 <!-- loopra-release:v26.11.1501:start -->
 ## [26.11.1501](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1501)
 
