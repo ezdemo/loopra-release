@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1602:start -->
+## [26.11.1602](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1602)
+
+发布日期：2026-11-16 22:50（UTC+8）
+
+### 新增
+- 在设置中新增管理外部 ACP 代理的功能。
+
+### 修复
+- 修复了 ACP 安装提示中 Codex CLI 和 Devin CLI 的名称显示问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/3bb8978d43a9fd1ba8fec8f7f1ea8bad98a10b00...b2f07f4e10a111d4546877ddaf09f6f43fe4d9c3>) · 从 v26.11.1601 到本次构建
+<!-- loopra-release:v26.11.1602:end -->
+
+---
+
 <!-- loopra-release:v26.11.1601:start -->
 ## [26.11.1601](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1601)
 
