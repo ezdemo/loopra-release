@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1601:start -->
+## [26.11.1601](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1601)
+
+发布日期：2026-11-16 21:37（UTC+8）
+
+### 新增
+- 重建连接器目录为经过验证的注册表，并添加品牌图标。
+
+### 改进
+- 会话提示标签页改为懒加载，并优化原始记录列表的展示。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/c5c3b3ac62c4729b01be2246ad5831cb40dca89a...3bb8978d43a9fd1ba8fec8f7f1ea8bad98a10b00>) · 从 v26.11.1502 到本次构建
+<!-- loopra-release:v26.11.1601:end -->
+
+---
+
 <!-- loopra-release:v26.11.1502:start -->
 ## [26.11.1502](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1502)
 
