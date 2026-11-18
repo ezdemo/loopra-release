@@ -4,6 +4,23 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1801:start -->
+## [26.11.1801](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1801)
+
+发布日期：2026-11-18 19:01（UTC+8）
+
+### 新增
+- 支持在原生引擎和外部引擎之间分支会话
+
+### 修复
+- 将ACP安装提示限定在依赖设置阶段
+- 修复桌面端工作台下载时保存对话框的提示问题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b2f07f4e10a111d4546877ddaf09f6f43fe4d9c3...2bef23c8cd2339264ee467f78e834880a14b7237>) · 从 v26.11.1602 到本次构建
+<!-- loopra-release:v26.11.1801:end -->
+
+---
+
 <!-- loopra-release:v26.11.1602:start -->
 ## [26.11.1602](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1602)
 
