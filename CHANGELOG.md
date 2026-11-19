@@ -4,6 +4,24 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.1901:start -->
+## [26.11.1901](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1901)
+
+发布日期：2026-11-19 16:43（UTC+8）
+
+### 新增
+- 将设置移入工作台
+- 添加工作台活动栏
+- 新增原生 Jetpack Compose Android 客户端
+
+### 修复
+- 异步生成会话标题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/2bef23c8cd2339264ee467f78e834880a14b7237...12abe2d153fcbcb882c8c3148c0cfc20a04e2115>) · 从 v26.11.1801 到本次构建
+<!-- loopra-release:v26.11.1901:end -->
+
+---
+
 <!-- loopra-release:v26.11.1801:start -->
 ## [26.11.1801](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1801)
 
