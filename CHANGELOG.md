@@ -4,6 +4,21 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2404:start -->
+## [26.11.2404](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2404)
+
+发布日期：2026-11-24 21:52（UTC+8）
+
+### 改进
+
+- 优化标签栏显示，使标签条更简洁。
+- 统一首页头部操作入口。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/f22a754dd2377eb58706a5feec2ce1bb9a68891a...c4372f4038b6de84c9ca6cfe4e0a4ed1b271cd96>) · 从 v26.11.2403 到本次构建
+<!-- loopra-release:v26.11.2404:end -->
+
+---
+
 <!-- loopra-release:v26.11.2403:start -->
 ## [26.11.2403](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2403)
 
