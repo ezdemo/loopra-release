@@ -11,6 +11,10 @@ on:
         description: 'Build an Android ARM64 debug APK and include it when publishing'
         type: boolean
         default: true
+      source_sha:
+        description: 'Loopra source commit to build (default: main HEAD)'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -36,11 +40,11 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Checkout LoopraX main
+      - name: Checkout LoopraX source
         uses: actions/checkout@v7
         with:
           repository: ezdemo/loopra
-          ref: main
+          ref: ${{ inputs.source_sha || 'main' }}
           path: source
           fetch-depth: 0
           token: ${{ secrets.SOURCE_READ_TOKEN || github.token }}
