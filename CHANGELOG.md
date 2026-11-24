@@ -4,6 +4,100 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2403:start -->
+## [26.11.2403](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2403)
+
+发布日期：2026-11-24 21:21（UTC+8）
+
+### 新增
+- 刷新工作台主题，并将侧边面板按项目进行作用域限定。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/46aec4c353a67220a46bf4bb51787f07f5436920...f22a754dd2377eb58706a5feec2ce1bb9a68891a>) · 从 v26.11.2401 到本次构建
+<!-- loopra-release:v26.11.2403:end -->
+
+---
+
+<!-- loopra-release:v26.11.2401:start -->
+## [26.11.2401](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2401)
+
+发布日期：2026-11-24 19:29（UTC+8）
+
+### 改进
+- 优化发布流程，确保发布构建基于通过 CI 验证的代码版本，提升发布稳定性。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/566f3f8f3fbb5ef6d61ab911419acab94fe695b4...46aec4c353a67220a46bf4bb51787f07f5436920>) · 从 v26.11.2301 到本次构建
+<!-- loopra-release:v26.11.2401:end -->
+
+---
+
+<!-- loopra-release:v26.11.2301:start -->
+## [26.11.2301](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2301)
+
+发布日期：2026-11-23 09:47（UTC+8）
+
+### 新增
+- 保留 Fusion 交接上下文，并支持共享工作区提示。
+
+### 修复
+- 修复在 Responses 中重放纯文本推理的问题。
+
+### 改进
+- 重命名工作台外壳类以优化代码结构。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/e674079621bfd3b7e7ba02254a599775434d17fc...566f3f8f3fbb5ef6d61ab911419acab94fe695b4>) · 从 v26.11.2003 到本次构建
+<!-- loopra-release:v26.11.2301:end -->
+
+---
+
+<!-- loopra-release:v26.11.2003:start -->
+## [26.11.2003](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2003)
+
+发布日期：2026-11-20 22:59（UTC+8）
+
+### 新增
+- 支持停止和追踪异步工具
+- 支持按模型配置推理努力程度
+
+### 修复
+- 修复原生工具调用间推理状态丢失的问题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a0c88e5350bdbd7afc294087ba5fe771f7983453...e674079621bfd3b7e7ba02254a599775434d17fc>) · 从 v26.11.2002 到本次构建
+<!-- loopra-release:v26.11.2003:end -->
+
+---
+
+<!-- loopra-release:v26.11.2002:start -->
+## [26.11.2002](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2002)
+
+发布日期：2026-11-20 15:47（UTC+8）
+
+### 新增
+- 持久化 Fusion 默认设置，并配置 Sidekick 推理。
+
+### 修复
+- 本地化推理标签，并缩短 Fusion 模型显示名称。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a1b84b9956031d17061c07c9165ccb1aeac8f6cf...a0c88e5350bdbd7afc294087ba5fe771f7983453>) · 从 v26.11.2001 到本次构建
+<!-- loopra-release:v26.11.2002:end -->
+
+---
+
+<!-- loopra-release:v26.11.2001:start -->
+## [26.11.2001](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2001)
+
+发布日期：2026-11-20 10:01（UTC+8）
+
+### 新增
+- 委托 Fusion 探索，并将任务清单移动到编辑器，添加共享任务清单
+
+### 修复
+- Fusion Sidekick 不再使用固定超时，改为内联渲染
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/12abe2d153fcbcb882c8c3148c0cfc20a04e2115...a1b84b9956031d17061c07c9165ccb1aeac8f6cf>) · 从 v26.11.1901 到本次构建
+<!-- loopra-release:v26.11.2001:end -->
+
+---
+
 <!-- loopra-release:v26.11.1901:start -->
 ## [26.11.1901](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.1901)
 
