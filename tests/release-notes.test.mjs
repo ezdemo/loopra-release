@@ -83,6 +83,15 @@ test('rejects unreadable or incorrect previous-release metadata instead of silen
   await assert.rejects(findBaseline(f.dir, f.metadata, { request: badSha }), /not an ancestor/);
 });
 
+test('non-strict builds skip a non-ancestor release and fall back to a source tag', async t => {
+  const f = fixture(t);
+  const request = async url => url.includes('/releases?')
+    ? Response.json([{ tag_name: 'v26.9.2', assets: [{ id: 1, name: 'release-metadata.json' }] }])
+    : Response.json({ ...f.metadata, sourceSha: 'a'.repeat(40) });
+  const baseline = await findBaseline(f.dir, f.metadata, { request, strictBaseline: false });
+  assert.deepEqual(baseline, { sha: f.second, tag: 'v26.9.2', kind: 'source-tag' });
+});
+
 test('ignores a release recorded against another source repository', async t => {
   const f = fixture(t);
   const baseline = await findBaseline(f.dir, f.metadata, { request: async url => {
