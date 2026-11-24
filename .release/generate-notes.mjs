@@ -37,7 +37,7 @@ async function githubJson(url, token, request, asset = false) {
   return response.json();
 }
 
-export async function findBaseline(sourceDir, metadata, { token, request = fetch } = {}) {
+export async function findBaseline(sourceDir, metadata, { token, request = fetch, strictBaseline = true } = {}) {
   const releases = [];
   for (let page = 1; ; page++) {
     if (page > 10) throw new Error('Too many release pages to establish the previous release.');
@@ -69,7 +69,12 @@ export async function findBaseline(sourceDir, metadata, { token, request = fetch
       }
     }
     if (!isAncestor(sourceDir, sha, metadata.sourceSha)) {
-      throw new Error('Previous release source is not an ancestor of this build; cannot generate an accurate changelog.');
+      if (strictBaseline) {
+        throw new Error('Previous release source is not an ancestor of this build; cannot generate an accurate changelog.');
+      }
+      // Build-only runs may pin a source_sha older than the latest release.
+      // Skip releases that cannot be a base and fall back to source tags.
+      continue;
     }
     return { sha, tag: previous.tag_name, kind: 'published-release' };
   }
@@ -184,6 +189,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const notes = await generateNotes(resolve(process.argv[2] || 'source'), resolve(process.argv[3] || '.'), {
     token: process.env.GH_TOKEN, apiKey: process.env.RELEASE_NOTES_API_KEY,
     baseUrl: process.env.RELEASE_NOTES_BASE_URL || DEFAULT_BASE_URL, model: process.env.RELEASE_NOTES_MODEL || DEFAULT_MODEL,
+    strictBaseline: process.env.RELEASE_NOTES_STRICT_BASELINE !== 'false',
   });
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `\n${notes}\n`);
   console.log('Release changes saved to release-changes.md');

@@ -66,6 +66,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_NOTES_API_KEY: ${{ secrets.RELEASE_NOTES_API_KEY }}
+          RELEASE_NOTES_STRICT_BASELINE: ${{ inputs.create_release }}
           RELEASE_NOTES_BASE_URL: ${{ vars.RELEASE_NOTES_BASE_URL || 'https://amr-link.open-design.ai/v1' }}
           RELEASE_NOTES_MODEL: ${{ vars.RELEASE_NOTES_MODEL || 'deepseek-v4-pro' }}
         run: node .release/generate-notes.mjs source
