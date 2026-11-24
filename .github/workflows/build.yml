@@ -261,7 +261,12 @@ jobs:
 
   # Releases published with GITHUB_TOKEN do not emit workflow-triggering release
   # events. Dispatch the follow-up workflows explicitly so each can fail alone.
+  # A skipped package-android marks the whole needs chain, so each job below
+  # must gate itself on the results it actually requires.
   dispatch-source-sync:
+    if: >-
+      ${{ !cancelled() && needs.prepare.result == 'success' &&
+          needs.release.result == 'success' }}
     needs: [prepare, release]
     runs-on: ubuntu-latest
     permissions:
@@ -276,6 +281,7 @@ jobs:
         run: gh workflow run sync-release.yml --ref main -f "tag=$RELEASE_TAG"
 
   dispatch-changelog:
+    if: ${{ !cancelled() && needs.release.result == 'success' }}
     needs: release
     runs-on: ubuntu-latest
     permissions:
