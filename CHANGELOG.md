@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2511:start -->
+## [26.11.2511](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2511)
+
+发布日期：2026-11-25 23:25（UTC+8）
+
+### 新增
+- 在助手回复旁显示网页来源
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/be4398d230ff66bcebbb4bd9929c8ad0193e2526...96d6571ac08db3eabe3209ece9e4881441ac7e31>) · 从 v26.11.2510 到本次构建
+<!-- loopra-release:v26.11.2511:end -->
+
+---
+
 <!-- loopra-release:v26.11.2510:start -->
 ## [26.11.2510](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2510)
 
