@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2505:start -->
+## [26.11.2505](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2505)
+
+发布日期：2026-11-25 13:41（UTC+8）
+
+### 修复
+
+- 修复终端代理名称显示问题，现在正确显示为 **Loopra**。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/f17f95caa40494213cc0c75748677d55d5f46683...ccc9d7732689749848b0c4a7fe98a10d4fa2ef68>) · 从 v26.11.2504 到本次构建
+<!-- loopra-release:v26.11.2505:end -->
+
+---
+
 <!-- loopra-release:v26.11.2504:start -->
 ## [26.11.2504](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2504)
 
