@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2504:start -->
+## [26.11.2504](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2504)
+
+发布日期：2026-11-25 13:08（UTC+8）
+
+### 新增
+
+- 默认构建现在通过内置资源嵌入 `micro-acp`。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/372d12e189d1e3f3f9f305554357c9b8760de4f3...f17f95caa40494213cc0c75748677d55d5f46683>) · 从 v26.11.2503 到本次构建
+<!-- loopra-release:v26.11.2504:end -->
+
+---
+
 <!-- loopra-release:v26.11.2503:start -->
 ## [26.11.2503](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2503)
 
