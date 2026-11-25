@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2507:start -->
+## [26.11.2507](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2507)
+
+发布日期：2026-11-25 17:03（UTC+8）
+
+### 新增
+- 每次模型调用后刷新会话使用量
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/5c96a8b147d02d93187e0bd5139ab6770393826c...6a08f648ba8b0aa6231254aa5cdadd179d0d811c>) · 从 v26.11.2506 到本次构建
+<!-- loopra-release:v26.11.2507:end -->
+
+---
+
 <!-- loopra-release:v26.11.2506:start -->
 ## [26.11.2506](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2506)
 
