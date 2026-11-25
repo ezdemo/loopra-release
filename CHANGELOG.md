@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2501:start -->
+## [26.11.2501](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2501)
+
+发布日期：2026-11-25 09:42（UTC+8）
+
+### 新增
+- 支持将外部代理作为嵌入式 TUI 会话运行
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/c4372f4038b6de84c9ca6cfe4e0a4ed1b271cd96...38c679c63720d7086cf28f0c581df05763b6681f>) · 从 v26.11.2404 到本次构建
+<!-- loopra-release:v26.11.2501:end -->
+
+---
+
 <!-- loopra-release:v26.11.2404:start -->
 ## [26.11.2404](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2404)
 
