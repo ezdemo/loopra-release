@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2508:start -->
+## [26.11.2508](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2508)
+
+发布日期：2026-11-25 17:10（UTC+8）
+
+### 更新内容
+
+- test: align ACP install prompt expectations with scoped copy ([8149586](https://github.com/ezdemo/loopra/commit/81495867c4e8b1fd57f5f4e2e86f25886342a3ad))
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/6a08f648ba8b0aa6231254aa5cdadd179d0d811c...81495867c4e8b1fd57f5f4e2e86f25886342a3ad>) · 从 v26.11.2507 到本次构建
+<!-- loopra-release:v26.11.2508:end -->
+
+---
+
 <!-- loopra-release:v26.11.2507:start -->
 ## [26.11.2507](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2507)
 
