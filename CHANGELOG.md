@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2506:start -->
+## [26.11.2506](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2506)
+
+发布日期：2026-11-25 16:31（UTC+8）
+
+### 修复
+- 修复上下文使用量在压缩和回滚后不准确的问题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/ccc9d7732689749848b0c4a7fe98a10d4fa2ef68...5c96a8b147d02d93187e0bd5139ab6770393826c>) · 从 v26.11.2505 到本次构建
+<!-- loopra-release:v26.11.2506:end -->
+
+---
+
 <!-- loopra-release:v26.11.2505:start -->
 ## [26.11.2505](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2505)
 
