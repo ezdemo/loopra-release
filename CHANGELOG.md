@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2503:start -->
+## [26.11.2503](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2503)
+
+发布日期：2026-11-25 13:00（UTC+8）
+
+### 改进
+
+- 移除旧版终端聊天界面。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/440532b9957a7ba0b731276c72c55bae39b21b32...372d12e189d1e3f3f9f305554357c9b8760de4f3>) · 从 v26.11.2502 到本次构建
+<!-- loopra-release:v26.11.2503:end -->
+
+---
+
 <!-- loopra-release:v26.11.2502:start -->
 ## [26.11.2502](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2502)
 
