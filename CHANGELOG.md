@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2502:start -->
+## [26.11.2502](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2502)
+
+发布日期：2026-11-25 11:27（UTC+8）
+
+### 新增
+- 添加终端聊天功能，并捆绑了 micro-acp。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/38c679c63720d7086cf28f0c581df05763b6681f...440532b9957a7ba0b731276c72c55bae39b21b32>) · 从 v26.11.2501 到本次构建
+<!-- loopra-release:v26.11.2502:end -->
+
+---
+
 <!-- loopra-release:v26.11.2501:start -->
 ## [26.11.2501](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2501)
 
