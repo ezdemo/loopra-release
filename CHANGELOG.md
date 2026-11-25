@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2509:start -->
+## [26.11.2509](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2509)
+
+发布日期：2026-11-25 21:43（UTC+8）
+
+### 新增
+- 为工具行添加类型图标和差异计数
+- 刷新聊天活动反馈
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/81495867c4e8b1fd57f5f4e2e86f25886342a3ad...0271979ba7e5c8b6cf43a4ba2202e2f49d7eb76c>) · 从 v26.11.2508 到本次构建
+<!-- loopra-release:v26.11.2509:end -->
+
+---
+
 <!-- loopra-release:v26.11.2508:start -->
 ## [26.11.2508](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2508)
 
