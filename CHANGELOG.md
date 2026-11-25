@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2510:start -->
+## [26.11.2510](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2510)
+
+发布日期：2026-11-25 22:42（UTC+8）
+
+### 新增
+- 统一工具模型设置
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/0271979ba7e5c8b6cf43a4ba2202e2f49d7eb76c...be4398d230ff66bcebbb4bd9929c8ad0193e2526>) · 从 v26.11.2509 到本次构建
+<!-- loopra-release:v26.11.2510:end -->
+
+---
+
 <!-- loopra-release:v26.11.2509:start -->
 ## [26.11.2509](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2509)
 
