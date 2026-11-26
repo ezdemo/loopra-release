@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2609:start -->
+## [26.11.2609](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2609)
+
+发布日期：2026-11-26 14:44（UTC+8）
+
+### 修复
+- 修复推理滑块宽度显示问题，使其保持全宽
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/07ce9aa3f8b442648600806528c22441d95c83eb...5654476694feaf4ae1923370099a3d438809b53a>) · 从 v26.11.2608 到本次构建
+<!-- loopra-release:v26.11.2609:end -->
+
+---
+
 <!-- loopra-release:v26.11.2608:start -->
 ## [26.11.2608](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2608)
 
