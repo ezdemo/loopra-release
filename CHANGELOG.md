@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2607:start -->
+## [26.11.2607](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2607)
+
+发布日期：2026-11-26 13:32（UTC+8）
+
+### 新增
+- 新增前端语言切换功能，支持实时切换界面语言。
+- 模型推理控制界面支持本地化。
+
+### 修复
+- 修复外部代理的努力级别和描述在切换时丢失的问题。
+- 修复推理状态和工作区状态未本地化的问题。
+- 完善前端本地化覆盖，包括设置搜索目标等。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/26e682d988e2bf12d186a887ecaaae30999679f4...aeab9077a992ab9c3cb6189fb75f6c53c9e2abfe>) · 从 v26.11.2606 到本次构建
+<!-- loopra-release:v26.11.2607:end -->
+
+---
+
 <!-- loopra-release:v26.11.2606:start -->
 ## [26.11.2606](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2606)
 
