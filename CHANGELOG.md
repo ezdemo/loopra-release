@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2608:start -->
+## [26.11.2608](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2608)
+
+发布日期：2026-11-26 14:14（UTC+8）
+
+### 修复
+- 修复推理努力等级在弹出菜单中的显示问题，使其在窄弹出菜单中也能完整显示并保持间距均匀。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/aeab9077a992ab9c3cb6189fb75f6c53c9e2abfe...07ce9aa3f8b442648600806528c22441d95c83eb>) · 从 v26.11.2607 到本次构建
+<!-- loopra-release:v26.11.2608:end -->
+
+---
+
 <!-- loopra-release:v26.11.2607:start -->
 ## [26.11.2607](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2607)
 
