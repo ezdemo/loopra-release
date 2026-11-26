@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2606:start -->
+## [26.11.2606](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2606)
+
+发布日期：2026-11-26 13:21（UTC+8）
+
+### 修复
+- 保持聊天活动文本在运行时可见
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/aeb6e55ddec53142c39060e77e0e11d409c8af13...26e682d988e2bf12d186a887ecaaae30999679f4>) · 从 v26.11.2605 到本次构建
+<!-- loopra-release:v26.11.2606:end -->
+
+---
+
 <!-- loopra-release:v26.11.2605:start -->
 ## [26.11.2605](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2605)
 
