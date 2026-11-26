@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2615:start -->
+## [26.11.2615](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2615)
+
+发布日期：2026-11-26 20:22（UTC+8）
+
+### 修复
+- 修复预览覆盖层中大型图片的居中问题
+
+### 改进
+- 修正介绍中的产品事实
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/648c5a450283a63d7992b2c5bcd0668d3d32b861...0714bb0f8279749f19029a6529df9f37a2c92005>) · 从 v26.11.2614 到本次构建
+<!-- loopra-release:v26.11.2615:end -->
+
+---
+
 <!-- loopra-release:v26.11.2614:start -->
 ## [26.11.2614](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2614)
 
