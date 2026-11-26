@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2612:start -->
+## [26.11.2612](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2612)
+
+发布日期：2026-11-26 16:22（UTC+8）
+
+### 修复
+- 简化并对齐快速模式控件。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/988871bb890b1095f30008b696f39ff578e72ec7...70362953f81e9c3c3561f85a2090f38f3219f35f>) · 从 v26.11.2611 到本次构建
+<!-- loopra-release:v26.11.2612:end -->
+
+---
+
 <!-- loopra-release:v26.11.2611:start -->
 ## [26.11.2611](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2611)
 
