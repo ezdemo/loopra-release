@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2605:start -->
+## [26.11.2605](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2605)
+
+发布日期：2026-11-26 12:23（UTC+8）
+
+### 修复
+- 修复了远程设备上ACP显示约定重复发送的问题，确保每个远程设备仅发送一次。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/221dc92d961d41f9902c15afdd9a96f87f42e0fd...aeb6e55ddec53142c39060e77e0e11d409c8af13>) · 从 v26.11.2604 到本次构建
+<!-- loopra-release:v26.11.2605:end -->
+
+---
+
 <!-- loopra-release:v26.11.2604:start -->
 ## [26.11.2604](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2604)
 
