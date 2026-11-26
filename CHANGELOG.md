@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2611:start -->
+## [26.11.2611](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2611)
+
+发布日期：2026-11-26 15:58（UTC+8）
+
+### 修复
+- 对齐滑块轨道内的推理标签。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a6beff8859e06d6c48a40680628f9f17f3538a0b...988871bb890b1095f30008b696f39ff578e72ec7>) · 从 v26.11.2610 到本次构建
+<!-- loopra-release:v26.11.2611:end -->
+
+---
+
 <!-- loopra-release:v26.11.2610:start -->
 ## [26.11.2610](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2610)
 
