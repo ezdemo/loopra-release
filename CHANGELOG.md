@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2614:start -->
+## [26.11.2614](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2614)
+
+发布日期：2026-11-26 20:06（UTC+8）
+
+### 修复
+- 修复了JSON-RPC错误处理逻辑，仅折叠负编码的错误，并改进了错误显示。
+- 修复了移动端图片预览关闭按钮的问题。
+
+### 改进
+- 将README精简为产品概述，并强化了定位说明。
+- 澄清了终端运行时边界。
+- 移除了原生Android Compose客户端。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/a900bfbb4671e6705261c0bd51e1b30a62b38fa6...648c5a450283a63d7992b2c5bcd0668d3d32b861>) · 从 v26.11.2613 到本次构建
+<!-- loopra-release:v26.11.2614:end -->
+
+---
+
 <!-- loopra-release:v26.11.2613:start -->
 ## [26.11.2613](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2613)
 
