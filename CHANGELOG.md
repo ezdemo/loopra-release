@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2601:start -->
+## [26.11.2601](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2601)
+
+发布日期：2026-11-26 09:38（UTC+8）
+
+### 新增
+- 为最大推理努力添加彩虹扫描效果
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/96d6571ac08db3eabe3209ece9e4881441ac7e31...d2b33127856c5bf77e0e220a94f49a448a47b17c>) · 从 v26.11.2511 到本次构建
+<!-- loopra-release:v26.11.2601:end -->
+
+---
+
 <!-- loopra-release:v26.11.2511:start -->
 ## [26.11.2511](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2511)
 
