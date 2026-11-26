@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2603:start -->
+## [26.11.2603](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2603)
+
+发布日期：2026-11-26 11:06（UTC+8）
+
+### 新增
+- 可自定义的强调色
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/3f2d6058f2cd254d759db2969aec9ca8339883e5...6ef71eb886261fb6d24d16f7e8f06aaf0f6276be>) · 从 v26.11.2602 到本次构建
+<!-- loopra-release:v26.11.2603:end -->
+
+---
+
 <!-- loopra-release:v26.11.2602:start -->
 ## [26.11.2602](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2602)
 
