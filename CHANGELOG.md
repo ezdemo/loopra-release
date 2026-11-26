@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2604:start -->
+## [26.11.2604](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2604)
+
+发布日期：2026-11-26 12:17（UTC+8）
+
+### 修复
+- 修复了在活动回合之外 ACP 斜杠命令未被保留的问题
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/6ef71eb886261fb6d24d16f7e8f06aaf0f6276be...221dc92d961d41f9902c15afdd9a96f87f42e0fd>) · 从 v26.11.2603 到本次构建
+<!-- loopra-release:v26.11.2604:end -->
+
+---
+
 <!-- loopra-release:v26.11.2603:start -->
 ## [26.11.2603](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2603)
 
