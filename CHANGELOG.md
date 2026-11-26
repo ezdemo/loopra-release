@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2613:start -->
+## [26.11.2613](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2613)
+
+发布日期：2026-11-26 18:25（UTC+8）
+
+### 新增
+- 将ACP历史作为单独的上下文块移交
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/70362953f81e9c3c3561f85a2090f38f3219f35f...a900bfbb4671e6705261c0bd51e1b30a62b38fa6>) · 从 v26.11.2612 到本次构建
+<!-- loopra-release:v26.11.2613:end -->
+
+---
+
 <!-- loopra-release:v26.11.2612:start -->
 ## [26.11.2612](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2612)
 
