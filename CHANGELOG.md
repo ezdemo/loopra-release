@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2610:start -->
+## [26.11.2610](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2610)
+
+发布日期：2026-11-26 15:19（UTC+8）
+
+### 修复
+- 修复了预览工作区外绝对路径文件的问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/5654476694feaf4ae1923370099a3d438809b53a...a6beff8859e06d6c48a40680628f9f17f3538a0b>) · 从 v26.11.2609 到本次构建
+<!-- loopra-release:v26.11.2610:end -->
+
+---
+
 <!-- loopra-release:v26.11.2609:start -->
 ## [26.11.2609](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2609)
 
