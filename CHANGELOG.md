@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2616:start -->
+## [26.11.2616](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2616)
+
+发布日期：2026-11-26 23:09（UTC+8）
+
+### 新增
+- 添加 SolonCode 作为外部 ACP 代理
+
+### 改进
+- 更新 README 文档中的截图，移除过时的空状态主图，添加应用和移动端截图
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/0714bb0f8279749f19029a6529df9f37a2c92005...1ac436cfe78ad6e8bde5508f4877740f7016e362>) · 从 v26.11.2615 到本次构建
+<!-- loopra-release:v26.11.2616:end -->
+
+---
+
 <!-- loopra-release:v26.11.2615:start -->
 ## [26.11.2615](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2615)
 
