@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2602:start -->
+## [26.11.2602](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2602)
+
+发布日期：2026-11-26 09:54（UTC+8）
+
+### 新增
+- 连续拖动推理滑块后，滑块将自动吸附到最近的档位，提升操作体验。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/d2b33127856c5bf77e0e220a94f49a448a47b17c...3f2d6058f2cd254d759db2969aec9ca8339883e5>) · 从 v26.11.2601 到本次构建
+<!-- loopra-release:v26.11.2602:end -->
+
+---
+
 <!-- loopra-release:v26.11.2601:start -->
 ## [26.11.2601](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2601)
 
