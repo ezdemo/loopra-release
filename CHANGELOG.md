@@ -4,6 +4,20 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2704:start -->
+## [26.11.2704](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2704)
+
+发布日期：2026-11-27 15:55（UTC+8）
+
+### 新增
+
+- 新增 SolonCode 编辑器快捷键支持。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/4f93602195b171d461a36948f82a9b8a85d230c6...c200f359a70acb8875ea5150dbdba13d3c395354>) · 从 v26.11.2703 到本次构建
+<!-- loopra-release:v26.11.2704:end -->
+
+---
+
 <!-- loopra-release:v26.11.2703:start -->
 ## [26.11.2703](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2703)
 
