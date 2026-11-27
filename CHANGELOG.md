@@ -4,6 +4,22 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2706:start -->
+## [26.11.2706](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2706)
+
+发布日期：2026-11-27 21:13（UTC+8）
+
+### 新增
+- 从服务器设置中打开 Loopra Web 版本
+
+### 修复
+- Web 快捷方式仅在桌面外壳中显示
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/b60f59e2b88bf6eee60720e813f682c7e265cf53...35202b10ce642c7a9493dba28da6ea75bf6f3253>) · 从 v26.11.2705 到本次构建
+<!-- loopra-release:v26.11.2706:end -->
+
+---
+
 <!-- loopra-release:v26.11.2705:start -->
 ## [26.11.2705](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2705)
 
