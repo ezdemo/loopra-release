@@ -4,6 +4,25 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2702:start -->
+## [26.11.2702](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2702)
+
+发布日期：2026-11-27 14:46（UTC+8）
+
+### 修复
+
+- ACP 配置与权限路由现在按各自会话隔离，避免跨会话相互影响。
+- 提升聊天滚动与虚拟列表稳定性：
+  - 行高估算改为基于消息内容，并排除附件负载对估算的影响。
+  - 折叠后恢复跟随、窗口替换以及滚动校正时，保留锚点与读取位置。
+  - 尊重用户主动向上滚轮操作；长聊天下允许离开底部；视口缩小时重新固定聊天；短聊天保留原生锚定。
+  - 改善深色模式下的文本选择与滚动稳定性。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/1ac436cfe78ad6e8bde5508f4877740f7016e362...6625718c914266f776b94c16f98107ec5949b319>) · 从 v26.11.2616 到本次构建
+<!-- loopra-release:v26.11.2702:end -->
+
+---
+
 <!-- loopra-release:v26.11.2616:start -->
 ## [26.11.2616](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2616)
 
