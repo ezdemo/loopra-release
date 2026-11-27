@@ -4,6 +4,21 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2703:start -->
+## [26.11.2703](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2703)
+
+发布日期：2026-11-27 14:59（UTC+8）
+
+### 修复
+
+- 缓存虚拟行高度估算结果。
+- 保留临时虚拟行测量数据。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/6625718c914266f776b94c16f98107ec5949b319...4f93602195b171d461a36948f82a9b8a85d230c6>) · 从 v26.11.2702 到本次构建
+<!-- loopra-release:v26.11.2703:end -->
+
+---
+
 <!-- loopra-release:v26.11.2702:start -->
 ## [26.11.2702](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2702)
 
