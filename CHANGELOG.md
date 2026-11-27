@@ -4,6 +4,19 @@
 
 <!-- loopra-changelog:start -->
 
+<!-- loopra-release:v26.11.2705:start -->
+## [26.11.2705](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2705)
+
+发布日期：2026-11-27 16:50（UTC+8）
+
+### 修复
+- 修复聊天滚动在虚拟窗口边界处可能出现的振荡问题。
+
+[查看完整源码变更](<https://github.com/ezdemo/loopra/compare/c200f359a70acb8875ea5150dbdba13d3c395354...b60f59e2b88bf6eee60720e813f682c7e265cf53>) · 从 v26.11.2704 到本次构建
+<!-- loopra-release:v26.11.2705:end -->
+
+---
+
 <!-- loopra-release:v26.11.2704:start -->
 ## [26.11.2704](https://github.com/ezdemo/loopra-release/releases/tag/v26.11.2704)
 
